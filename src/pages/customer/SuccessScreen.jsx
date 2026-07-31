@@ -13,7 +13,7 @@ export default function SuccessScreen() {
           <CheckCircle className="w-12 h-12 text-green-600" />
         </div>
         <h2 className="text-2xl font-bold text-[#003366] dark:text-white mb-1">Booking Confirmed!</h2>
-        <p className="text-gray-500 dark:text-gray-400 mb-8">Your Kwikfixer is on the way</p>
+        <p className="text-gray-500 dark:text-gray-400 mb-8">Your KWIKFIXER is on the way</p>
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 w-full max-w-sm mb-8">
           <div className="border-b dark:border-gray-700 pb-3 mb-3">
             <p className="text-sm text-gray-500">Service</p>

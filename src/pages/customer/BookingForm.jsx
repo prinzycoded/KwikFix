@@ -136,7 +136,7 @@ export default function BookingForm() {
           </div>
 
           <button type="submit" className="w-full md:w-auto px-12 py-3.5 bg-[#003366] text-white font-semibold rounded-lg text-base hover:bg-[#002244] transition-colors focus:outline-none focus:ring-2 focus:ring-[#FF6600] focus:ring-offset-2">
-            Find a Kwikfixer
+            Find a KWIKFIXER
           </button>
         </form>
       </div>

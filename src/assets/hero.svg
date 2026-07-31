@@ -1,0 +1,363 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 900" fill="none">
+  <defs>
+    <!-- Background gradient - workshop lighting -->
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1a1a2e"/>
+      <stop offset="30%" stop-color="#2d2d44"/>
+      <stop offset="60%" stop-color="#3d3d5c"/>
+      <stop offset="100%" stop-color="#1a1a2e"/>
+    </linearGradient>
+    <linearGradient id="ceilingLight" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#fff8e1" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </linearGradient>
+    <linearGradient id="jacket" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1b2838"/>
+      <stop offset="100%" stop-color="#0f1923"/>
+    </linearGradient>
+    <linearGradient id="jacketArmL" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1b2838"/>
+      <stop offset="100%" stop-color="#0f1923"/>
+    </linearGradient>
+    <linearGradient id="jacketArmR" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1b2838"/>
+      <stop offset="100%" stop-color="#0f1923"/>
+    </linearGradient>
+    <linearGradient id="skin" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#d4a373"/>
+      <stop offset="100%" stop-color="#b88352"/>
+    </linearGradient>
+    <linearGradient id="skin2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#c9946a"/>
+      <stop offset="100%" stop-color="#a87345"/>
+    </linearGradient>
+    <linearGradient id="garageDoor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4a4a5a"/>
+      <stop offset="100%" stop-color="#3a3a4a"/>
+    </linearGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2a2a3a"/>
+      <stop offset="100%" stop-color="#1a1a2a"/>
+    </linearGradient>
+    <filter id="blur1">
+      <feGaussianBlur stdDeviation="3"/>
+    </filter>
+    <filter id="blur2">
+      <feGaussianBlur stdDeviation="5"/>
+    </filter>
+    <filter id="blur3">
+      <feGaussianBlur stdDeviation="8"/>
+    </filter>
+    <filter id="softShadow">
+      <feDropShadow dx="2" dy="4" stdDeviation="6" flood-color="rgba(0,0,0,0.5)"/>
+    </filter>
+    <filter id="innerGlow">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- === BACKGROUND - Workshop Environment === -->
+
+  <!-- Main background -->
+  <rect width="1000" height="900" fill="url(#bg)"/>
+
+  <!-- Ambient light glow from above -->
+  <ellipse cx="500" cy="0" rx="600" ry="300" fill="url(#ceilingLight)"/>
+
+  <!-- Garage roll-up doors (back wall) -->
+  <g opacity="0.6">
+    <rect x="100" y="100" width="250" height="350" rx="4" fill="url(#garageDoor)" stroke="#5a5a6a" stroke-width="2"/>
+    <rect x="100" y="100" width="250" height="350" rx="4" fill="none" stroke="#3a3a4a" stroke-width="1"/>
+    <line x1="100" y1="180" x2="350" y2="180" stroke="#3a3a4a" stroke-width="1"/>
+    <line x1="100" y1="260" x2="350" y2="260" stroke="#3a3a4a" stroke-width="1"/>
+    <line x1="100" y1="340" x2="350" y2="340" stroke="#3a3a4a" stroke-width="1"/>
+    <line x1="100" y1="420" x2="350" y2="420" stroke="#3a3a4a" stroke-width="1"/>
+    <rect x="210" y="410" width="30" height="40" rx="3" fill="#5a5a6a"/>
+
+    <rect x="650" y="100" width="250" height="350" rx="4" fill="url(#garageDoor)" stroke="#5a5a6a" stroke-width="2"/>
+    <line x1="650" y1="180" x2="900" y2="180" stroke="#3a3a4a" stroke-width="1"/>
+    <line x1="650" y1="260" x2="900" y2="260" stroke="#3a3a4a" stroke-width="1"/>
+    <line x1="650" y1="340" x2="900" y2="340" stroke="#3a3a4a" stroke-width="1"/>
+    <line x1="650" y1="420" x2="900" y2="420" stroke="#3a3a4a" stroke-width="1"/>
+    <rect x="760" y="410" width="30" height="40" rx="3" fill="#5a5a6a"/>
+  </g>
+
+  <!-- Wall shelves with tools (left side, out of focus) -->
+  <g filter="url(#blur2)" opacity="0.4">
+    <rect x="30" y="200" width="80" height="8" rx="2" fill="#5a5a6a"/>
+    <rect x="30" y="300" width="80" height="8" rx="2" fill="#5a5a6a"/>
+    <!-- Tools on shelves -->
+    <rect x="40" y="180" width="6" height="20" rx="1" fill="#888"/>
+    <rect x="55" y="175" width="4" height="25" rx="1" fill="#aaa"/>
+    <rect x="70" y="280" width="8" height="20" rx="2" fill="#ff6"/>
+    <rect x="85" y="285" width="4" height="15" rx="1" fill="#888"/>
+  </g>
+
+  <!-- Workbench (right side, out of focus) -->
+  <g filter="url(#blur2)" opacity="0.35">
+    <rect x="800" y="380" width="150" height="10" rx="2" fill="#6b4226"/>
+    <rect x="810" y="390" width="8" height="60" rx="1" fill="#6b4226"/>
+    <rect x="930" y="390" width="8" height="60" rx="1" fill="#6b4226"/>
+    <!-- Items on workbench -->
+    <rect x="820" y="365" width="20" height="15" rx="3" fill="#888"/>
+    <rect x="850" y="370" width="6" height="10" rx="1" fill="#ff6"/>
+    <circle cx="890" cy="372" r="6" fill="#888"/>
+  </g>
+
+  <!-- Ladder (far right, out of focus) -->
+  <g filter="url(#blur3)" opacity="0.3">
+    <line x1="950" y1="150" x2="940" y2="500" stroke="#aaa" stroke-width="4"/>
+    <line x1="990" y1="150" x2="980" y2="500" stroke="#aaa" stroke-width="4"/>
+    <line x1="948" y1="220" x2="988" y2="220" stroke="#aaa" stroke-width="3"/>
+    <line x1="946" y1="290" x2="986" y2="290" stroke="#aaa" stroke-width="3"/>
+    <line x1="944" y1="360" x2="984" y2="360" stroke="#aaa" stroke-width="3"/>
+    <line x1="942" y1="430" x2="982" y2="430" stroke="#aaa" stroke-width="3"/>
+  </g>
+
+  <!-- Out of focus worker figure (far left) -->
+  <g filter="url(#blur3)" opacity="0.25">
+    <ellipse cx="80" cy="480" rx="30" ry="50" fill="#3a3a4a"/>
+    <circle cx="80" cy="430" r="22" fill="#c9946a"/>
+    <rect x="60" y="530" width="15" height="40" rx="3" fill="#2a2a3a"/>
+    <rect x="85" y="530" width="15" height="40" rx="3" fill="#2a2a3a"/>
+    <rect x="55" y="480" width="50" height="55" rx="5" fill="#4a6a4a"/>
+  </g>
+
+  <!-- Out of focus worker figure (far right) -->
+  <g filter="url(#blur3)" opacity="0.2">
+    <ellipse cx="880" cy="490" rx="28" ry="48" fill="#3a3a4a"/>
+    <circle cx="880" cy="445" r="20" fill="#d4a373"/>
+  </g>
+
+  <!-- Floor -->
+  <rect x="0" y="500" width="1000" height="400" fill="url(#floor)"/>
+  <line x1="0" y1="500" x2="1000" y2="500" stroke="#4a4a5a" stroke-width="2"/>
+
+  <!-- Floor reflection lines -->
+  <g opacity="0.05">
+    <line x1="200" y1="500" x2="180" y2="900" stroke="#888" stroke-width="1"/>
+    <line x1="500" y1="500" x2="500" y2="900" stroke="#888" stroke-width="1"/>
+    <line x1="800" y1="500" x2="820" y2="900" stroke="#888" stroke-width="1"/>
+  </g>
+
+  <!-- Shadow under person -->
+  <ellipse cx="500" cy="800" rx="160" ry="18" fill="rgba(0,0,0,0.5)" filter="url(#softShadow)"/>
+
+  <!-- === MAIN SUBJECT: Handyman putting on jacket === -->
+
+  <!-- Left leg -->
+  <path d="M455 660 L435 795 L465 795 L480 660Z" fill="#1a2530"/>
+  <path d="M455 660 L435 795 L450 795 L465 660Z" fill="#1a2530" opacity="0.6"/>
+  <!-- Right leg -->
+  <path d="M505 660 L520 795 L550 795 L530 660Z" fill="#1a2530"/>
+  <path d="M505 660 L520 795 L535 795 L515 660Z" fill="#1a2530" opacity="0.6"/>
+
+  <!-- Left boot -->
+  <ellipse cx="450" cy="798" rx="22" ry="10" fill="#2c2c2c"/>
+  <ellipse cx="450" cy="800" rx="22" ry="8" fill="#1a1a1a"/>
+  <!-- Right boot -->
+  <ellipse cx="535" cy="798" rx="22" ry="10" fill="#2c2c2c"/>
+  <ellipse cx="535" cy="800" rx="22" ry="8" fill="#1a1a1a"/>
+
+  <!-- Dark t-shirt under jacket (visible at bottom) -->
+  <rect x="430" y="635" width="125" height="35" rx="5" fill="#1a1a1a"/>
+
+  <!-- === JACKET (being put on - left arm going in, right arm still out) === -->
+
+  <!-- Jacket body -->
+  <path d="M410 430 L420 640 L565 640 L575 430Z" fill="url(#jacket)" filter="url(#softShadow)"/>
+
+  <!-- Jacket front opening (showing it's open / being put on) -->
+  <line x1="492" y1="435" x2="492" y2="640" stroke="#0f1923" stroke-width="3"/>
+  <line x1="490" y1="435" x2="490" y2="640" stroke="#2a3a4a" stroke-width="1" opacity="0.5"/>
+
+  <!-- Jacket zipper -->
+  <line x1="490" y1="435" x2="490" y2="640" stroke="#555" stroke-width="1.5" stroke-dasharray="3 4"/>
+
+  <!-- Left jacket arm (being worn - arm inside) -->
+  <path d="M410 440 L340 520 L325 560 L345 570 L365 545 L420 480Z" fill="url(#jacketArmL)"/>
+
+  <!-- Left hand (coming out of sleeve) -->
+  <ellipse cx="335" cy="565" rx="16" ry="14" fill="url(#skin)"/>
+  <!-- Finger details -->
+  <path d="M324 565 L320 572" stroke="#b88352" stroke-width="2" stroke-linecap="round"/>
+  <path d="M328 562 L324 570" stroke="#b88352" stroke-width="2" stroke-linecap="round"/>
+  <path d="M333 560 L330 568" stroke="#b88352" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Right jacket arm (being put on - arm reaching back) -->
+  <path d="M575 440 L640 490 L670 530 L655 545 L630 515 L565 480Z" fill="url(#jacketArmR)"/>
+
+  <!-- Right hand -->
+  <ellipse cx="660" cy="538" rx="16" ry="14" fill="url(#skin)"/>
+
+  <!-- Jacket collar -->
+  <path d="M430 430 L470 455 L490 460 L510 455 L555 430 L530 450 L490 465 L450 450Z" fill="#1b2838"/>
+  <path d="M430 430 L470 455 L490 460 L510 455 L555 430" fill="none" stroke="#2a3a4a" stroke-width="1.5"/>
+
+  <!-- === EMBROIDERED TEXT ON JACKET (upper left chest) === -->
+
+  <!-- KWIKFIX in yellow block letters on left chest -->
+  <rect x="425" y="485" width="130" height="32" rx="4" fill="#1b2838" opacity="0.3"/>
+  <text x="490" y="510" font-family="'Arial Black', Arial, sans-serif" font-size="22" font-weight="900" fill="#FFD700" text-anchor="middle" letter-spacing="2.5">KWIKFIX</text>
+
+  <!-- Yellow thread-like border around text (embroidery effect) -->
+  <rect x="428" y="475" width="124" height="34" rx="4" fill="none" stroke="#FFD700" stroke-width="0.5" opacity="0.4"/>
+  <rect x="427" y="474" width="126" height="36" rx="5" fill="none" stroke="#FFD700" stroke-width="0.3" opacity="0.2"/>
+
+  <!-- REPAIR SERVICES below KWIKFIX -->
+  <text x="490" y="532" font-family="Arial, sans-serif" font-size="9" font-weight="600" fill="#FFD700" text-anchor="middle" letter-spacing="3" opacity="0.9">REPAIR SERVICES</text>
+
+  <!-- Small stitch dots around the embroidery -->
+  <g opacity="0.3">
+    <circle cx="425" cy="478" r="0.8" fill="#FFD700"/>
+    <circle cx="430" cy="478" r="0.8" fill="#FFD700"/>
+    <circle cx="435" cy="478" r="0.8" fill="#FFD700"/>
+    <circle cx="545" cy="478" r="0.8" fill="#FFD700"/>
+    <circle cx="550" cy="478" r="0.8" fill="#FFD700"/>
+    <circle cx="555" cy="478" r="0.8" fill="#FFD700"/>
+  </g>
+
+  <!-- === Head / Face === -->
+
+  <!-- Neck -->
+  <rect x="468" y="380" width="48" height="55" rx="10" fill="url(#skin)"/>
+
+  <!-- Neck shadow -->
+  <rect x="470" y="400" width="44" height="30" rx="8" fill="#a87345" opacity="0.4"/>
+
+  <!-- Head -->
+  <ellipse cx="492" cy="345" rx="48" ry="58" fill="url(#skin)"/>
+
+  <!-- Face shadow (right side - lighting from upper left) -->
+  <ellipse cx="505" cy="345" rx="35" ry="55" fill="url(#skin2)" opacity="0.3"/>
+
+  <!-- Greying hair -->
+  <path d="M445 330 Q445 275 492 265 Q539 275 539 330 Q535 300 492 290 Q449 300 445 330Z" fill="#3a3a3a"/>
+  <path d="M445 330 Q445 290 492 280 Q539 290 539 330" fill="#3a3a3a"/>
+  <!-- Grey highlights -->
+  <path d="M458 310 Q460 295 475 288" stroke="#888" stroke-width="2" fill="none" opacity="0.5"/>
+  <path d="M520 285 Q530 290 534 305" stroke="#888" stroke-width="2" fill="none" opacity="0.5"/>
+  <path d="M465 295 Q470 290 480 287" stroke="#aaa" stroke-width="1.5" fill="none" opacity="0.4"/>
+  <path d="M510 286 Q518 288 525 295" stroke="#aaa" stroke-width="1.5" fill="none" opacity="0.4"/>
+
+  <!-- Sideburns / ear area hair -->
+  <path d="M445 340 Q448 370 450 380" stroke="#3a3a3a" stroke-width="4" fill="none"/>
+  <path d="M539 340 Q536 370 534 380" stroke="#3a3a3a" stroke-width="4" fill="none"/>
+
+  <!-- Ears -->
+  <ellipse cx="444" cy="340" rx="8" ry="12" fill="url(#skin)"/>
+  <ellipse cx="540" cy="340" rx="8" ry="12" fill="url(#skin)"/>
+  <path d="M444 335 Q440 340 444 345" stroke="#b88352" stroke-width="1" fill="none"/>
+  <path d="M540 335 Q544 340 540 345" stroke="#b88352" stroke-width="1" fill="none"/>
+
+  <!-- Eyes -->
+  <ellipse cx="472" cy="338" rx="11" ry="8" fill="white"/>
+  <ellipse cx="512" cy="338" rx="11" ry="8" fill="white"/>
+  <!-- Irises -->
+  <circle cx="474" cy="339" r="6" fill="#4a3728"/>
+  <circle cx="514" cy="339" r="6" fill="#4a3728"/>
+  <!-- Pupils -->
+  <circle cx="475" cy="339" r="3.5" fill="#1a1a1a"/>
+  <circle cx="515" cy="339" r="3.5" fill="#1a1a1a"/>
+  <!-- Eye highlights -->
+  <circle cx="477" cy="336" r="2" fill="white"/>
+  <circle cx="517" cy="336" r="2" fill="white"/>
+
+  <!-- Eyebrows (slightly furrowed, focused look) -->
+  <path d="M460 324 Q468 318 483 322" stroke="#2c2c2c" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+  <path d="M501 322 Q516 318 524 324" stroke="#2c2c2c" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+
+  <!-- Grey stubble on face -->
+  <g opacity="0.15">
+    <circle cx="460" cy="370" r="1" fill="#666"/>
+    <circle cx="465" cy="372" r="1" fill="#666"/>
+    <circle cx="470" cy="368" r="1" fill="#666"/>
+    <circle cx="475" cy="373" r="1" fill="#666"/>
+    <circle cx="480" cy="370" r="1" fill="#666"/>
+    <circle cx="485" cy="374" r="1" fill="#666"/>
+    <circle cx="490" cy="369" r="1" fill="#666"/>
+    <circle cx="495" cy="373" r="1" fill="#666"/>
+    <circle cx="500" cy="370" r="1" fill="#666"/>
+    <circle cx="505" cy="372" r="1" fill="#666"/>
+    <circle cx="510" cy="368" r="1" fill="#666"/>
+    <circle cx="515" cy="373" r="1" fill="#666"/>
+    <circle cx="520" cy="370" r="1" fill="#666"/>
+    <circle cx="525" cy="372" r="1" fill="#666"/>
+  </g>
+
+  <!-- Nose -->
+  <path d="M490 345 Q484 360 492 365 Q500 360 494 345Z" fill="#b88352"/>
+  <path d="M490 345 Q484 360 492 365 Q500 360 494 345Z" fill="none" stroke="#a87345" stroke-width="0.5"/>
+
+  <!-- Nostril hints -->
+  <circle cx="488" cy="363" r="1.5" fill="#a87345" opacity="0.5"/>
+  <circle cx="496" cy="363" r="1.5" fill="#a87345" opacity="0.5"/>
+
+  <!-- Nose highlight -->
+  <path d="M490 348 Q488 355 490 360" stroke="#e8c49a" stroke-width="1" fill="none" opacity="0.4"/>
+
+  <!-- Mouth - slight concentrated expression -->
+  <path d="M480 385 Q492 390 504 385" stroke="#8B4513" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+  <!-- Lower lip shadow -->
+  <path d="M482 388 Q492 392 502 388" stroke="#a87345" stroke-width="1" fill="none" opacity="0.3"/>
+
+  <!-- Chin definition -->
+  <path d="M478 393 Q492 402 506 393" stroke="#a87345" stroke-width="1" fill="none" opacity="0.3"/>
+
+  <!-- === Neck shadow from jacket collar === -->
+  <path d="M458 430 L525 430 L520 445 L463 445Z" fill="#0a0a0a" opacity="0.3"/>
+
+  <!-- === Foreground atmospheric elements === -->
+
+  <!-- Dust particles / workshop atmosphere -->
+  <g opacity="0.08">
+    <circle cx="200" cy="300" r="2" fill="#FFD700"/>
+    <circle cx="350" cy="250" r="1.5" fill="#FFD700"/>
+    <circle cx="700" cy="280" r="2" fill="#FFD700"/>
+    <circle cx="550" cy="200" r="1" fill="#FFD700"/>
+    <circle cx="850" cy="350" r="1.5" fill="#FFD700"/>
+    <circle cx="150" cy="450" r="1" fill="#FFD700"/>
+    <circle cx="750" cy="450" r="1.5" fill="#FFD700"/>
+    <circle cx="300" cy="400" r="1" fill="#FFD700"/>
+    <circle cx="650" cy="320" r="1" fill="#FFD700"/>
+  </g>
+
+  <!-- Light ray from above -->
+  <g opacity="0.04">
+    <polygon points="450,0 420,500 480,500" fill="#fff8e1"/>
+    <polygon points="520,0 500,500 560,500" fill="#fff8e1"/>
+  </g>
+
+  <!-- === TOOLS ON BELT (visible below jacket) === -->
+
+  <!-- Belt -->
+  <rect x="425" y="640" width="135" height="18" rx="3" fill="#1a1a1a"/>
+  <rect x="483" y="640" width="20" height="18" rx="2" fill="#555"/>
+
+  <!-- Wrench on belt (left side) -->
+  <g transform="translate(435, 650) rotate(-10)">
+    <rect x="-4" y="0" width="8" height="40" rx="2" fill="#888"/>
+    <rect x="-7" y="-8" width="14" height="10" rx="3" fill="#aaa"/>
+    <circle cx="0" cy="-12" r="5" fill="none" stroke="#aaa" stroke-width="2"/>
+  </g>
+
+  <!-- Pliers on belt (right side) -->
+  <g transform="translate(550, 655) rotate(15)">
+    <rect x="-3" y="0" width="6" height="35" rx="2" fill="#888"/>
+    <rect x="-6" y="-5" width="12" height="8" rx="2" fill="#999"/>
+    <path d="M-6 -5 L-8 -12 L-3 -8 L2 -12 L6 -5Z" fill="#999"/>
+  </g>
+
+  <!-- === MOTION LINES (subtle, showing mid-action) === -->
+  <g opacity="0.06">
+    <line x1="580" y1="500" x2="650" y2="550" stroke="#FFD700" stroke-width="2" stroke-linecap="round"/>
+    <line x1="575" y1="510" x2="630" y2="555" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="570" y1="490" x2="660" y2="540" stroke="#FFD700" stroke-width="1" stroke-linecap="round"/>
+  </g>
+
+  <!-- === Signature bottom right === -->
+  <g opacity="0.06">
+    <text x="880" y="870" font-family="Arial, sans-serif" font-size="10" fill="#FFD700" letter-spacing="2">KWIKFIX</text>
+  </g>
+</svg>

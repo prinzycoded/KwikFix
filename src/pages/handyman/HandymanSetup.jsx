@@ -35,10 +35,10 @@ const EDUCATION_LEVELS = [
   'Masters',
 ];
 
-const TERMS_TEXT = `TERMS AND CONDITIONS FOR KIKFIX HANDYMAN SERVICES
+const TERMS_TEXT = `TERMS AND CONDITIONS FOR KWIKFIX HANDYMAN SERVICES
 
 1. INTRODUCTION
-These Terms and Conditions govern your registration and use of the Kwikfix platform as a Handyman Service Provider. By creating an account and using the platform, you agree to be bound by these terms.
+These Terms and Conditions govern your registration and use of the KWIKFIX platform as a Handyman Service Provider. By creating an account and using the platform, you agree to be bound by these terms.
 
 2. ELIGIBILITY
 You must be at least 18 years of age and not more than 50 years of age to register as a Handyman. You must possess the necessary skills, qualifications, and licenses required to perform the services you offer. You agree to provide accurate and complete information during registration.
@@ -47,7 +47,7 @@ You must be at least 18 years of age and not more than 50 years of age to regist
 You agree to provide your National Identification Number (NIN) and Bank Verification Number (BVN) for identity verification purposes. Your personal information will be handled in accordance with our Privacy Policy and applicable data protection regulations.
 
 4. COMMISSION FEES
-A commission fee of 2% (two percent) will be applied to every job you accept and complete through the Kwikfix platform. This fee is deducted from the total job payment before disbursement to your account. Kwikfix reserves the right to adjust this commission rate with prior notice.
+A commission fee of 2% (two percent) will be applied to every job you accept and complete through the KWIKFIX platform. This fee is deducted from the total job payment before disbursement to your account. KWIKFIX reserves the right to adjust this commission rate with prior notice.
 
 5. SERVICE OBLIGATIONS
 As a Handyman, you agree to:
@@ -58,25 +58,25 @@ As a Handyman, you agree to:
 - Comply with all applicable laws and regulations
 
 6. PAYMENT TERMS
-Payments for completed jobs will be processed through the Kwikfix platform. Withdrawals are processed within 1-3 business days. Kwikfix may hold payments pending dispute resolution if a customer raises a complaint.
+Payments for completed jobs will be processed through the KWIKFIX platform. Withdrawals are processed within 1-3 business days. KWIKFIX may hold payments pending dispute resolution if a customer raises a complaint.
 
 7. CODE OF CONDUCT
 You agree to maintain professional conduct at all times. Harassment, discrimination, fraud, or any illegal activity will result in immediate account termination and possible legal action.
 
 8. ACCOUNT TERMINATION
-Kwikfix reserves the right to suspend or terminate your account for violation of these terms, provision of false information, poor service ratings, or any activity that harms the platform's reputation.
+KWIKFIX reserves the right to suspend or terminate your account for violation of these terms, provision of false information, poor service ratings, or any activity that harms the platform's reputation.
 
 9. DISPUTE RESOLUTION
-Any disputes arising from services provided through the platform will be mediated by Kwikfix. Both parties agree to participate in good faith in the dispute resolution process.
+Any disputes arising from services provided through the platform will be mediated by KWIKFIX. Both parties agree to participate in good faith in the dispute resolution process.
 
 10. LIABILITY
-Kwikfix acts as a marketplace connecting Handymen with Customers. We are not liable for the quality of services provided. Handymen are responsible for their own insurance coverage and liability.
+KWIKFIX acts as a marketplace connecting Handymen with Customers. We are not liable for the quality of services provided. Handymen are responsible for their own insurance coverage and liability.
 
 11. DATA PROTECTION
 Your personal data will be collected, stored, and processed in accordance with the Nigeria Data Protection Regulation (NDPR) and other applicable laws.
 
 12. MODIFICATIONS
-Kwikfix reserves the right to modify these terms at any time. Continued use of the platform after changes constitutes acceptance of the modified terms.
+KWIKFIX reserves the right to modify these terms at any time. Continued use of the platform after changes constitutes acceptance of the modified terms.
 
 13. GOVERNING LAW
 These terms shall be governed by and construed in accordance with the laws of the Federal Republic of Nigeria.`;
@@ -872,7 +872,7 @@ function HandymanSetup() {
             </p>
             <p className="text-xs text-amber-700 mt-1">
               A 2% commission fee will be applied to every job you accept and
-              complete through the Kwikfix platform.
+              complete through the KWIKFIX platform.
             </p>
           </div>
         </div>
@@ -1034,7 +1034,7 @@ function HandymanSetup() {
               Account Created Successfully!
             </h2>
             <p className="text-gray-500 text-sm mb-6">
-              Welcome to Kwikfix! Your handyman profile has been created.
+              Welcome to KWIKFIX! Your handyman profile has been created.
             </p>
             <button
               onClick={() => {

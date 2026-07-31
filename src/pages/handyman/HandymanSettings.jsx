@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, Moon, Sun, Bell, Globe, Lock, ChevronRight, Smartphone, Info, LogOut } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useTheme } from '../../contexts/ThemeContext';
 
 function SettingsToggle({ icon, label, description, value, onChange }) {
   return (
@@ -37,7 +38,8 @@ function SettingsLink({ icon, label, description, onClick }) {
 
 function HandymanSettings() {
   const navigate = useNavigate();
-  const { darkMode, toggleDarkMode, logout } = useAuth();
+  const { logout } = useAuth();
+  const { darkMode, toggleDarkMode } = useTheme();
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [locationEnabled, setLocationEnabled] = useState(true);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
@@ -72,7 +74,7 @@ function HandymanSettings() {
               <SettingsLink icon={<Smartphone size={18} className="text-[#003366]" />} label="App Version" description="v1.0.0 (Build 1)" onClick={() => {}} />
             </div>
             <div className="border-t dark:border-gray-700">
-              <SettingsLink icon={<Info size={18} className="text-[#003366]" />} label="About Kwikfix" description="Learn more about the platform" onClick={() => {}} />
+              <SettingsLink icon={<Info size={18} className="text-[#003366]" />} label="About KWIKFIX" description="Learn more about the platform" onClick={() => {}} />
             </div>
           </div>
         </div>

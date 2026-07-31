@@ -23,7 +23,7 @@ export default function MatchingAnimation() {
             <div className="w-20 h-20 rounded-full bg-[#003366] flex items-center justify-center animate-pulse mb-6">
               <Search className="w-10 h-10 text-white" />
             </div>
-            <h2 className="text-2xl font-bold text-[#003366] dark:text-white mb-2">Finding a Kwikfixer</h2>
+            <h2 className="text-2xl font-bold text-[#003366] dark:text-white mb-2">Finding a KWIKFIXER</h2>
             <p className="text-gray-500 dark:text-gray-400">Searching for nearby professionals...</p>
             <div className="mt-8 space-y-2">
               <div className="flex items-center gap-2 text-sm text-gray-500"><Search className="w-4 h-4 animate-spin" /> Scanning available handypeople</div>
@@ -33,7 +33,7 @@ export default function MatchingAnimation() {
         ) : (
           <>
             <CheckCircle className="w-20 h-20 text-green-500 mb-4" />
-            <h2 className="text-2xl font-bold text-[#003366] dark:text-white mb-1">Kwikfixer Found!</h2>
+            <h2 className="text-2xl font-bold text-[#003366] dark:text-white mb-1">KWIKFIXER Found!</h2>
             <p className="text-gray-500 dark:text-gray-400 mb-6">A professional has been matched</p>
 
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 w-full max-w-sm">

@@ -6,7 +6,7 @@ export default function BottomNav({ items, activeTab, onTabChange }) {
           key={item.key}
           onClick={() => onTabChange(item.key)}
           className={`flex flex-col items-center gap-1 ${
-            activeTab === item.key ? 'text-[#003366]' : 'text-gray-400'
+            activeTab === item.key ? 'text-[#003366] dark:text-[#FF6600]' : 'text-gray-400 dark:text-gray-500'
           }`}
         >
           <item.icon className="w-6 h-6" />

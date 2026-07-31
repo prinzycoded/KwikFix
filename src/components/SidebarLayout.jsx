@@ -41,7 +41,7 @@ export default function SidebarLayout({ children }) {
       >
         <div className="flex items-center justify-between p-4 border-b dark:border-gray-700">
           {!collapsed && (
-            <h1 className="text-xl font-bold text-[#003366] dark:text-white">Kwikfix</h1>
+             <img src="/logo.svg" alt="KwikFix" className="h-8" />
           )}
           <button
             onClick={() => setCollapsed(!collapsed)}

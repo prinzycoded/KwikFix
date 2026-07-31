@@ -7,6 +7,7 @@ import {
   ThumbsUp, Calendar, Wallet, Moon,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useTheme } from '../../contexts/ThemeContext';
 import { useApp } from '../../contexts/AppContext';
 
 const MOCK_JOBS = [
@@ -29,7 +30,8 @@ const MOCK_NOTIFICATIONS = [
 
 function HandymanDashboard() {
   const navigate = useNavigate();
-  const { currentUser, darkMode } = useAuth();
+  const { currentUser } = useAuth();
+  const { darkMode } = useTheme();
   const { markAsRead } = useApp();
 
   const [activeTab, setActiveTab] = useState('home');
