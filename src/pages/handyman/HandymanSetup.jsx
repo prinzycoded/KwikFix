@@ -139,6 +139,9 @@ function HandymanSetup() {
 
   const otpRefs = useRef([]);
   const timerRef = useRef(null);
+  const fileInputRef = useRef(null);
+  const profilePicInputRef = useRef(null);
+  const [targetSlot, setTargetSlot] = useState(null);
 
   useEffect(() => {
     return () => {
@@ -323,6 +326,28 @@ function HandymanSetup() {
     setTimeout(() => {
       setNinVerified(true);
     }, 800);
+  };
+
+  const handlePastWorkFile = (e) => {
+    const file = e.target.files?.[0];
+    if (file && targetSlot !== null) {
+      const url = URL.createObjectURL(file);
+      setPastWorkImages((prev) => {
+        const next = [...prev];
+        next[targetSlot] = url;
+        return next;
+      });
+    }
+    e.target.value = '';
+    setTargetSlot(null);
+  };
+
+  const handleProfilePicFile = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setProfilePicture(URL.createObjectURL(file));
+    }
+    e.target.value = '';
   };
 
   const handleCreateAccount = () => {
@@ -517,19 +542,18 @@ function HandymanSetup() {
           {[0, 1, 2, 3, 4, 5].map((idx) => (
             <div
               key={idx}
-              className="aspect-square rounded-lg bg-[#F4F4F4] border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-[#FF6600] transition-all"
+              className="aspect-square rounded-lg bg-[#F4F4F4] border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-[#FF6600] transition-all overflow-hidden"
               onClick={() => {
-                setPastWorkImages((prev) => {
-                  const next = [...prev];
-                  next[idx] = 'uploaded';
-                  return next;
-                });
+                setTargetSlot(idx);
+                fileInputRef.current?.click();
               }}
             >
               {pastWorkImages[idx] ? (
-                <div className="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center">
-                  <CheckCircle size={24} className="text-[#10B981]" />
-                </div>
+                <img
+                  src={pastWorkImages[idx]}
+                  alt={`Past work ${idx + 1}`}
+                  className="w-full h-full object-cover"
+                />
               ) : (
                 <div className="flex flex-col items-center text-gray-400">
                   <Upload size={20} />
@@ -539,6 +563,14 @@ function HandymanSetup() {
             </div>
           ))}
         </div>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={handlePastWorkFile}
+        />
+        <p className="text-xs text-gray-400 mt-2">Tap a box to choose a picture from your device</p>
       </div>
 
       <div>
@@ -784,11 +816,7 @@ function HandymanSetup() {
       <div className="flex flex-col items-center mb-6">
         <div
           className="w-24 h-24 rounded-full bg-[#F4F4F4] border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-[#FF6600] transition-all overflow-hidden"
-          onClick={() =>
-            setProfilePicture(
-              profilePicture ? '' : 'https://via.placeholder.com/100',
-            )
-          }
+          onClick={() => profilePicInputRef.current?.click()}
         >
           {profilePicture ? (
             <img
@@ -803,7 +831,14 @@ function HandymanSetup() {
             </div>
           )}
         </div>
-        <p className="text-xs text-gray-400 mt-2">Upload Profile Picture</p>
+        <input
+          ref={profilePicInputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={handleProfilePicFile}
+        />
+        <p className="text-xs text-gray-400 mt-2">Tap to choose a profile picture</p>
       </div>
 
       <div>
