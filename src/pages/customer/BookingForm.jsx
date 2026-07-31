@@ -60,7 +60,7 @@ export default function BookingForm() {
 
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">I am hiring for</label>
-              <div className="flex gap-4">
+              <div className="flex gap-4 flex-wrap">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input type="radio" name="hiringFor" value="myself" checked={hiringFor === 'myself'} onChange={() => setHiringFor('myself')} className="accent-[#003366]" />
                   <span className="text-sm text-gray-700 dark:text-gray-300">Myself</span>

@@ -375,7 +375,7 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
-    padding: 24,
+    padding: '24px 16px',
   },
   callHeader: {
     display: 'flex',
@@ -401,15 +401,15 @@ const styles = {
   callControls: {
     display: 'flex',
     justifyContent: 'center',
-    gap: 32,
+    gap: 20,
     paddingBottom: 40,
   },
   callButton: {
     backgroundColor: '#003366',
     border: 'none',
     borderRadius: 40,
-    width: 72,
-    height: 72,
+    width: 'clamp(56px, 18vw, 72px)',
+    height: 'clamp(56px, 18vw, 72px)',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -432,7 +432,7 @@ const styles = {
     backgroundColor: '#FFF',
     borderRadius: 16,
     padding: 24,
-    width: 300,
+    width: 'min(300px, 90vw)',
     textAlign: 'center',
   },
   popupButton: {

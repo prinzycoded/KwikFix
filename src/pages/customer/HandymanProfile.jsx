@@ -19,9 +19,9 @@ export default function HandymanProfile() {
           <div className="lg:col-span-2">
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 mb-6">
               <div className="flex items-center gap-4 mb-4">
-                <div className="w-20 h-20 rounded-full bg-[#003366] flex items-center justify-center text-white text-3xl font-bold">AO</div>
-                <div>
-                  <h2 className="text-2xl font-bold text-[#003366] dark:text-white">Adebayo Olamide</h2>
+                <div className="w-20 h-20 rounded-full bg-[#003366] flex items-center justify-center text-white text-3xl font-bold shrink-0">AO</div>
+                <div className="min-w-0 flex-1">
+                  <h2 className="text-xl sm:text-2xl font-bold text-[#003366] dark:text-white">Adebayo Olamide</h2>
                   <div className="flex items-center gap-1 text-yellow-500 mt-1">
                     {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-current" />)}
                     <span className="text-gray-600 dark:text-gray-300 ml-1">4.8</span>

@@ -311,7 +311,7 @@ const styles = {
   formContainer: {
     backgroundColor: '#FFF',
     borderRadius: 16,
-    padding: 32,
+    padding: '32px 20px',
     width: '100%',
     maxWidth: 400,
     boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
@@ -378,11 +378,11 @@ const styles = {
   },
   otpContainer: {
     display: 'flex',
-    gap: 8,
+    gap: 6,
     justifyContent: 'center',
   },
   otpBox: {
-    width: 42,
+    width: 'clamp(32px, 11vw, 42px)',
     height: 48,
     borderRadius: 8,
     border: '2px solid #003366',

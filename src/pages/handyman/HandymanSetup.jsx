@@ -708,23 +708,24 @@ function HandymanSetup() {
           onPaste={handleOtpPaste}
         >
           {otp.map((digit, idx) => (
-            <input
-              key={idx}
-              ref={(el) => {
-                otpRefs.current[idx] = el;
-              }}
-              type="text"
-              inputMode="numeric"
-              autoComplete="one-time-code"
-              maxLength={1}
-              value={digit}
-              onChange={(e) => handleOtpChange(idx, e.target.value)}
-              onKeyDown={(e) => handleOtpKeyDown(idx, e)}
-              className={`w-11 h-12 sm:w-12 sm:h-14 text-center text-xl font-bold rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-[#FF6600] transition-all
-                ${otpVerified ? 'border-[#10B981] bg-[#10B981]/5' : 'border-gray-200 bg-white'}
-                ${otpError && !otpVerified ? 'border-[#EF4444]' : ''}`}
-              disabled={otpVerified}
-            />
+            <div key={idx} className="flex-1 min-w-0 max-w-11 sm:max-w-12">
+              <input
+                ref={(el) => {
+                  otpRefs.current[idx] = el;
+                }}
+                type="text"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                maxLength={1}
+                value={digit}
+                onChange={(e) => handleOtpChange(idx, e.target.value)}
+                onKeyDown={(e) => handleOtpKeyDown(idx, e)}
+                className={`h-12 sm:h-14 w-full text-center text-xl font-bold rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-[#FF6600] transition-all
+                  ${otpVerified ? 'border-[#10B981] bg-[#10B981]/5' : 'border-gray-200 bg-white'}
+                  ${otpError && !otpVerified ? 'border-[#EF4444]' : ''}`}
+                disabled={otpVerified}
+              />
+            </div>
           ))}
         </div>
         {otpError && (
