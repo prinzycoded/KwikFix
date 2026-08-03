@@ -389,10 +389,10 @@ function HandymanSetup() {
               className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300
                 ${
                   step === idx
-                    ? 'bg-[#FF6600] text-white shadow-lg shadow-orange-200'
+                    ? 'bg-accent text-white shadow-lg shadow-accent/30'
                     : step > idx
                       ? 'bg-[#10B981] text-white'
-                      : 'bg-[#F4F4F4] text-gray-400 border-2 border-gray-200'
+                      : 'bg-navy-800 text-muted border-2 border-white/10'
                 }`}
             >
               {step > idx ? (
@@ -404,10 +404,10 @@ function HandymanSetup() {
             <span
               className={`text-[10px] mt-1 hidden sm:block ${
                 step === idx
-                  ? 'text-[#FF6600] font-semibold'
+                  ? 'text-accent font-semibold'
                   : step > idx
                     ? 'text-[#10B981]'
-                    : 'text-gray-400'
+                    : 'text-muted'
               }`}
             >
               {s.label}
@@ -416,7 +416,7 @@ function HandymanSetup() {
           {idx < STEPS.length - 1 && (
             <div
               className={`h-0.5 w-8 sm:w-12 mx-1 sm:mx-2 rounded ${
-                step > idx ? 'bg-[#10B981]' : 'bg-gray-200'
+                step > idx ? 'bg-[#10B981]' : 'bg-white/10'
               }`}
             />
           )}
@@ -436,14 +436,14 @@ function HandymanSetup() {
   };
 
   const inputClass =
-    'w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#FF6600] focus:border-transparent text-sm transition-all bg-white';
-  const labelClass = 'block text-sm font-semibold text-gray-700 mb-1.5';
+    'w-full px-4 py-3 rounded-lg border border-white/15 bg-navy-700 text-white placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent text-sm transition-all';
+  const labelClass = 'block text-sm font-semibold text-white mb-1.5';
   const selectClass =
-    'w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#FF6600] focus:border-transparent text-sm bg-white appearance-none cursor-pointer';
+    'w-full px-4 py-3 rounded-lg border border-white/15 bg-navy-700 text-white focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent text-sm appearance-none cursor-pointer';
 
   const renderStep0 = () => (
     <div className="space-y-5 animate-fadeIn">
-      <h2 className="text-2xl font-bold text-[#003366] mb-6">
+      <h2 className="text-2xl font-bold text-white mb-6">
         Personal Information
       </h2>
 
@@ -463,7 +463,7 @@ function HandymanSetup() {
           <label className={labelClass}>Last Name</label>
           <input
             type="text"
-            placeholder="e.g. Doe"
+            placeholder="e.g. Okafor"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
             className={`${inputClass} ${errors.lastName ? 'border-[#EF4444]' : ''}`}
@@ -534,7 +534,7 @@ function HandymanSetup() {
 
   const renderStep1 = () => (
     <div className="space-y-5">
-      <h2 className="text-2xl font-bold text-[#003366] mb-6">Qualification</h2>
+      <h2 className="text-2xl font-bold text-white mb-6">Qualification</h2>
 
       <div>
         <label className={labelClass}>Upload Past Work Pictures</label>
@@ -542,7 +542,7 @@ function HandymanSetup() {
           {[0, 1, 2, 3, 4, 5].map((idx) => (
             <div
               key={idx}
-              className="aspect-square rounded-lg bg-[#F4F4F4] border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-[#FF6600] transition-all overflow-hidden"
+              className="aspect-square rounded-lg bg-navy-800 border-2 border-dashed border-white/15 flex items-center justify-center cursor-pointer hover:border-accent transition-all overflow-hidden"
               onClick={() => {
                 setTargetSlot(idx);
                 fileInputRef.current?.click();
@@ -555,7 +555,7 @@ function HandymanSetup() {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="flex flex-col items-center text-gray-400">
+                <div className="flex flex-col items-center text-muted">
                   <Upload size={20} />
                   <span className="text-[10px] mt-1">Upload</span>
                 </div>
@@ -570,7 +570,7 @@ function HandymanSetup() {
           className="hidden"
           onChange={handlePastWorkFile}
         />
-        <p className="text-xs text-gray-400 mt-2">Tap a box to choose a picture from your device</p>
+        <p className="text-xs text-muted mt-2">Tap a box to choose a picture from your device</p>
       </div>
 
       <div>
@@ -604,18 +604,18 @@ function HandymanSetup() {
       </div>
 
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-3">
+        <label className="block text-sm font-semibold text-white mb-3">
           References (at least 2)
         </label>
         {references.map((ref, idx) => (
           <div
             key={idx}
-            className="p-4 mb-3 rounded-lg border border-gray-100 bg-[#F4F4F4]/50"
+            className="p-4 mb-3 rounded-lg border border-white/10 bg-navy-800/50"
           >
-            <p className="text-xs font-medium text-gray-500 mb-2">
+            <p className="text-xs font-medium text-muted mb-2">
               Reference {idx + 1}
               {idx === 2 && (
-                <span className="text-gray-400 font-normal">
+                <span className="text-muted font-normal">
                   {' '}
                   (optional)
                 </span>
@@ -661,11 +661,11 @@ function HandymanSetup() {
 
   const renderStep2 = () => (
     <div className="space-y-5">
-      <h2 className="text-2xl font-bold text-[#003366] mb-6">
+      <h2 className="text-2xl font-bold text-white mb-6">
         NIN Verification
       </h2>
 
-      <div className="p-5 rounded-xl border border-gray-200 bg-white">
+      <div className="p-5 rounded-xl border border-white/15 bg-navy-800">
         <label className={labelClass}>
           National Identification Number (NIN)
         </label>
@@ -683,12 +683,12 @@ function HandymanSetup() {
               setNinError('');
             }}
             disabled={ninVerified}
-            className={`${inputClass} flex-1 ${ninVerified ? 'bg-gray-50 opacity-75' : ''} ${ninError ? 'border-[#EF4444]' : ''}`}
+            className={`${inputClass} flex-1 ${ninVerified ? 'bg-white/5 opacity-75' : ''} ${ninError ? 'border-[#EF4444]' : ''}`}
           />
           {!ninVerified ? (
             <button
               onClick={handleVerifyNin}
-              className="px-5 py-3 bg-[#FF6600] text-white rounded-lg font-semibold text-sm hover:bg-orange-600 transition-colors whitespace-nowrap"
+              className="px-5 py-3 bg-accent text-white rounded-lg font-semibold text-sm hover:bg-accent-dark transition-colors whitespace-nowrap"
             >
               Verify NIN
             </button>
@@ -708,7 +708,7 @@ function HandymanSetup() {
       {ninVerified && (
         <div className="p-4 rounded-xl bg-[#10B981]/10 border border-[#10B981]/20 flex items-center gap-3">
           <Shield size={24} className="text-[#10B981]" />
-          <p className="text-sm text-gray-700 font-medium">
+          <p className="text-sm text-white font-medium">
             NIN verification complete.
           </p>
         </div>
@@ -724,13 +724,13 @@ function HandymanSetup() {
 
   const renderStep3 = () => (
     <div className="space-y-5">
-      <h2 className="text-2xl font-bold text-[#003366] mb-6">
+      <h2 className="text-2xl font-bold text-white mb-6">
         Phone Verification
       </h2>
 
-      <div className="p-5 rounded-xl bg-[#F4F4F4] border border-gray-200">
-        <label className="text-sm text-gray-500">Phone Number</label>
-        <p className="text-lg font-bold text-[#003366]">{phoneNumber}</p>
+      <div className="p-5 rounded-xl bg-navy-800 border border-white/15">
+        <label className="text-sm text-muted">Phone Number</label>
+        <p className="text-lg font-bold text-white">{phoneNumber}</p>
       </div>
 
       <div>
@@ -752,8 +752,8 @@ function HandymanSetup() {
                 value={digit}
                 onChange={(e) => handleOtpChange(idx, e.target.value)}
                 onKeyDown={(e) => handleOtpKeyDown(idx, e)}
-                className={`h-12 sm:h-14 w-full text-center text-xl font-bold rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-[#FF6600] transition-all
-                  ${otpVerified ? 'border-[#10B981] bg-[#10B981]/5' : 'border-gray-200 bg-white'}
+                className={`h-12 sm:h-14 w-full text-center text-xl font-bold rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-accent transition-all
+                  ${otpVerified ? 'border-[#10B981] bg-[#10B981]/10' : 'border-white/15 bg-navy-700 text-white'}
                   ${otpError && !otpVerified ? 'border-[#EF4444]' : ''}`}
                 disabled={otpVerified}
               />
@@ -778,7 +778,7 @@ function HandymanSetup() {
             <p className="text-sm text-[#EF4444] font-medium mb-1">
               Maximum requests reached. Try again in:
             </p>
-            <p className="text-lg font-bold text-[#003366]">
+            <p className="text-lg font-bold text-white">
               {formatTime(otpCooldown)}
             </p>
           </div>
@@ -789,8 +789,8 @@ function HandymanSetup() {
             className={`px-6 py-2.5 rounded-lg font-semibold text-sm transition-all
               ${
                 otpTimer > 0 || otpVerified
-                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                  : 'bg-[#003366] text-white hover:bg-[#002244]'
+                  ? 'bg-white/5 text-muted/50 cursor-not-allowed'
+                  : 'bg-accent text-white hover:bg-accent-dark'
               }`}
           >
             {otpTimer > 0
@@ -800,7 +800,7 @@ function HandymanSetup() {
                 : 'Request Code'}
           </button>
         )}
-        <p className="text-xs text-gray-400">
+        <p className="text-xs text-muted">
           {otpRequests < 3
             ? `${3 - otpRequests} request${3 - otpRequests !== 1 ? 's' : ''} remaining`
             : 'Cooldown period active'}
@@ -811,11 +811,11 @@ function HandymanSetup() {
 
   const renderStep4 = () => (
     <div className="space-y-5">
-      <h2 className="text-2xl font-bold text-[#003366] mb-6">Final Setup</h2>
+      <h2 className="text-2xl font-bold text-white mb-6">Final Setup</h2>
 
       <div className="flex flex-col items-center mb-6">
         <div
-          className="w-24 h-24 rounded-full bg-[#F4F4F4] border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-[#FF6600] transition-all overflow-hidden"
+          className="w-24 h-24 rounded-full bg-navy-800 border-2 border-dashed border-white/15 flex items-center justify-center cursor-pointer hover:border-accent transition-all overflow-hidden"
           onClick={() => profilePicInputRef.current?.click()}
         >
           {profilePicture ? (
@@ -825,7 +825,7 @@ function HandymanSetup() {
               className="w-full h-full object-cover"
             />
           ) : (
-            <div className="flex flex-col items-center text-gray-400">
+            <div className="flex flex-col items-center text-muted">
               <Camera size={28} />
               <span className="text-xs mt-1">Upload</span>
             </div>
@@ -838,7 +838,7 @@ function HandymanSetup() {
           className="hidden"
           onChange={handleProfilePicFile}
         />
-        <p className="text-xs text-gray-400 mt-2">Tap to choose a profile picture</p>
+        <p className="text-xs text-muted mt-2">Tap to choose a profile picture</p>
       </div>
 
       <div>
@@ -856,17 +856,17 @@ function HandymanSetup() {
       <div>
         <label className={labelClass}>App Permissions</label>
         <div className="space-y-3">
-          <label className="flex items-center justify-between p-4 rounded-xl border border-gray-200 cursor-pointer hover:border-[#FF6600] transition-all">
+          <label className="flex items-center justify-between p-4 rounded-xl border border-white/15 cursor-pointer hover:border-accent transition-all">
             <div>
-              <p className="font-medium text-gray-700 text-sm">Location</p>
-              <p className="text-xs text-gray-400">
+              <p className="font-medium text-white text-sm">Location</p>
+              <p className="text-xs text-muted">
                 Allow access to your location
               </p>
             </div>
             <div
               onClick={() => setLocationPermission(!locationPermission)}
               className={`w-12 h-6 rounded-full relative transition-colors cursor-pointer ${
-                locationPermission ? 'bg-[#10B981]' : 'bg-gray-300'
+                locationPermission ? 'bg-[#10B981]' : 'bg-white/20'
               }`}
             >
               <div
@@ -876,17 +876,17 @@ function HandymanSetup() {
               />
             </div>
           </label>
-          <label className="flex items-center justify-between p-4 rounded-xl border border-gray-200 cursor-pointer hover:border-[#FF6600] transition-all">
+          <label className="flex items-center justify-between p-4 rounded-xl border border-white/15 cursor-pointer hover:border-accent transition-all">
             <div>
-              <p className="font-medium text-gray-700 text-sm">Audio</p>
-              <p className="text-xs text-gray-400">
+              <p className="font-medium text-white text-sm">Audio</p>
+              <p className="text-xs text-muted">
                 Allow access to microphone
               </p>
             </div>
             <div
               onClick={() => setAudioPermission(!audioPermission)}
               className={`w-12 h-6 rounded-full relative transition-colors cursor-pointer ${
-                audioPermission ? 'bg-[#10B981]' : 'bg-gray-300'
+                audioPermission ? 'bg-[#10B981]' : 'bg-white/20'
               }`}
             >
               <div
@@ -920,13 +920,13 @@ function HandymanSetup() {
             onClick={() => setAcceptTerms(!acceptTerms)}
             className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all shrink-0 mt-0.5 ${
               acceptTerms
-                ? 'bg-[#FF6600] border-[#FF6600]'
-                : 'border-gray-300 bg-white'
+                ? 'bg-accent border-accent'
+                : 'border-white/25 bg-navy-800'
             }`}
           >
             {acceptTerms && <Check size={14} className="text-white" />}
           </div>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-muted">
             I accept the{' '}
             <button
               type="button"
@@ -934,7 +934,7 @@ function HandymanSetup() {
                 e.stopPropagation();
                 setShowTermsModal(true);
               }}
-              className="text-[#FF6600] font-semibold underline"
+              className="text-accent font-semibold underline"
             >
               Terms & Conditions
             </button>
@@ -945,7 +945,7 @@ function HandymanSetup() {
 
       <button
         onClick={handleCreateAccount}
-        className="w-full py-4 bg-[#FF6600] text-white rounded-xl font-bold text-lg hover:bg-orange-600 transition-all shadow-lg shadow-orange-200"
+        className="w-full py-4 bg-white text-navy rounded-2xl font-bold text-lg hover:bg-slate-100 transition-all shadow-lg"
       >
         Create Account
       </button>
@@ -970,16 +970,16 @@ function HandymanSetup() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-navy">
       <div className="max-w-lg mx-auto px-4 py-6">
         <div className="flex items-center justify-between mb-6">
           <button
             onClick={() => navigate(-1)}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
           >
-            <ChevronLeft size={24} className="text-[#003366]" />
+            <ChevronLeft size={24} className="text-white" />
           </button>
-          <h1 className="text-lg font-bold text-[#003366]">
+          <h1 className="text-lg font-bold text-white">
             Handyman Registration
           </h1>
           <div className="w-10" />
@@ -987,7 +987,7 @@ function HandymanSetup() {
 
         {renderStepIndicator()}
 
-        <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+        <div className="bg-navy-800 rounded-2xl p-6 border border-white/10 shadow-sm">
           {renderStepContent()}
         </div>
 
@@ -999,8 +999,8 @@ function HandymanSetup() {
               className={`px-6 py-3 rounded-xl font-semibold text-sm transition-all flex items-center gap-2
                 ${
                   step === 0
-                    ? 'bg-gray-100 text-gray-300 cursor-not-allowed'
-                    : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'
+                    ? 'bg-white/5 text-muted/50 cursor-not-allowed'
+                    : 'bg-white/10 border border-white/15 text-white hover:bg-white/20'
                 }`}
             >
               <ChevronLeft size={18} />
@@ -1008,7 +1008,7 @@ function HandymanSetup() {
             </button>
             <button
               onClick={handleContinue}
-              className="px-8 py-3 bg-[#FF6600] text-white rounded-xl font-semibold text-sm hover:bg-orange-600 transition-all flex items-center gap-2 shadow-lg shadow-orange-200"
+              className="px-8 py-3 bg-accent text-white rounded-xl font-semibold text-sm hover:bg-accent-dark transition-all flex items-center gap-2 shadow-lg shadow-accent/30"
             >
               Continue
               <ChevronRight size={18} />
@@ -1020,7 +1020,7 @@ function HandymanSetup() {
           <div className="flex justify-start mt-6">
             <button
               onClick={handleBack}
-              className="px-6 py-3 rounded-xl font-semibold text-sm transition-all flex items-center gap-2 bg-white border border-gray-200 text-gray-700 hover:bg-gray-50"
+              className="px-6 py-3 rounded-xl font-semibold text-sm transition-all flex items-center gap-2 bg-white/10 border border-white/15 text-white hover:bg-white/20"
             >
               <ChevronLeft size={18} />
               Back
@@ -1031,27 +1031,27 @@ function HandymanSetup() {
 
       {showTermsModal && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-4">
-          <div className="bg-white rounded-2xl w-full max-w-lg max-h-[80vh] flex flex-col">
-            <div className="flex items-center justify-between p-5 border-b border-gray-100">
-              <h3 className="font-bold text-[#003366] text-lg">
+          <div className="bg-navy-800 border border-white/10 rounded-2xl w-full max-w-lg max-h-[80vh] flex flex-col">
+            <div className="flex items-center justify-between p-5 border-b border-white/10">
+              <h3 className="font-bold text-white text-lg">
                 Terms & Conditions
               </h3>
               <button
                 onClick={() => setShowTermsModal(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 hover:bg-white/10 rounded-lg transition-colors"
               >
-                <X size={20} className="text-gray-400" />
+                <X size={20} className="text-muted" />
               </button>
             </div>
-            <div className="overflow-y-auto p-5 text-sm text-gray-600 leading-relaxed space-y-4">
+            <div className="overflow-y-auto p-5 text-sm text-muted leading-relaxed space-y-4">
               {TERMS_TEXT.split('\n\n').map((para, idx) => (
                 <p key={idx}>{para}</p>
               ))}
             </div>
-            <div className="p-5 border-t border-gray-100">
+            <div className="p-5 border-t border-white/10">
               <button
                 onClick={() => setShowTermsModal(false)}
-                className="w-full py-3 bg-[#FF6600] text-white rounded-xl font-semibold hover:bg-orange-600 transition-all"
+                className="w-full py-3 bg-accent text-white rounded-xl font-semibold hover:bg-accent-dark transition-all"
               >
                 Close
               </button>
@@ -1062,14 +1062,14 @@ function HandymanSetup() {
 
       {showSuccessModal && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-8 w-full max-w-sm text-center">
+          <div className="bg-navy-800 border border-white/10 rounded-2xl p-8 w-full max-w-sm text-center">
             <div className="w-20 h-20 rounded-full bg-[#10B981]/10 flex items-center justify-center mx-auto mb-4">
               <CheckCircle size={48} className="text-[#10B981]" />
             </div>
-            <h2 className="text-2xl font-bold text-[#003366] mb-2">
+            <h2 className="text-2xl font-bold text-white mb-2">
               Account Created Successfully!
             </h2>
-            <p className="text-gray-500 text-sm mb-6">
+            <p className="text-muted text-sm mb-6">
               Welcome to KWIKFIX! Your handyman profile has been created.
             </p>
             <button
@@ -1077,7 +1077,7 @@ function HandymanSetup() {
                 setShowSuccessModal(false);
                 navigate('/handyman/dashboard');
               }}
-              className="w-full py-3 bg-[#FF6600] text-white rounded-xl font-bold hover:bg-orange-600 transition-all"
+              className="w-full py-3 bg-white text-navy rounded-2xl font-bold hover:bg-slate-100 transition-all"
             >
               Go to Dashboard
             </button>
