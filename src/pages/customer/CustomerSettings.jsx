@@ -8,39 +8,39 @@ export default function CustomerSettings() {
 
   return (
     <div className="max-w-3xl">
-      <h1 className="text-2xl font-bold text-[#003366] dark:text-white mb-6">Settings</h1>
+      <h1 className="text-2xl font-bold text-white mb-6">Settings</h1>
 
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow divide-y dark:divide-gray-700">
+      <div className="bg-navy-800 border border-white/10 rounded-2xl divide-y divide-white/10">
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center gap-3">
-            {darkMode ? <Moon className="w-5 h-5 text-[#003366] dark:text-white" /> : <Sun className="w-5 h-5 text-[#003366]" />}
-            <span className="font-medium text-[#003366] dark:text-white">Dark Mode</span>
+            <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">{darkMode ? <Moon className="w-5 h-5 text-accent" /> : <Sun className="w-5 h-5 text-accent" />}</div>
+            <span className="font-medium text-white">Dark Mode</span>
           </div>
           <button
             onClick={toggleDarkMode}
-            className={`relative w-12 h-6 rounded-full transition-colors ${darkMode ? 'bg-[#003366]' : 'bg-gray-300'}`}
+            className={`relative w-12 h-6 rounded-full transition-colors ${darkMode ? 'bg-accent' : 'bg-white/20'}`}
           >
             <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${darkMode ? 'left-7' : 'left-1'}`} />
           </button>
         </div>
         <div className="flex items-center gap-3 p-4">
-          <Bell className="w-5 h-5 text-gray-400" />
-          <span className="font-medium text-[#003366] dark:text-white">Push Notifications</span>
-          <span className="ml-auto text-sm text-gray-400">Enabled</span>
+          <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center"><Bell className="w-5 h-5 text-muted" /></div>
+          <span className="font-medium text-white">Push Notifications</span>
+          <span className="ml-auto text-sm text-muted">Enabled</span>
         </div>
         <div className="flex items-center gap-3 p-4">
-          <Shield className="w-5 h-5 text-gray-400" />
-          <span className="font-medium text-[#003366] dark:text-white">Privacy</span>
-          <span className="ml-auto text-sm text-gray-400">Standard</span>
+          <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center"><Shield className="w-5 h-5 text-muted" /></div>
+          <span className="font-medium text-white">Privacy</span>
+          <span className="ml-auto text-sm text-muted">Standard</span>
         </div>
       </div>
 
       <button
         onClick={() => navigate('/')}
-        className="mt-6 bg-white dark:bg-gray-800 rounded-2xl shadow p-4 flex items-center gap-3 border dark:border-gray-700"
+        className="mt-6 bg-navy-800 border border-white/10 rounded-2xl p-4 flex items-center gap-3 w-full hover:bg-navy-700"
       >
-        <LogOut className="w-5 h-5 text-red-500" />
-        <span className="font-medium text-red-500">Sign Out</span>
+        <LogOut className="w-5 h-5 text-[#F87171]" />
+        <span className="font-medium text-[#F87171]">Sign Out</span>
       </button>
     </div>
   );

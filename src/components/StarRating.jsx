@@ -8,7 +8,7 @@ export default function StarRating({ rating, size }) {
         <Star
           key={i}
           size={starSize}
-          className={i < rating ? 'text-yellow-500 fill-current' : 'text-gray-200'}
+          className={i < rating ? 'text-yellow-500 fill-current' : 'text-white/20'}
         />
       ))}
     </div>

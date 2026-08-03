@@ -113,12 +113,16 @@ export default function CustomerAuth() {
   const inputStyle = {
     width: '100%',
     padding: '12px 14px',
-    borderRadius: 8,
-    border: '1px solid #DDD',
+    borderRadius: 10,
+    border: '1px solid rgba(255,255,255,0.16)',
+    backgroundColor: '#0A2540',
+    color: '#FFFFFF',
     fontSize: 14,
     outline: 'none',
     boxSizing: 'border-box',
   };
+
+  const eyeIconProps = { size: 20, color: '#9DB0C5' };
 
   if (view === 'login') {
     return (
@@ -154,7 +158,7 @@ export default function CustomerAuth() {
                   onClick={() => setShowPassword(!showPassword)}
                   style={styles.eyeButton}
                 >
-                  {showPassword ? <EyeOff size={20} color="#888" /> : <Eye size={20} color="#888" />}
+{showPassword ? <EyeOff {...eyeIconProps} /> : <Eye {...eyeIconProps} />}
                 </button>
               </div>
             </div>
@@ -188,7 +192,7 @@ export default function CustomerAuth() {
             <label style={styles.label}>Full Name</label>
             <input
               style={inputStyle}
-              placeholder="e.g. John Doe"
+              placeholder="e.g. Chinedu Okafor"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
             />
@@ -302,28 +306,29 @@ export default function CustomerAuth() {
 const styles = {
   container: {
     minHeight: '100vh',
-    backgroundColor: '#F4F4F4',
+    backgroundColor: '#0A2540',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
   },
   formContainer: {
-    backgroundColor: '#FFF',
-    borderRadius: 16,
+    backgroundColor: '#0D3054',
+    border: '1px solid rgba(255,255,255,0.08)',
+    borderRadius: 20,
     padding: '32px 20px',
     width: '100%',
     maxWidth: 400,
-    boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+    boxShadow: '0 10px 40px rgba(0,0,0,0.35)',
   },
   title: {
-    color: '#003366',
+    color: '#FFFFFF',
     fontSize: 24,
     fontWeight: 'bold',
     margin: '0 0 4px 0',
   },
   subtitle: {
-    color: '#888',
+    color: '#9DB0C5',
     fontSize: 14,
     margin: '0 0 24px 0',
   },
@@ -338,7 +343,7 @@ const styles = {
     gap: 6,
   },
   label: {
-    color: '#003366',
+    color: '#FFFFFF',
     fontSize: 13,
     fontWeight: 600,
   },
@@ -356,22 +361,22 @@ const styles = {
     padding: 0,
   },
   primaryButton: {
-    backgroundColor: '#FF6600',
-    color: '#FFF',
+    backgroundColor: '#FFFFFF',
+    color: '#0A2540',
     border: 'none',
-    borderRadius: 8,
-    padding: '14px 0',
+    borderRadius: 16,
+    padding: '15px 0',
     fontSize: 16,
     fontWeight: 'bold',
     cursor: 'pointer',
     marginTop: 8,
   },
   sendOtpButton: {
-    backgroundColor: '#003366',
+    backgroundColor: '#FF6B1A',
     color: '#FFF',
     border: 'none',
-    borderRadius: 8,
-    padding: '10px 0',
+    borderRadius: 12,
+    padding: '12px 0',
     fontSize: 14,
     fontWeight: 'bold',
     cursor: 'pointer',
@@ -384,16 +389,17 @@ const styles = {
   otpBox: {
     width: 'clamp(32px, 11vw, 42px)',
     height: 48,
-    borderRadius: 8,
-    border: '2px solid #003366',
+    borderRadius: 10,
+    border: '2px solid #FF6B1A',
+    backgroundColor: '#0A2540',
     textAlign: 'center',
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#003366',
+    color: '#FFFFFF',
     outline: 'none',
   },
   timerText: {
-    color: '#888',
+    color: '#9DB0C5',
     fontSize: 12,
     textAlign: 'center',
     margin: '4px 0 0 0',
@@ -401,7 +407,7 @@ const styles = {
   resendButton: {
     background: 'none',
     border: 'none',
-    color: '#FF6600',
+    color: '#FF6B1A',
     fontSize: 13,
     fontWeight: 600,
     cursor: 'pointer',
@@ -409,12 +415,12 @@ const styles = {
     marginTop: 4,
   },
   error: {
-    color: '#FF4444',
+    color: '#F87171',
     fontSize: 13,
     margin: 0,
   },
   switchText: {
-    color: '#888',
+    color: '#9DB0C5',
     fontSize: 13,
     textAlign: 'center',
     marginTop: 20,
@@ -422,7 +428,7 @@ const styles = {
   linkButton: {
     background: 'none',
     border: 'none',
-    color: '#FF6600',
+    color: '#FF6B1A',
     fontWeight: 600,
     cursor: 'pointer',
     fontSize: 13,
