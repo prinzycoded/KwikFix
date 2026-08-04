@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Wrench, Zap, Settings, Hammer, AlertTriangle, Shield, Clock, BadgeCheck,
-  Star, ArrowRight, Menu, X, Phone, Mail, MapPin, CheckCircle2, Users, Home, Search
+  Star, ArrowRight, Menu, X, Phone, Mail, MapPin, CheckCircle2, CheckCircle, Users, Home, Search
 } from 'lucide-react';
+import heroImg from '../assets/Kwik.img.png';
 
 const services = [
   { name: 'Plumbing', icon: Wrench, desc: 'Leaks, pipes, fittings & installations' },
@@ -31,8 +32,6 @@ const stats = [
   { value: '0 min', label: 'Avg. response time' },
   { value: '0.0/5', label: 'Customer rating' },
 ];
-import { Wrench, Shield, ArrowRight, Star, Users, Zap, MapPin, Clock, CheckCircle, Search } from 'lucide-react';
-import heroImg from '../assets/Kwik.img.png';
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -44,6 +43,7 @@ export default function LandingPage() {
   };
 
   return (
+    <>
     <div className="min-h-screen bg-[#F4F4F9] dark:bg-gray-950 text-gray-900 dark:text-white">
       <header className="sticky top-0 z-50 bg-[#F4F4F9]/90 dark:bg-gray-950/90 backdrop-blur border-b border-gray-200/60 dark:border-gray-800/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -103,113 +103,92 @@ export default function LandingPage() {
         )}
       </header>
 
-      <section className="bg-gradient-to-br from-[#003366] via-[#004080] to-[#001a33] text-white relative overflow-hidden">
-        <div className="absolute -top-24 -right-24 w-96 h-96 bg-[#FF6600]/20 rounded-full blur-3xl" />
-        <div className="absolute -bottom-32 -left-24 w-96 h-96 bg-[#FF6600]/10 rounded-full blur-3xl" />
+      <section className="bg-[#003366] text-white">
+        <div className="flex flex-col lg:flex-row min-h-[calc(100vh-4rem)]">
+          {/* Left: Content */}
+          <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 py-12 lg:py-0">
+            <div className="w-full max-w-md flex flex-col items-center lg:items-start">
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24 relative grid lg:grid-cols-2 gap-12 items-center">
-          <div>
-            <span className="inline-flex items-center gap-2 bg-white/10 border border-white/15 rounded-full px-4 py-1.5 text-xs font-semibold tracking-wide">
-              <Star className="w-3.5 h-3.5 text-[#FF6600] fill-[#FF6600]" />
-              Trusted home repairs, on demand
-            </span>
-            <h1 className="mt-6 text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight">
-              Your home deserves a <span className="text-[#FF6600]">KwikFix</span>
-            </h1>
-            <p className="mt-5 text-lg text-white/80 max-w-xl leading-relaxed">
-              Book verified handymen for plumbing, electrical, carpentry and generator repairs.
-              Fast matching, transparent pricing, guaranteed work.
-            </p>
-
-            <div className="mt-8 flex flex-col sm:flex-row gap-4">
-              <button
-                onClick={() => navigate('/service-selection')}
-                className="inline-flex items-center justify-center gap-2 bg-[#FF6600] text-white font-bold px-8 py-4 rounded-2xl hover:bg-[#e05500] transition-colors shadow-xl shadow-[#FF6600]/30"
-              >
-                Book a handyman <ArrowRight className="w-5 h-5" />
-              </button>
-              <button
-                onClick={() => navigate('/handyman/login')}
-                className="inline-flex items-center justify-center gap-2 border-2 border-white/25 text-white font-semibold px-8 py-4 rounded-2xl hover:bg-white/10 transition-colors"
-              >
-                I offer services
-              </button>
-            </div>
-
-            <div className="mt-10 flex items-center gap-3 text-sm text-white/70">
-              <BadgeCheck className="w-5 h-5 text-emerald-400" />
-              Satisfaction guaranteed on every job
-            </div>
-          </div>
-
-          <div className="relative hidden lg:block">
-            <div className="absolute -inset-4 bg-gradient-to-tr from-[#FF6600]/40 via-transparent to-sky-400/30 rounded-[2.5rem] blur-2xl" />
-
-            <div className="relative bg-white/10 border border-white/15 backdrop-blur rounded-3xl p-8 shadow-2xl">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs text-white/60 font-medium uppercase tracking-wider">Matched handyman</p>
-                  <p className="mt-1 text-2xl font-bold">Your handyman</p>
-                </div>
-                <span className="w-14 h-14 rounded-2xl bg-[#FF6600] flex items-center justify-center">
-                  <Wrench className="w-7 h-7 text-white" />
+              <div className="flex items-center gap-2 mb-2">
+                <Wrench className="w-8 h-8 text-[#FF6600]" />
+                <span className="text-3xl font-extrabold tracking-tight uppercase text-white">
+                  Kwik<span className="text-[#FF6600]">Fix</span>
                 </span>
               </div>
 
-              <div className="mt-6 flex items-center gap-3 bg-white/10 rounded-2xl px-4 py-3 border border-white/10">
-                <BadgeCheck className="w-5 h-5 text-emerald-400 shrink-0" />
-                <div className="flex-1">
-                  <p className="text-sm font-semibold">Verified professional</p>
-                  <p className="text-xs text-white/60">Background checked · vetted by KwikFix</p>
-                </div>
-                <span className="text-xs font-bold bg-[#FF6600] px-3 py-1 rounded-full">New</span>
+              <h1 className="text-4xl lg:text-5xl font-bold text-white text-center lg:text-left leading-tight">
+                Your Home.
+                <br />
+                <span className="text-[#FF6600]">Our Pros.</span>
+              </h1>
+
+              <p className="mt-4 text-white/70 text-sm leading-relaxed max-w-sm text-center lg:text-left">
+                We connect you with trusted, vetted handymen in your area — so you can fix, build, and improve your home without the hassle.
+              </p>
+
+              {/* Features */}
+              <div className="grid grid-cols-3 gap-4 mt-8 w-full max-w-sm">
+                {[
+                  { icon: Star, label: 'Verified Pros', color: 'text-[#FFD54F]' },
+                  { icon: Zap, label: 'Fast Matching', color: 'text-[#FF6600]' },
+                  { icon: Users, label: 'Local Experts', color: 'text-[#4FC3F7]' },
+                ].map(({ icon: Icon, label, color }) => (
+                  <div key={label} className="flex flex-col items-center gap-2">
+                    <div className="bg-white/10 rounded-xl p-2.5 backdrop-blur-sm hover:bg-white/20 hover:scale-110 transition-all duration-200">
+                      <Icon className={`w-5 h-5 ${color}`} />
+                    </div>
+                    <span className="text-white/60 text-[10px] text-center leading-tight font-medium">{label}</span>
+                  </div>
+                ))}
               </div>
 
-              <div className="mt-4 flex items-center gap-3 bg-white/10 rounded-2xl px-4 py-3 border border-white/10">
-                <span className="w-9 h-9 rounded-xl bg-[#FF6600]/20 flex items-center justify-center">
-                  <Zap className="w-4.5 h-4.5 text-[#FF6600]" />
+              {/* CTA Buttons */}
+              <div className="w-full flex flex-col gap-3 mt-8 max-w-sm">
+                <button
+                  onClick={() => navigate('/service-selection')}
+                  className="w-full bg-white rounded-2xl px-6 py-4 flex items-center gap-3 cursor-pointer shadow-lg font-semibold text-base text-[#003366] hover:bg-gray-50 transition-all active:scale-[0.98] group"
+                >
+                  <div className="bg-[#003366]/10 rounded-xl p-2">
+                    <Search size={20} className="text-[#003366]" />
+                  </div>
+                  <span className="flex-1 text-left">Looking For Service</span>
+                  <ArrowRight size={18} className="text-[#003366]/40 group-hover:translate-x-0.5 transition-transform" />
+                </button>
+                <button
+                  onClick={() => navigate('/handyman/login')}
+                  className="w-full bg-[#FF6600] rounded-2xl px-6 py-4 flex items-center gap-3 cursor-pointer shadow-lg font-semibold text-base text-white hover:bg-[#e05500] transition-all active:scale-[0.98] group"
+                >
+                  <div className="bg-white/20 rounded-xl p-2">
+                    <Shield size={20} className="text-white" />
+                  </div>
+                  <span className="flex-1 text-left">Offering Service</span>
+                  <ArrowRight size={18} className="text-white/60 group-hover:translate-x-0.5 transition-transform" />
+                </button>
+              </div>
+
+              {/* Trust badges */}
+              <div className="flex items-center gap-5 mt-6 text-white/40 text-xs flex-wrap justify-center lg:justify-start">
+                <span className="flex items-center gap-1.5">
+                  <MapPin size={12} /> Abia state,Nigeria.
                 </span>
-                <div className="flex-1">
-                  <p className="text-sm font-semibold">Plumbing · Kitchen sink leak</p>
-                  <p className="text-xs text-white/60">Agreed quote before work begins</p>
-                </div>
-              </div>
-
-              <button className="mt-6 w-full bg-[#FF6600] text-white font-bold py-3.5 rounded-2xl hover:bg-[#e05500] transition-colors shadow-lg shadow-[#FF6600]/30">
-                Track my handyman
-              </button>
-            </div>
-
-            <div className="absolute -top-6 -right-4 bg-white dark:bg-gray-900 rounded-2xl shadow-xl px-4 py-3 flex items-center gap-3 animate-bounce">
-              <span className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center">
-                <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-              </span>
-              <div>
-                <p className="font-bold text-sm">Job completed</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Satisfaction guaranteed</p>
-              </div>
-            </div>
-
-            <div className="absolute -bottom-5 -left-5 bg-white dark:bg-gray-900 rounded-2xl shadow-xl px-4 py-3 flex items-center gap-3">
-              <span className="w-10 h-10 rounded-full bg-[#FF6600]/10 flex items-center justify-center">
-                <Clock className="w-5 h-5 text-[#FF6600]" />
-              </span>
-              <div>
-                <p className="font-bold text-sm">Fast service</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">matched with pros near you</p>
+                <span className="flex items-center gap-1.5">
+                  <Clock size={12} /> Avg. 15min response
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <CheckCircle size={12} /> 4.8 ★ rating
+                </span>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 border-t border-white/10 pt-8">
-            {stats.map((s) => (
-              <div key={s.label} className="text-center">
-                <p className="text-2xl sm:text-3xl font-extrabold text-[#FF6600]">{s.value}</p>
-                <p className="text-sm text-white/70 mt-1">{s.label}</p>
-              </div>
-            ))}
+          {/* Right: Hero Image */}
+          <div className="relative flex-1 min-h-[50vh] lg:min-h-0 overflow-hidden">
+            <img
+              src={heroImg}
+              alt="Professional handyman tools and equipment"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#003366] via-[#003366]/30 to-transparent lg:bg-gradient-to-r lg:from-[#003366] lg:via-[#003366]/50 lg:to-transparent" />
           </div>
         </div>
       </section>
@@ -363,7 +342,7 @@ export default function LandingPage() {
               <span className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center">
                 <Wrench className="w-5 h-5 text-[#FF6600]" />
               </span>
-              <span className="text-xl font-bold tracking-tight">Kwik<span className="text-[#FF6600]">Fix</span></span>
+<span className="text-xl font-extrabold tracking-tight uppercase">Kwik<span className="text-[#FF6600]">Fix</span></span>
             </div>
             <p className="mt-4 text-sm text-white/60 leading-relaxed">
               Connecting trusted handymen with homeowners who need quick, quality repairs.
@@ -407,96 +386,7 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
-    <div className="min-h-screen bg-[#003366]">
-      <div className="flex flex-col lg:flex-row min-h-screen">
-        {/* Left: Content */}
-        <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 py-12 lg:py-0">
-          <div className="w-full max-w-md flex flex-col items-center lg:items-start">
-
-            <div className="flex items-center gap-2 mb-2">
-              <Wrench className="w-8 h-8 text-[#FF6600]" />
-              <span className="text-3xl font-bold text-white">
-                Kwik<span className="text-[#FF6600]">Fix</span>
-              </span>
-            </div>
-
-            <h1 className="text-4xl lg:text-5xl font-bold text-white text-center lg:text-left leading-tight">
-              Your Home.
-              <br />
-              <span className="text-[#FF6600]">Our Pros.</span>
-            </h1>
-
-            <p className="mt-4 text-white/70 text-sm leading-relaxed max-w-sm text-center lg:text-left">
-              We connect you with trusted, vetted handymen in your area — so you can fix, build, and improve your home without the hassle.
-            </p>
-
-            {/* Features */}
-            <div className="grid grid-cols-3 gap-4 mt-8 w-full max-w-sm">
-              {[
-                { icon: Star, label: 'Verified Pros', color: 'text-[#FFD54F]' },
-                { icon: Zap, label: 'Fast Matching', color: 'text-[#FF6600]' },
-                { icon: Users, label: 'Local Experts', color: 'text-[#4FC3F7]' },
-              ].map(({ icon: Icon, label, color }) => (
-                <div key={label} className="flex flex-col items-center gap-2">
-                  <div className="bg-white/10 rounded-xl p-2.5 backdrop-blur-sm hover:bg-white/20 hover:scale-110 transition-all duration-200">
-                    <Icon className={`w-5 h-5 ${color}`} />
-                  </div>
-                  <span className="text-white/60 text-[10px] text-center leading-tight font-medium">{label}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* CTA Buttons */}
-            <div className="w-full flex flex-col gap-3 mt-8 max-w-sm">
-              <button
-                onClick={() => navigate('/service-selection')}
-                className="w-full bg-white rounded-2xl px-6 py-4 flex items-center gap-3 cursor-pointer shadow-lg font-semibold text-base text-[#003366] hover:bg-gray-50 transition-all active:scale-[0.98] group"
-              >
-                <div className="bg-[#003366]/10 rounded-xl p-2">
-                  <Search size={20} className="text-[#003366]" />
-                </div>
-                <span className="flex-1 text-left">Looking For Service</span>
-                <ArrowRight size={18} className="text-[#003366]/40 group-hover:translate-x-0.5 transition-transform" />
-              </button>
-              <button
-                onClick={() => navigate('/handyman/login')}
-                className="w-full bg-[#FF6600] rounded-2xl px-6 py-4 flex items-center gap-3 cursor-pointer shadow-lg font-semibold text-base text-white hover:bg-[#e05500] transition-all active:scale-[0.98] group"
-              >
-                <div className="bg-white/20 rounded-xl p-2">
-                  <Shield size={20} className="text-white" />
-                </div>
-                <span className="flex-1 text-left">Offering Service</span>
-                <ArrowRight size={18} className="text-white/60 group-hover:translate-x-0.5 transition-transform" />
-              </button>
-            </div>
-
-            {/* Trust badges */}
-            <div className="flex items-center gap-5 mt-6 text-white/40 text-xs flex-wrap justify-center lg:justify-start">
-              <span className="flex items-center gap-1.5">
-                <MapPin size={12} /> Abia state,Nigeria.
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Clock size={12} /> Avg. 15min response
-              </span>
-              <span className="flex items-center gap-1.5">
-                <CheckCircle size={12} /> 4.8 ★ rating
-              </span>
-            </div>
-
-            <p className="text-white/20 text-xs mt-8 pb-4 text-center lg:text-left">Connecting Professionals & Clients</p>
-          </div>
-        </div>
-
-        {/* Right: Hero Image */}
-        <div className="relative flex-1 min-h-[40vh] lg:min-h-screen overflow-hidden">
-          <img
-            src={heroImg}
-            alt="Professional handyman tools and equipment"
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#003366] via-[#003366]/30 to-transparent lg:bg-gradient-to-r lg:from-[#003366] lg:via-[#003366]/50 lg:to-transparent" />
-        </div>
       </div>
-    </div>
+    </>
   );
 }
