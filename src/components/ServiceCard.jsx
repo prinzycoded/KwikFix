@@ -3,9 +3,9 @@ export default function ServiceCard({ service, onClick }) {
   return (
     <button
       onClick={onClick}
-      className="bg-[#003366] rounded-xl p-6 flex flex-col items-center justify-center gap-3 hover:bg-[#004488] transition-colors"
+      className="bg-navy-800 border border-white/10 rounded-xl p-6 flex flex-col items-center justify-center gap-3 hover:bg-navy-700 hover:border-accent/40 transition-colors"
     >
-      <Icon className="w-10 h-10 text-[#FF6600]" />
+      <Icon className="w-10 h-10 text-accent" />
       <span className="text-white font-medium text-center">{service.name}</span>
     </button>
   );

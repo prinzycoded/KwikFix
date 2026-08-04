@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X, Home, Briefcase, User, Settings, Wrench, Calendar, Wallet, Image, LogOut } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
+import heroImg from '../assets/Kwik.img.png';
 
 const customerLinks = [
   { label: 'Dashboard', icon: Home, path: '/customer/dashboard' },
@@ -20,6 +21,7 @@ const handymanLinks = [
 
 export default function SidebarLayout({ children }) {
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { currentUser, userRole, logout } = useAuth();
@@ -32,22 +34,53 @@ export default function SidebarLayout({ children }) {
     navigate('/');
   };
 
+  const goTo = (path) => {
+    navigate(path);
+    setMobileOpen(false);
+  };
+
   return (
-    <div className={`min-h-screen flex ${darkMode ? 'dark bg-gray-900' : 'bg-[#F4F4F4]'}`}>
+    <div className={`min-h-screen flex bg-navy`}>
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
       <aside
         className={`${
-          collapsed ? 'w-16' : 'w-60'
-        } bg-white dark:bg-gray-800 border-r dark:border-gray-700 flex flex-col transition-all duration-300 fixed h-full z-30`}
+          collapsed ? 'md:w-16' : 'w-60'
+        } bg-navy-800 border-r border-white/10 flex flex-col transition-all duration-300 fixed h-full z-50 md:translate-x-0 ${
+          mobileOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
       >
-        <div className="flex items-center justify-between p-4 border-b dark:border-gray-700">
+        <div className="relative flex items-center justify-between p-4 border-b border-white/10 overflow-hidden">
           {!collapsed && (
-            <h1 className="text-xl font-bold text-[#003366] dark:text-white">Kwikfix</h1>
+            <>
+              <div className="absolute inset-0">
+                <img src={heroImg} alt="" className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-navy/80" />
+              </div>
+              <div className="relative z-10 flex items-center gap-2">
+                <Wrench size={22} className="text-accent" />
+                <span className="text-xl font-bold text-white">
+                  Kwik<span className="text-accent">Fix</span>
+                </span>
+              </div>
+            </>
           )}
           <button
-            onClick={() => setCollapsed(!collapsed)}
-            className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+            onClick={() => setMobileOpen(false)}
+            className="relative z-10 md:hidden p-1.5 rounded-lg hover:bg-white/10"
           >
-            {collapsed ? <Menu size={20} className="text-gray-500" /> : <X size={20} className="text-gray-500" />}
+            <X size={20} className="text-white" />
+          </button>
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className={`relative z-10 hidden md:block p-1.5 rounded-lg hover:bg-white/10 ${collapsed ? 'ml-auto' : ''}`}
+          >
+            {collapsed ? <Menu size={20} className="text-muted" /> : <X size={20} className="text-muted" />}
           </button>
         </div>
 
@@ -56,12 +89,12 @@ export default function SidebarLayout({ children }) {
             const isActive = location.pathname === link.path;
             return (
               <button
-                key={link.path}
-                onClick={() => navigate(link.path)}
+                key={link.label}
+                onClick={() => goTo(link.path)}
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                   isActive
-                    ? 'bg-[#003366] text-white'
-                    : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                    ? 'bg-accent text-white'
+                    : 'text-muted hover:bg-white/10 hover:text-white'
                 }`}
                 title={collapsed ? link.label : undefined}
               >
@@ -72,12 +105,12 @@ export default function SidebarLayout({ children }) {
           })}
         </nav>
 
-        <div className="border-t dark:border-gray-700 p-3 space-y-2">
+        <div className="border-t border-white/10 p-3 space-y-2">
           <button
             onClick={toggleDarkMode}
             className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
               collapsed ? 'justify-center' : ''
-            } text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700`}
+            } text-muted hover:bg-white/10 hover:text-white`}
             title={collapsed ? 'Toggle Theme' : undefined}
           >
             <span className="text-base">{darkMode ? '☀️' : '🌙'}</span>
@@ -87,7 +120,7 @@ export default function SidebarLayout({ children }) {
             onClick={handleLogout}
             className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
               collapsed ? 'justify-center' : ''
-            } text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20`}
+            } text-red-400 hover:bg-red-500/10`}
             title={collapsed ? 'Sign Out' : undefined}
           >
             <LogOut size={20} />
@@ -96,7 +129,24 @@ export default function SidebarLayout({ children }) {
         </div>
       </aside>
 
-      <main className={`flex-1 transition-all duration-300 ${collapsed ? 'ml-16' : 'ml-60'}`}>
+      <main className={`flex-1 transition-all duration-300 ml-0 ${collapsed ? 'md:ml-16' : 'md:ml-60'}`}>
+        <div className="md:hidden sticky top-0 z-30 relative overflow-hidden px-4 h-14 flex items-center justify-between border-b border-white/10">
+          <img src={heroImg} alt="" className="absolute inset-0 w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-navy/80" />
+          <button
+            onClick={() => setMobileOpen(true)}
+            className="relative z-10 p-2 -ml-2 rounded-lg hover:bg-white/10"
+          >
+            <Menu size={22} className="text-white" />
+          </button>
+          <div className="relative z-10 flex items-center gap-1.5">
+            <Wrench size={18} className="text-accent" />
+            <span className="text-lg font-bold text-white">
+              Kwik<span className="text-accent">Fix</span>
+            </span>
+          </div>
+          <span className="w-9 relative z-10" />
+        </div>
         <div className="p-4 md:p-6 lg:p-8">{children}</div>
       </main>
     </div>

@@ -1,6 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Star, CheckCircle, MapPin, MessageSquare, X } from 'lucide-react';
+import { ArrowLeft, Star, CheckCircle, MessageSquare, X, Wrench, Bath, Flame, Droplets } from 'lucide-react';
+import Avatar from '../../components/Avatar';
+
+const portfolioItems = [
+  { title: 'Kitchen Sink Repair', icon: Wrench, color: 'text-accent' },
+  { title: 'Bathroom Fittings', icon: Bath, color: 'text-sky-400' },
+  { title: 'Water Heater Install', icon: Flame, color: 'text-amber-400' },
+  { title: 'Burst Pipe Fix', icon: Droplets, color: 'text-emerald-400' },
+];
 
 export default function HandymanProfile() {
   const navigate = useNavigate();
@@ -8,63 +16,75 @@ export default function HandymanProfile() {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [agreedPrice, setAgreedPrice] = useState('');
 
+  const confirmBooking = () => {
+    if (!agreedPrice) return;
+    setShowConfirmModal(false);
+    navigate(`/customer/success?service=${encodeURIComponent('Plumbing')}&price=${agreedPrice}`);
+  };
+
   return (
-    <div className="min-h-screen bg-[#F4F4F9] dark:bg-gray-900">
+    <div className="min-h-screen bg-navy">
       <div className="max-w-5xl mx-auto px-4 py-6">
-        <button onClick={() => navigate(-1)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full mb-4">
-          <ArrowLeft className="w-6 h-6 text-[#003366] dark:text-white" />
+        <button onClick={() => navigate(-1)} className="p-2 hover:bg-white/10 rounded-full mb-4">
+          <ArrowLeft className="w-6 h-6 text-white" />
         </button>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 mb-6">
+            <div className="bg-navy-800 border border-white/10 rounded-2xl shadow-lg p-6 mb-6">
               <div className="flex items-center gap-4 mb-4">
-                <div className="w-20 h-20 rounded-full bg-[#003366] flex items-center justify-center text-white text-3xl font-bold">AO</div>
-                <div>
-                  <h2 className="text-2xl font-bold text-[#003366] dark:text-white">Adebayo Olamide</h2>
+                <Avatar name="Adebayo Olamide" size={80} />
+                <div className="min-w-0 flex-1">
+                  <h2 className="text-xl sm:text-2xl font-bold text-white">Adebayo Olamide</h2>
                   <div className="flex items-center gap-1 text-yellow-500 mt-1">
                     {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-current" />)}
-                    <span className="text-gray-600 dark:text-gray-300 ml-1">4.8</span>
+                    <span className="text-muted ml-1">4.8</span>
                   </div>
                   <div className="flex items-center gap-1 mt-1">
-                    <CheckCircle className="w-4 h-4 text-green-600" /><span className="text-xs text-green-600">Verified</span>
-                    <span className="w-2 h-2 bg-green-500 rounded-full ml-2" /><span className="text-xs text-green-600">Available</span>
+                    <CheckCircle className="w-4 h-4 text-[#10B981]" /><span className="text-xs text-[#10B981]">Verified</span>
+                    <span className="w-2 h-2 bg-[#10B981] rounded-full ml-2" /><span className="text-xs text-[#10B981]">Available</span>
                   </div>
-                  <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Plumbing · 8 years experience</p>
+                  <p className="text-muted text-sm mt-1">Plumbing · 8 years experience</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 mb-6">
+            <div className="bg-navy-800 border border-white/10 rounded-2xl shadow-lg p-6 mb-6">
+              <h3 className="font-bold text-white mb-3">Work Portfolio</h3>
               <div className="grid grid-cols-2 gap-2">
-                {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="aspect-square bg-gray-200 dark:bg-gray-700 rounded-xl flex items-center justify-center text-gray-400">Photo {i}</div>
+                {portfolioItems.map((item, i) => (
+                  <div key={i} className="aspect-square rounded-xl border border-white/10 overflow-hidden group">
+                    <div className="w-full h-full bg-white/5 flex flex-col items-center justify-center gap-2 group-hover:bg-white/10 transition-all">
+                      <item.icon size={32} className={item.color} />
+                      <p className="text-[10px] text-muted text-center px-2">{item.title}</p>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
           </div>
 
           <div>
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 mb-6">
-              <h3 className="font-bold text-[#003366] dark:text-white mb-3">Price Estimate</h3>
-              <div className="bg-[#F4F4F9] dark:bg-gray-700 rounded-xl p-4 mb-4">
-                <p className="text-gray-600 dark:text-gray-300 text-sm mb-2">Market Research: ₦15,000 - ₦25,000</p>
-                <div className="space-y-1 text-sm text-gray-500 dark:text-gray-400">
+            <div className="bg-navy-800 border border-white/10 rounded-2xl shadow-lg p-6 mb-6">
+              <h3 className="font-bold text-white mb-3">Price Estimate</h3>
+              <div className="bg-navy-700 rounded-xl p-4 mb-4">
+                <p className="text-muted text-sm mb-2">Market Research: ₦15,000 - ₦25,000</p>
+                <div className="space-y-1 text-sm text-muted">
                   <p>• Senior qualification level: +₦5,000</p>
                   <p>• Customer provides tools: -₦2,000</p>
-                  <p className="font-bold text-[#003366] dark:text-white pt-1">Estimated: ₦18,000 - ₦23,000</p>
+                  <p className="font-bold text-white pt-1">Estimated: ₦18,000 - ₦23,000</p>
                 </div>
               </div>
-              <label className="text-sm font-semibold text-[#003366] dark:text-white mb-2 block">Proposed Price: ₦{proposedPrice.toLocaleString()}</label>
-              <input type="range" min={5000} max={50000} step={500} value={proposedPrice} onChange={(e) => setProposedPrice(Number(e.target.value))} className="w-full accent-[#FF6600]" />
-              <div className="flex justify-between text-xs text-gray-500 mt-1"><span>₦5,000</span><span>₦50,000</span></div>
+              <label className="text-sm font-semibold text-white mb-2 block">Proposed Price: ₦{proposedPrice.toLocaleString()}</label>
+              <input type="range" min={5000} max={50000} step={500} value={proposedPrice} onChange={(e) => setProposedPrice(Number(e.target.value))} className="w-full accent-[#FF6B1A]" />
+              <div className="flex justify-between text-xs mt-1"><span className="text-muted">₦5,000</span><span className="text-muted">₦50,000</span></div>
             </div>
 
             <div className="space-y-3">
-              <button onClick={() => navigate('/customer/chat/handyman-1')} className="w-full bg-[#FF6600] text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-[#e05500]">
+              <button onClick={() => navigate('/customer/chat/handyman-1')} className="w-full bg-accent text-white py-3 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-accent-dark">
                 <MessageSquare className="w-5 h-5" /> Chat with Handyman
               </button>
-              <button onClick={() => setShowConfirmModal(true)} className="w-full bg-[#003366] text-white py-3 rounded-xl font-bold hover:bg-[#004488]">
+              <button onClick={() => setShowConfirmModal(true)} className="w-full bg-white text-navy py-3 rounded-2xl font-bold hover:bg-slate-100">
                 Confirm Booking
               </button>
             </div>
@@ -74,11 +94,11 @@ export default function HandymanProfile() {
 
       {showConfirmModal && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowConfirmModal(false)}>
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 w-full max-w-sm" onClick={(e) => e.stopPropagation()}>
-            <button onClick={() => setShowConfirmModal(false)} className="float-right"><X className="w-5 h-5 text-gray-500" /></button>
-            <h3 className="text-lg font-bold text-[#003366] dark:text-white mb-3 mt-2">Enter Agreed Price</h3>
-            <input type="number" value={agreedPrice} onChange={(e) => setAgreedPrice(e.target.value)} placeholder="e.g. 20000" className="w-full border dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl p-3 mb-4 focus:outline-none focus:ring-2 focus:ring-[#003366]" />
-            <button onClick={() => { if (agreedPrice) { setShowConfirmModal(false); navigate('/customer/success'); } }} className="w-full bg-[#003366] text-white py-3 rounded-xl font-bold hover:bg-[#004488]">Submit Agreement</button>
+          <div className="bg-navy-800 border border-white/10 rounded-2xl p-6 w-full max-w-sm" onClick={(e) => e.stopPropagation()}>
+            <button onClick={() => setShowConfirmModal(false)} className="float-right"><X className="w-5 h-5 text-muted" /></button>
+            <h3 className="text-lg font-bold text-white mb-3 mt-2">Enter Agreed Price</h3>
+            <input type="number" value={agreedPrice} onChange={(e) => setAgreedPrice(e.target.value)} placeholder="e.g. 20000" className="w-full border border-white/15 bg-navy-700 text-white placeholder:text-muted/60 rounded-xl p-3 mb-4 focus:outline-none focus:ring-2 focus:ring-accent" />
+            <button onClick={() => { if (agreedPrice) { confirmBooking(); } }} className="w-full bg-white text-navy py-3 rounded-2xl font-bold hover:bg-slate-100">Submit Agreement</button>
           </div>
         </div>
       )}

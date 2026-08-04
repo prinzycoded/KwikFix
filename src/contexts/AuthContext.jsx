@@ -1,21 +1,23 @@
 import { createContext, useContext, useState } from 'react';
 
+const genId = () => {
+  try {
+    return crypto.randomUUID();
+  } catch {
+    return Date.now().toString(36) + Math.random().toString(36).substring(2, 10);
+  }
+};
+
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
-  const [darkMode, setDarkMode] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return window.matchMedia('(prefers-color-scheme: dark)').matches;
-    }
-    return false;
-  });
 
   const login = (role, email, password) => {
     setCurrentUser({
-      id: crypto.randomUUID(),
+      id: genId(),
       fullName: '',
       email,
       phone: '',
@@ -34,7 +36,7 @@ export function AuthProvider({ children }) {
 
   const signup = (data) => {
     const newUser = {
-      id: crypto.randomUUID(),
+      id: genId(),
       fullName: data.fullName ?? '',
       email: data.email ?? '',
       phone: data.phone ?? '',
@@ -52,10 +54,6 @@ export function AuthProvider({ children }) {
     setIsAuthenticated(true);
   };
 
-  const toggleDarkMode = () => {
-    setDarkMode((prev) => !prev);
-  };
-
   const logout = () => {
     setIsAuthenticated(false);
     setUserRole(null);
@@ -68,10 +66,8 @@ export function AuthProvider({ children }) {
         isAuthenticated,
         userRole,
         currentUser,
-        darkMode,
         login,
         signup,
-        toggleDarkMode,
         logout,
       }}
     >

@@ -38,21 +38,22 @@ export default function OTPInput({ otp, onChange, onKeyDown, onPaste, verified, 
   return (
     <div className="flex items-center justify-center gap-2 sm:gap-3 my-4" onPaste={handlePaste}>
       {otp.map((digit, idx) => (
-        <input
-          key={idx}
-          ref={(el) => { otpRefs.current[idx] = el; }}
-          type="text"
-          inputMode="numeric"
-          autoComplete="one-time-code"
-          maxLength={1}
-          value={digit}
-          onChange={(e) => handleChange(idx, e.target.value)}
-          onKeyDown={(e) => handleKeyDown(idx, e)}
-          className={`w-11 h-12 sm:w-12 sm:h-14 text-center text-xl font-bold rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-[#FF6600] transition-all
-            ${verified ? 'border-[#10B981] bg-[#10B981]/5' : 'border-gray-200 bg-white'}
-            ${error && !verified ? 'border-[#EF4444]' : ''}`}
-          disabled={verified}
-        />
+        <div key={idx} className="flex-1 min-w-0 max-w-11 sm:max-w-12">
+          <input
+            ref={(el) => { otpRefs.current[idx] = el; }}
+            type="text"
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            maxLength={1}
+            value={digit}
+            onChange={(e) => handleChange(idx, e.target.value)}
+            onKeyDown={(e) => handleKeyDown(idx, e)}
+            className={`h-12 sm:h-14 w-full text-center text-xl font-bold rounded-xl border-2 bg-navy-700 text-white focus:outline-none focus:ring-2 focus:ring-accent transition-all
+              ${verified ? 'border-[#10B981] bg-[#10B981]/10' : 'border-white/15'}
+              ${error && !verified ? 'border-[#EF4444]' : ''}`}
+            disabled={verified}
+          />
+        </div>
       ))}
     </div>
   );

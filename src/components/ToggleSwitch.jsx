@@ -3,7 +3,7 @@ export default function ToggleSwitch({ value, onChange, activeColor }) {
     <div
       onClick={() => onChange(!value)}
       className={`w-12 h-6 rounded-full relative transition-colors cursor-pointer ${
-        value ? activeColor || 'bg-[#003366]' : 'bg-gray-300'
+        value ? activeColor || 'bg-accent' : 'bg-white/20'
       }`}
     >
       <div
