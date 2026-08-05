@@ -188,7 +188,7 @@ export default function LandingPage() {
               alt="Professional handyman tools and equipment"
               className="absolute inset-0 w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#003366] via-[#003366]/30 to-transparent lg:bg-gradient-to-r lg:from-[#003366] lg:via-[#003366]/50 lg:to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-t from-[#003366] via-[#003366]/30 to-transparent lg:bg-linear-to-r lg:from-[#003366] lg:via-[#003366]/50 lg:to-transparent" />
           </div>
         </div>
       </section>
@@ -223,7 +223,7 @@ export default function LandingPage() {
 
         <button
           onClick={() => navigate('/diy-sos')}
-          className="mt-6 w-full bg-gradient-to-r from-red-500 to-orange-500 text-white py-5 rounded-2xl font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
+          className="mt-6 w-full bg-linear-to-r from-red-500 to-orange-500 text-white py-5 rounded-2xl font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
         >
           <AlertTriangle className="w-5 h-5" />
           Emergency? Try DIY SOS — instant step-by-step help
@@ -317,7 +317,7 @@ export default function LandingPage() {
       </section>
 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
-        <div className="relative bg-gradient-to-r from-[#FF6600] to-[#ff8c33] rounded-3xl overflow-hidden">
+        <div className="relative bg-linear-to-r from-[#FF6600] to-[#ff8c33] rounded-3xl overflow-hidden">
           <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '24px 24px' }} />
           <div className="relative px-8 py-12 sm:px-12 flex flex-col lg:flex-row items-center justify-between gap-6">
             <div className="text-center lg:text-left">
