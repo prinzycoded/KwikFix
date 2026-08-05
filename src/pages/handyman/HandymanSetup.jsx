@@ -386,7 +386,7 @@ function HandymanSetup() {
         <div key={idx} className="flex items-center">
           <div className="flex flex-col items-center">
             <div
-              className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300
+              className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300
                 ${
                   step === idx
                     ? 'bg-accent text-white shadow-lg shadow-accent/30'
@@ -396,7 +396,7 @@ function HandymanSetup() {
                 }`}
             >
               {step > idx ? (
-                <CheckCircle size={20} />
+                <CheckCircle size={18} className="sm:w-5 sm:h-5" />
               ) : (
                 <span>{idx + 1}</span>
               )}
@@ -415,7 +415,7 @@ function HandymanSetup() {
           </div>
           {idx < STEPS.length - 1 && (
             <div
-              className={`h-0.5 w-8 sm:w-12 mx-1 sm:mx-2 rounded ${
+              className={`h-0.5 w-4 sm:w-12 mx-0.5 sm:mx-2 rounded ${
                 step > idx ? 'bg-[#10B981]' : 'bg-white/10'
               }`}
             />

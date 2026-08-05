@@ -130,7 +130,7 @@ export default function SidebarLayout({ children }) {
       </aside>
 
       <main className={`flex-1 transition-all duration-300 ml-0 ${collapsed ? 'md:ml-16' : 'md:ml-60'}`}>
-        <div className="md:hidden sticky top-0 z-30 relative overflow-hidden px-4 h-14 flex items-center justify-between border-b border-white/10">
+        <div className="md:hidden sticky top-0 z-30 relative overflow-hidden px-4 h-14 flex items-center justify-between border-b border-white/10 pt-[env(safe-area-inset-top)]">
           <img src={heroImg} alt="" className="absolute inset-0 w-full h-full object-cover" />
           <div className="absolute inset-0 bg-navy/80" />
           <button

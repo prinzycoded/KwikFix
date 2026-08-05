@@ -226,7 +226,7 @@ function HandymanDashboard() {
         <EmptyState icon={Clock} title="No active jobs" message="Jobs you're working on will show up here with a live timer." />
       )}
       {endJobResult && (
-        <div className={`fixed bottom-8 left-1/2 -translate-x-1/2 max-w-sm p-4 rounded-xl shadow-lg z-50 ${endJobResult === 'success' ? 'bg-[#10B981] text-white' : 'bg-amber-500 text-white'}`}>
+        <div className={`fixed bottom-8 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-sm p-4 rounded-xl shadow-lg z-50 ${endJobResult === 'success' ? 'bg-[#10B981] text-white' : 'bg-amber-500 text-white'}`}>
           <div className="flex items-center gap-2">
             {endJobResult === 'success' ? <><ThumbsUp size={18} /><p className="text-sm font-medium">Job ended successfully!</p></> : <><AlertTriangle size={18} /><p className="text-sm font-medium">{endJobResult === 'waiting' ? 'Waiting for the other party...' : 'Only one party ended the job.'}</p></>}
           </div>
@@ -268,9 +268,9 @@ function HandymanDashboard() {
   const renderJobsTab = () => (
     <div className="max-w-5xl">
       <h1 className="text-2xl font-bold text-white mb-4">Jobs</h1>
-      <div className="flex gap-1 mb-4 bg-navy-800 rounded-xl p-1 w-fit">
+      <div className="grid grid-cols-3 sm:flex gap-1 mb-4 bg-navy-800 rounded-xl p-1 w-full sm:w-fit">
         {(['available', 'active', 'past']).map((sub) => (
-          <button key={sub} onClick={() => { setJobsSubTab(sub); setSelectedJob(null); setShowNegotiation(false); }} className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all capitalize ${jobsSubTab === sub ? 'bg-white text-navy shadow-sm' : 'text-muted hover:text-white'}`}>
+          <button key={sub} onClick={() => { setJobsSubTab(sub); setSelectedJob(null); setShowNegotiation(false); }} className={`px-2 sm:px-4 py-2 rounded-lg text-sm font-semibold transition-all capitalize truncate ${jobsSubTab === sub ? 'bg-white text-navy shadow-sm' : 'text-muted hover:text-white'}`}>
             {sub === 'available' ? 'Available' : sub === 'active' ? 'Active' : 'Past Jobs'}
           </button>
         ))}
@@ -312,9 +312,9 @@ function HandymanDashboard() {
 
   return (
     <div>
-      <div className="flex gap-1 mb-6 bg-navy-800 rounded-xl p-1 w-fit">
+      <div className="grid grid-cols-3 sm:flex gap-1 mb-6 bg-navy-800 rounded-xl p-1 w-full sm:w-fit">
         {(['home', 'jobs', 'profile']).map((tab) => (
-          <button key={tab} onClick={() => setActiveTab(tab)} className={`px-5 py-2 rounded-lg text-sm font-semibold capitalize transition-all ${activeTab === tab ? 'bg-white text-navy shadow-sm' : 'text-muted hover:text-white'}`}>
+          <button key={tab} onClick={() => setActiveTab(tab)} className={`px-3 sm:px-5 py-2 rounded-lg text-sm font-semibold capitalize transition-all truncate ${activeTab === tab ? 'bg-white text-navy shadow-sm' : 'text-muted hover:text-white'}`}>
             {tab === 'home' ? 'Home' : tab === 'jobs' ? 'Jobs' : 'Profile'}
           </button>
         ))}

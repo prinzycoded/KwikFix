@@ -45,7 +45,7 @@ export default function LandingPage() {
   return (
     <>
     <div className="min-h-screen bg-[#F4F4F9] dark:bg-gray-950 text-gray-900 dark:text-white">
-      <header className="sticky top-0 z-50 bg-[#F4F4F9]/90 dark:bg-gray-950/90 backdrop-blur border-b border-gray-200/60 dark:border-gray-800/60">
+      <header className="sticky top-0 z-50 bg-[#F4F4F9]/90 dark:bg-gray-950/90 backdrop-blur border-b border-gray-200/60 dark:border-gray-800/60 pt-[env(safe-area-inset-top)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="flex items-center gap-2">
             <span className="w-9 h-9 rounded-xl bg-[#003366] flex items-center justify-center">
@@ -54,23 +54,23 @@ export default function LandingPage() {
             <span className="text-xl font-bold tracking-tight">Kwik<span className="text-[#FF6600]">Fix</span></span>
           </button>
 
-          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-700 dark:text-gray-300">
+          <nav className="hidden md:flex items-center gap-6 lg:gap-8 text-sm font-medium text-gray-700 dark:text-gray-300">
             <button onClick={() => scrollTo('services')} className="hover:text-[#FF6600] transition-colors">Services</button>
             <button onClick={() => scrollTo('how-it-works')} className="hover:text-[#FF6600] transition-colors">How it works</button>
             <button onClick={() => scrollTo('why-us')} className="hover:text-[#FF6600] transition-colors">Why KwikFix</button>
             <button onClick={() => scrollTo('reviews')} className="hover:text-[#FF6600] transition-colors">Reviews</button>
           </nav>
 
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-2 lg:gap-3">
             <button
               onClick={() => navigate('/handyman/login')}
-              className="text-sm font-semibold text-[#003366] dark:text-white border-2 border-[#003366] dark:border-white px-5 py-2 rounded-xl hover:bg-[#003366] hover:text-white dark:hover:bg-white dark:hover:text-[#003366] transition-colors"
+              className="text-sm font-semibold text-[#003366] dark:text-white border-2 border-[#003366] dark:border-white px-4 lg:px-5 py-2 rounded-xl hover:bg-[#003366] hover:text-white dark:hover:bg-white dark:hover:text-[#003366] transition-colors"
             >
               I offer services
             </button>
             <button
               onClick={() => navigate('/service-selection')}
-              className="bg-[#FF6600] text-white text-sm font-semibold px-5 py-2 rounded-xl hover:bg-[#e05500] transition-colors shadow-lg shadow-[#FF6600]/25 border-2 border-[#FF6600]"
+              className="bg-[#FF6600] text-white text-sm font-semibold px-4 lg:px-5 py-2 rounded-xl hover:bg-[#e05500] transition-colors shadow-lg shadow-[#FF6600]/25 border-2 border-[#FF6600]"
             >
               Book a handyman
             </button>
@@ -116,7 +116,7 @@ export default function LandingPage() {
                 </span>
               </div>
 
-              <h1 className="text-4xl lg:text-5xl font-bold text-white text-center lg:text-left leading-tight">
+              <h1 className="text-4xl sm:text-5xl font-bold text-white text-center lg:text-left leading-tight">
                 Your Home.
                 <br />
                 <span className="text-[#FF6600]">Our Pros.</span>
@@ -207,7 +207,7 @@ export default function LandingPage() {
             <button
               key={service.name}
               onClick={() => navigate(`/booking-form?service=${service.key}`)}
-              className="group bg-white dark:bg-gray-900 rounded-2xl p-8 text-left border border-gray-200/70 dark:border-gray-800 hover:border-[#FF6600] hover:shadow-xl hover:shadow-[#FF6600]/10 transition-all"
+              className="group bg-white dark:bg-gray-900 rounded-2xl p-6 sm:p-8 text-left border border-gray-200/70 dark:border-gray-800 hover:border-[#FF6600] hover:shadow-xl hover:shadow-[#FF6600]/10 transition-all"
             >
               <span className="w-14 h-14 rounded-xl bg-[#003366] dark:bg-[#003366]/80 flex items-center justify-center group-hover:bg-[#FF6600] transition-colors">
                 <service.icon className="w-7 h-7 text-[#FF6600] group-hover:text-white transition-colors" />
@@ -298,7 +298,7 @@ export default function LandingPage() {
             <h2 className="mt-3 text-3xl sm:text-4xl font-extrabold tracking-tight">Customer reviews</h2>
           </div>
 
-          <div className="mt-12 max-w-xl mx-auto bg-white/5 border border-white/10 rounded-2xl p-10 text-center backdrop-blur">
+          <div className="mt-12 max-w-xl mx-auto bg-white/5 border border-white/10 rounded-2xl p-6 sm:p-10 text-center backdrop-blur">
             <span className="w-14 h-14 mx-auto rounded-2xl bg-[#FF6600]/15 flex items-center justify-center">
               <Star className="w-7 h-7 text-[#FF6600]" />
             </span>

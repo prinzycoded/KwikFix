@@ -19,6 +19,10 @@
       scroll-behavior: auto;
     }
   }
+  html,
+  body {
+    overflow-x: clip;
+  }
   body {
     @apply bg-navy text-white antialiased;
   }

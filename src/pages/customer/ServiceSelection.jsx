@@ -28,10 +28,10 @@ export default function ServiceSelection() {
             <button
               key={index}
               onClick={() => navigate(`/booking-form?service=${service.key}`)}
-              className="bg-navy-800 border border-white/10 rounded-xl p-8 flex flex-col items-center justify-center gap-4 hover:bg-navy-700 hover:border-accent/40 transition-colors aspect-square"
+              className="bg-navy-800 border border-white/10 rounded-xl p-5 sm:p-8 flex flex-col items-center justify-center gap-3 sm:gap-4 hover:bg-navy-700 hover:border-accent/40 transition-colors aspect-square"
             >
-              <service.icon className="w-12 h-12 text-accent" />
-              <span className="text-white font-medium text-center text-lg">{service.name}</span>
+              <service.icon className="w-10 h-10 sm:w-12 sm:h-12 text-accent" />
+              <span className="text-white font-medium text-center text-base sm:text-lg">{service.name}</span>
             </button>
           ))}
         </div>
