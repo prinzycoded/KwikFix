@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Star, CheckCircle, MessageSquare, X, Wrench, Bath, Flame, Droplets } from 'lucide-react';
 import Avatar from '../../components/Avatar';
+import { useApp } from '../../contexts/AppContext';
 
 const portfolioItems = [
   { title: 'Kitchen Sink Repair', icon: Wrench, color: 'text-accent' },
@@ -12,6 +13,11 @@ const portfolioItems = [
 
 export default function HandymanProfile() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const { addBooking } = useApp();
+  const service = searchParams.get('service') || 'Plumbing';
+  const date = searchParams.get('date') || '';
+  const time = searchParams.get('time') || '';
   const [proposedPrice, setProposedPrice] = useState(20000);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [agreedPrice, setAgreedPrice] = useState('');
@@ -19,7 +25,21 @@ export default function HandymanProfile() {
   const confirmBooking = () => {
     if (!agreedPrice) return;
     setShowConfirmModal(false);
-    navigate(`/customer/success?service=${encodeURIComponent('Plumbing')}&price=${agreedPrice}`);
+    addBooking({
+      id: `b${Date.now()}`,
+      service,
+      date,
+      time,
+      price: Number(agreedPrice),
+      status: 'confirmed',
+    });
+    const params = new URLSearchParams({
+      service: encodeURIComponent(service),
+      price: agreedPrice,
+      date: encodeURIComponent(date),
+      time: encodeURIComponent(time),
+    });
+    navigate(`/customer/success?${params.toString()}`);
   };
 
   return (

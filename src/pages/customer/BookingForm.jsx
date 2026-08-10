@@ -43,7 +43,10 @@ export default function BookingForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    if (validate()) navigate('/auth')
+    if (validate()) {
+      const params = new URLSearchParams({ service: serviceName, date, time })
+      navigate(`/auth?${params.toString()}`)
+    }
   }
 
   const fieldClass = (hasError) =>

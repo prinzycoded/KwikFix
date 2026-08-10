@@ -1,25 +1,54 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, MapPin, CheckCircle, Clock, XCircle } from 'lucide-react';
+import { useApp } from '../../contexts/AppContext';
+import { useAuth } from '../../contexts/AuthContext';
+import { formatDate } from '../../lib/format';
+
+const timeOptionLabels = {
+  '15': 'within 15 mins',
+  '30': 'within 30 mins',
+  '60': 'within 1 hour',
+  '120': 'within 2 hours',
+  '240': 'within 4 hours',
+  flexible: 'at a flexible time',
+};
 
 export default function ActiveJobScreen() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { bookings } = useApp();
+  const { currentUser } = useAuth();
 
   const [endState, setEndState] = useState('none');
   const [locationState, setLocationState] = useState('stopped');
   const [notifications, setNotifications] = useState([]);
 
-  const job = {
-    id: id ?? 'unknown',
-    serviceType: 'Plumbing',
-    providerName: 'Adebayo Olamide',
-    clientName: 'Chiamaka Eze',
-    address: '12, Azikiwe Road, Umuahia, Abia State',
-    agreedPrice: 25000,
-    time: '10:00 AM',
-    role: 'customer',
-  };
+  const booking = bookings.find((b) => b.id === id);
+
+  const job = booking
+    ? {
+        id: booking.id,
+        serviceType: booking.service,
+        providerName: 'KWIKFIXER',
+        clientName: currentUser?.fullName || 'You',
+        address: 'Umuahia, Abia State',
+        agreedPrice: booking.price || 0,
+        time: timeOptionLabels[booking.time] || booking.time || 'Flexible',
+        date: booking.date || '',
+        role: 'customer',
+      }
+    : {
+        id: id ?? 'unknown',
+        serviceType: 'Plumbing',
+        providerName: 'Adebayo Olamide',
+        clientName: 'Chiamaka Eze',
+        address: '12, Azikiwe Road, Umuahia, Abia State',
+        agreedPrice: 25000,
+        time: '10:00 AM',
+        date: '',
+        role: 'customer',
+      };
 
   const addNotification = (msg) => {
     setNotifications((prev) => [...prev, msg]);
@@ -62,8 +91,11 @@ export default function ActiveJobScreen() {
               <div><p className="text-sm text-muted">Provider</p><p className="font-medium text-white">{job.providerName}</p></div>
               <div><p className="text-sm text-muted">Client</p><p className="font-medium text-white">{job.clientName}</p></div>
               <div className="col-span-2"><p className="text-sm text-muted">Address</p><p className="font-medium text-white">{job.address}</p></div>
-              <div><p className="text-sm text-muted">Agreed Price</p><p className="font-bold text-accent">₦{job.agreedPrice.toLocaleString()}</p></div>
-              <div><p className="text-sm text-muted">Time</p><p className="font-medium text-white">{job.time}</p></div>
+              <div><p className="text-sm text-muted">Agreed Price</p><p className="font-bold text-accent">₦{Number(job.agreedPrice || 0).toLocaleString()}</p></div>
+              <div><p className="text-sm text-muted">Time</p><p className="font-medium text-white capitalize">{job.time}</p></div>
+              {job.date && (
+                <div><p className="text-sm text-muted">Scheduled Date</p><p className="font-medium text-white">{formatDate(job.date)}</p></div>
+              )}
             </div>
           </div>
 

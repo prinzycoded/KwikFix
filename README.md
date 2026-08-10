@@ -1,32 +1,67 @@
-# React + TypeScript + Vite
+# KwikFix
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Connect with trusted, vetted handymen in Abia State.
 
-Currently, two official plugins are available:
+## Setup
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm install
+npm run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Firebase Configuration
+
+KwikFix uses **Firebase Authentication** (email/password) and the
+**Realtime Database** for user profiles.
+
+### 1. Create a Firebase project
+
+1. Go to the [Firebase Console](https://console.firebase.google.com) and create a project.
+2. **Authentication** → Get started → enable the **Email/Password** provider.
+3. **Realtime Database** → Create database → production mode → copy the
+   `https://<project>-default-rtdb.firebaseio.com` URL.
+4. **Realtime Database → Rules** — allow each user to read/write only their own profile:
+
+   ```json
+   {
+     "rules": {
+       "users": {
+         "$uid": {
+           ".read": "auth != null && auth.uid === $uid",
+           ".write": "auth != null && auth.uid === $uid"
+         }
+       }
+     }
+   }
+   ```
+
+5. **Project settings** → Your apps → Web app (`</>`) → register the app and copy the SDK config values.
+
+### 2. Add your config to `.env`
+
+```bash
+cp .env.example .env
+```
+
+Then fill in the values from your Firebase console app settings:
+
+```env
+VITE_FIREBASE_API_KEY=
+VITE_FIREBASE_AUTH_DOMAIN=
+VITE_FIREBASE_DATABASE_URL=https://your-project-default-rtdb.firebaseio.com
+VITE_FIREBASE_PROJECT_ID=
+VITE_FIREBASE_STORAGE_BUCKET=
+VITE_FIREBASE_MESSAGING_SENDER_ID=
+VITE_FIREBASE_APP_ID=
+```
+
+Restart `npm run dev` after adding the values.
+
+## What is stored where
+
+| Data | Location |
+| --- | --- |
+| Email / password accounts | Firebase Authentication |
+| User profiles (`users/{uid}`) | Firebase Realtime Database |
+| Bookings, jobs, notifications | Local app state (in-memory) |
+| NIN / BVN | Local app state only — **not** written to Firebase (to be connected to a verification provider later) |

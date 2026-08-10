@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Search, CheckCircle, Star, MapPin } from 'lucide-react';
 import Avatar from '../../components/Avatar';
 
 export default function MatchingAnimation() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [searching, setSearching] = useState(true);
 
   useEffect(() => {
@@ -54,7 +55,7 @@ export default function MatchingAnimation() {
             </div>
 
             <button
-              onClick={() => navigate('/customer/handyman-profile')}
+              onClick={() => { const q = searchParams.toString(); navigate(`/customer/handyman-profile${q ? `?${q}` : ''}`) }}
               className="mt-6 bg-white text-navy px-8 py-3 rounded-2xl font-bold hover:bg-slate-100 transition-colors"
             >
               View Profile

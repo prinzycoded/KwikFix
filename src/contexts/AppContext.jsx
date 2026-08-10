@@ -19,7 +19,7 @@ const defaultHandymanRegistration = {
     bvn: '',
   },
   step4: {
-    otp: '',
+    email: '',
   },
   step5: {
     username: '',

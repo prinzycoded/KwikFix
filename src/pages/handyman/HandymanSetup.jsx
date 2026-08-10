@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   CheckCircle,
@@ -9,7 +9,7 @@ import {
   Shield,
   User,
   FileText,
-  Phone,
+  Mail,
   X,
   Check,
   Info,
@@ -21,7 +21,7 @@ const STEPS = [
   { label: 'Personal Info', icon: User },
   { label: 'Qualification', icon: FileText },
   { label: 'Verification', icon: Shield },
-  { label: 'Phone', icon: Phone },
+  { label: 'Account', icon: Mail },
   { label: 'Final Setup', icon: CheckCircle },
 ];
 
@@ -94,7 +94,7 @@ function getAge(dateString) {
 
 function HandymanSetup() {
   const navigate = useNavigate();
-  const { signup } = useAuth();
+  const { signup, firebaseReady } = useAuth();
   const { updateHandymanRegistration } = useApp();
 
   const [step, setStep] = useState(0);
@@ -120,13 +120,10 @@ function HandymanSetup() {
   const [ninVerified, setNinVerified] = useState(false);
   const [ninError, setNinError] = useState('');
 
-  const [otp, setOtp] = useState(['', '', '', '', '', '']);
-  const [otpRequests, setOtpRequests] = useState(0);
-  const [otpTimer, setOtpTimer] = useState(0);
-  const [otpCooldown, setOtpCooldown] = useState(0);
-  const [otpVerified, setOtpVerified] = useState(false);
-  const [otpError, setOtpError] = useState('');
-  const phoneNumber = '+234 801 234 5678';
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [creating, setCreating] = useState(false);
 
   const [username, setUsername] = useState('');
   const [profilePicture, setProfilePicture] = useState('');
@@ -137,105 +134,9 @@ function HandymanSetup() {
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  const otpRefs = useRef([]);
-  const timerRef = useRef(null);
   const fileInputRef = useRef(null);
   const profilePicInputRef = useRef(null);
   const [targetSlot, setTargetSlot] = useState(null);
-
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (otpTimer > 0) {
-      timerRef.current = setInterval(() => {
-        setOtpTimer((prev) => {
-          if (prev <= 1) {
-            if (timerRef.current) clearInterval(timerRef.current);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-      return () => {
-        if (timerRef.current) clearInterval(timerRef.current);
-      };
-    }
-  }, [otpTimer]);
-
-  useEffect(() => {
-    if (otpCooldown > 0) {
-      const cd = setInterval(() => {
-        setOtpCooldown((prev) => {
-          if (prev <= 1) {
-            clearInterval(cd);
-            setOtpRequests(0);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-      return () => clearInterval(cd);
-    }
-  }, [otpCooldown]);
-
-  const handleOtpChange = (index, value) => {
-    if (otpVerified) return;
-    if (value && !/^\d$/.test(value)) return;
-    const newOtp = [...otp];
-    newOtp[index] = value;
-    setOtp(newOtp);
-    setOtpError('');
-
-    if (value && index < 5) {
-      otpRefs.current[index + 1]?.focus();
-    }
-
-    const fullOtp = newOtp.join('');
-    if (fullOtp.length === 6) {
-      setTimeout(() => {
-        setOtpVerified(true);
-      }, 500);
-    }
-  };
-
-  const handleOtpKeyDown = (index, e) => {
-    if (e.key === 'Backspace' && !otp[index] && index > 0) {
-      otpRefs.current[index - 1]?.focus();
-    }
-  };
-
-  const handleOtpPaste = (e) => {
-    e.preventDefault();
-    if (otpVerified) return;
-    const pasted = e.clipboardData.getData('text').replace(/\D/g, '');
-    if (pasted.length === 0) return;
-    const newOtp = ['', '', '', '', '', ''];
-    for (let i = 0; i < Math.min(pasted.length, 6); i++) {
-      newOtp[i] = pasted[i];
-    }
-    setOtp(newOtp);
-    setOtpError('');
-    const focusIdx = Math.min(pasted.length, 5);
-    otpRefs.current[focusIdx]?.focus();
-    if (pasted.length >= 6) {
-      setTimeout(() => setOtpVerified(true), 500);
-    }
-  };
-
-  const handleRequestCode = () => {
-    if (otpCooldown > 0) return;
-    if (otpRequests >= 3) {
-      setOtpCooldown(1800);
-      setOtpRequests(0);
-      return;
-    }
-    setOtpRequests((prev) => prev + 1);
-    setOtpTimer(60);
-  };
 
   const validateStep = (s) => {
     const newErrors = {};
@@ -291,7 +192,19 @@ function HandymanSetup() {
     }
 
     if (s === 3) {
-      if (!otpVerified) newErrors.otp = 'Please enter and verify the OTP';
+      if (!email.trim()) {
+        newErrors.email = 'Email is required';
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+        newErrors.email = 'Please enter a valid email address';
+      }
+      if (!password) {
+        newErrors.password = 'Password is required';
+      } else if (password.length < 6) {
+        newErrors.password = 'Password must be at least 6 characters';
+      }
+      if (confirmPassword !== password) {
+        newErrors.confirmPassword = 'Passwords do not match';
+      }
     }
 
     if (s === 4) {
@@ -350,34 +263,50 @@ function HandymanSetup() {
     e.target.value = '';
   };
 
-  const handleCreateAccount = () => {
+  const handleCreateAccount = async () => {
     if (!validateStep(4)) return;
-    signup({
-      fullName: `${firstName} ${lastName}`,
-      niche: areaOfSpecialization.toLowerCase(),
-      role: 'handyman',
-    });
-    updateHandymanRegistration('step1', {
-      name: `${firstName} ${lastName}`,
-      age: parseInt(age, 10),
-      gender,
-      dateOfBirth,
-      areaOfSpecialization: areaOfSpecialization.toLowerCase(),
-    });
-    updateHandymanRegistration('step2', {
-      pastWorkImages,
-      highestEducation: highestEducation.toLowerCase().replace(/\s/g, '_'),
-      yearsOfExperience: parseInt(yearsOfExperience, 10),
-      references: references.filter((r) => r.name.trim() || r.phone.trim()),
-    });
-    updateHandymanRegistration('step3', { nin });
-    updateHandymanRegistration('step4', { otp: otp.join('') });
-    updateHandymanRegistration('step5', {
-      username,
-      profilePicture,
-      permissions: { location: locationPermission, audio: audioPermission },
-    });
-    setShowSuccessModal(true);
+    if (!firebaseReady) {
+      setErrors({ acceptTerms: 'Firebase is not configured. Add your config to .env (see .env.example)' });
+      return;
+    }
+    setCreating(true);
+    try {
+      await signup({
+        fullName: `${firstName} ${lastName}`,
+        email,
+        password,
+        phone: '',
+        role: 'handyman',
+        username,
+        avatar: profilePicture,
+        niche: areaOfSpecialization.toLowerCase(),
+      });
+      updateHandymanRegistration('step1', {
+        name: `${firstName} ${lastName}`,
+        age: parseInt(age, 10),
+        gender,
+        dateOfBirth,
+        areaOfSpecialization: areaOfSpecialization.toLowerCase(),
+      });
+      updateHandymanRegistration('step2', {
+        pastWorkImages,
+        highestEducation: highestEducation.toLowerCase().replace(/\s/g, '_'),
+        yearsOfExperience: parseInt(yearsOfExperience, 10),
+        references: references.filter((r) => r.name.trim() || r.phone.trim()),
+      });
+      updateHandymanRegistration('step3', { nin });
+      updateHandymanRegistration('step4', { email });
+      updateHandymanRegistration('step5', {
+        username,
+        profilePicture,
+        permissions: { location: locationPermission, audio: audioPermission },
+      });
+      setShowSuccessModal(true);
+    } catch (err) {
+      setErrors({ acceptTerms: err?.message || 'Failed to create account. Please try again' });
+    } finally {
+      setCreating(false);
+    }
   };
 
   const renderStepIndicator = () => (
@@ -716,95 +645,49 @@ function HandymanSetup() {
     </div>
   );
 
-  const formatTime = (seconds) => {
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-  };
-
   const renderStep3 = () => (
     <div className="space-y-5">
       <h2 className="text-2xl font-bold text-white mb-6">
-        Phone Verification
+        Account Setup
       </h2>
 
-      <div className="p-5 rounded-xl bg-navy-800 border border-white/15">
-        <label className="text-sm text-muted">Phone Number</label>
-        <p className="text-lg font-bold text-white">{phoneNumber}</p>
+      <div>
+        <label className={labelClass}>Email Address</label>
+        <input
+          type="email"
+          placeholder="e.g. johnfixer@email.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className={`${inputClass} ${errors.email ? 'border-[#EF4444]' : ''}`}
+        />
+        <p className="text-xs text-muted mt-1.5">
+          You'll use this to log in to your KWIKFIX account.
+        </p>
+        {renderError('email')}
       </div>
 
       <div>
-        <label className={labelClass}>Enter OTP Code</label>
-        <div
-          className="flex items-center justify-center gap-2 sm:gap-3 my-4"
-          onPaste={handleOtpPaste}
-        >
-          {otp.map((digit, idx) => (
-            <div key={idx} className="flex-1 min-w-0 max-w-11 sm:max-w-12">
-              <input
-                ref={(el) => {
-                  otpRefs.current[idx] = el;
-                }}
-                type="text"
-                inputMode="numeric"
-                autoComplete="one-time-code"
-                maxLength={1}
-                value={digit}
-                onChange={(e) => handleOtpChange(idx, e.target.value)}
-                onKeyDown={(e) => handleOtpKeyDown(idx, e)}
-                className={`h-12 sm:h-14 w-full text-center text-xl font-bold rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-accent transition-all
-                  ${otpVerified ? 'border-[#10B981] bg-[#10B981]/10' : 'border-white/15 bg-navy-700 text-white'}
-                  ${otpError && !otpVerified ? 'border-[#EF4444]' : ''}`}
-                disabled={otpVerified}
-              />
-            </div>
-          ))}
-        </div>
-        {otpError && (
-          <p className="text-[#EF4444] text-xs text-center">{otpError}</p>
-        )}
-        {otpVerified && (
-          <p className="text-[#10B981] text-xs text-center flex items-center justify-center gap-1 mt-1">
-            <CheckCircle size={14} />
-            Verified successfully
-          </p>
-        )}
-        {renderError('otp')}
+        <label className={labelClass}>Password</label>
+        <input
+          type="password"
+          placeholder="At least 6 characters"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className={`${inputClass} ${errors.password ? 'border-[#EF4444]' : ''}`}
+        />
+        {renderError('password')}
       </div>
 
-      <div className="flex flex-col items-center gap-3">
-        {otpCooldown > 0 ? (
-          <div className="text-center">
-            <p className="text-sm text-[#EF4444] font-medium mb-1">
-              Maximum requests reached. Try again in:
-            </p>
-            <p className="text-lg font-bold text-white">
-              {formatTime(otpCooldown)}
-            </p>
-          </div>
-        ) : (
-          <button
-            onClick={handleRequestCode}
-            disabled={otpTimer > 0 || otpVerified}
-            className={`px-6 py-2.5 rounded-lg font-semibold text-sm transition-all
-              ${
-                otpTimer > 0 || otpVerified
-                  ? 'bg-white/5 text-muted/50 cursor-not-allowed'
-                  : 'bg-accent text-white hover:bg-accent-dark'
-              }`}
-          >
-            {otpTimer > 0
-              ? `Resend code in ${formatTime(otpTimer)}`
-              : otpRequests >= 3
-                ? 'Maximum requests reached'
-                : 'Request Code'}
-          </button>
-        )}
-        <p className="text-xs text-muted">
-          {otpRequests < 3
-            ? `${3 - otpRequests} request${3 - otpRequests !== 1 ? 's' : ''} remaining`
-            : 'Cooldown period active'}
-        </p>
+      <div>
+        <label className={labelClass}>Confirm Password</label>
+        <input
+          type="password"
+          placeholder="Re-enter your password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          className={`${inputClass} ${errors.confirmPassword ? 'border-[#EF4444]' : ''}`}
+        />
+        {renderError('confirmPassword')}
       </div>
     </div>
   );
@@ -945,9 +828,10 @@ function HandymanSetup() {
 
       <button
         onClick={handleCreateAccount}
-        className="w-full py-4 bg-white text-navy rounded-2xl font-bold text-lg hover:bg-slate-100 transition-all shadow-lg"
+        disabled={creating}
+        className="w-full py-4 bg-white text-navy rounded-2xl font-bold text-lg hover:bg-slate-100 transition-all shadow-lg disabled:opacity-60"
       >
-        Create Account
+        {creating ? 'Creating Account...' : 'Create Account'}
       </button>
     </div>
   );

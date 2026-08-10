@@ -1,11 +1,14 @@
-import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 export default function CustomerAuth() {
   const navigate = useNavigate();
-  const { login, signup } = useAuth();
+  const [searchParams] = useSearchParams();
+  const { login, signup, firebaseReady } = useAuth();
+
+  const bookingQuery = searchParams.toString();
 
   const [view, setView] = useState('login');
 
@@ -15,79 +18,44 @@ export default function CustomerAuth() {
 
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
-  const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [signupEmail, setSignupEmail] = useState('');
   const [signupPassword, setSignupPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [otpTimer, setOtpTimer] = useState(60);
-  const [otpSent, setOtpSent] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
-  const otpRefs = useRef([]);
-
-  useEffect(() => {
-    if (!otpSent || otpTimer <= 0) return;
-    const interval = setInterval(() => {
-      setOtpTimer((t) => t - 1);
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [otpSent, otpTimer]);
-
-  const handleSendOtp = () => {
-    if (!phone.trim()) {
-      setError('Please enter a phone number');
-      return;
-    }
-    setOtpSent(true);
-    setOtpTimer(60);
-    setError('');
-  };
-
-  const handleResendOtp = () => {
-    setOtpTimer(60);
-    setOtp(['', '', '', '', '', '']);
-    otpRefs.current[0]?.focus();
-  };
-
-  const handleOtpChange = (index, value) => {
-    if (value.length > 1) return;
-    const newOtp = [...otp];
-    newOtp[index] = value;
-    setOtp(newOtp);
-    if (value && index < 5) {
-      otpRefs.current[index + 1]?.focus();
-    }
-  };
-
-  const handleOtpKeyDown = (index, e) => {
-    if (e.key === 'Backspace' && !otp[index] && index > 0) {
-      otpRefs.current[index - 1]?.focus();
-    }
-  };
-
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
+    if (!firebaseReady) {
+      setError('Firebase is not configured. Add your config to .env (see .env.example)');
+      return;
+    }
     if (!email.trim() || !password.trim()) {
       setError('Please fill in all fields');
       return;
     }
-    login('customer', email, password);
-    navigate('/matching');
+    setSubmitting(true);
+    try {
+      await login(email, password);
+      navigate(`/matching${bookingQuery ? `?${bookingQuery}` : ''}`);
+    } catch (err) {
+      setError(getFriendlyError(err));
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-  const handleSignup = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
     setError('');
-
-    if (!fullName.trim() || !phone.trim() || !signupEmail.trim() || !signupPassword.trim() || !confirmPassword.trim()) {
-      setError('Please fill in all fields');
+    if (!firebaseReady) {
+      setError('Firebase is not configured. Add your config to .env (see .env.example)');
       return;
     }
 
-    const otpFilled = otp.every((d) => d !== '');
-    if (!otpFilled) {
-      setError('Please enter the OTP code');
+    if (!fullName.trim() || !signupEmail.trim() || !signupPassword.trim() || !confirmPassword.trim()) {
+      setError('Please fill in all fields');
       return;
     }
 
@@ -101,13 +69,21 @@ export default function CustomerAuth() {
       return;
     }
 
-    signup({
-      fullName,
-      email: signupEmail,
-      phone,
-      role: 'customer',
-    });
-    navigate('/matching');
+    setSubmitting(true);
+    try {
+      await signup({
+        fullName,
+        email: signupEmail,
+        password: signupPassword,
+        phone,
+        role: 'customer',
+      });
+      navigate(`/matching${bookingQuery ? `?${bookingQuery}` : ''}`);
+    } catch (err) {
+      setError(getFriendlyError(err));
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const inputStyle = {
@@ -165,8 +141,8 @@ export default function CustomerAuth() {
 
             {error && <p style={styles.error}>{error}</p>}
 
-            <button type="submit" style={styles.primaryButton}>
-              Login
+            <button type="submit" style={styles.primaryButton} disabled={submitting}>
+              {submitting ? 'Logging in...' : 'Login'}
             </button>
           </form>
 
@@ -199,7 +175,7 @@ export default function CustomerAuth() {
           </div>
 
           <div style={styles.inputGroup}>
-            <label style={styles.label}>Phone</label>
+            <label style={styles.label}>Phone (optional)</label>
             <input
               style={inputStyle}
               placeholder="e.g. 08012345678"
@@ -207,40 +183,6 @@ export default function CustomerAuth() {
               onChange={(e) => setPhone(e.target.value)}
               type="tel"
             />
-          </div>
-
-          <div style={styles.inputGroup}>
-            <label style={styles.label}>Phone Verification OTP</label>
-            {!otpSent ? (
-              <button type="button" onClick={handleSendOtp} style={styles.sendOtpButton}>
-                Send OTP
-              </button>
-            ) : (
-              <>
-                <div style={styles.otpContainer}>
-                  {otp.map((digit, index) => (
-                    <input
-                      key={index}
-                      ref={(el) => { otpRefs.current[index] = el; }}
-                      style={styles.otpBox}
-                      value={digit}
-                      onChange={(e) => handleOtpChange(index, e.target.value)}
-                      onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                      maxLength={1}
-                      type="text"
-                      inputMode="numeric"
-                    />
-                  ))}
-                </div>
-                {otpTimer > 0 ? (
-                  <p style={styles.timerText}>Resend code in {otpTimer}s</p>
-                ) : (
-                  <button type="button" onClick={handleResendOtp} style={styles.resendButton}>
-                    Resend Code
-                  </button>
-                )}
-              </>
-            )}
           </div>
 
           <div style={styles.inputGroup}>
@@ -287,8 +229,8 @@ export default function CustomerAuth() {
 
           {error && <p style={styles.error}>{error}</p>}
 
-          <button type="submit" style={styles.primaryButton}>
-            Sign Up
+          <button type="submit" style={styles.primaryButton} disabled={submitting}>
+            {submitting ? 'Creating account...' : 'Sign Up'}
           </button>
         </form>
 
@@ -302,6 +244,23 @@ export default function CustomerAuth() {
     </div>
   );
 }
+
+const getFriendlyError = (err) => {
+  const code = err?.code || '';
+  const messages = {
+    'auth/invalid-email': 'Please enter a valid email address',
+    'auth/user-not-found': 'No account found with this email',
+    'auth/wrong-password': 'Incorrect password. Please try again',
+    'auth/invalid-credential': 'Incorrect email or password',
+    'auth/email-already-in-use': 'An account with this email already exists',
+    'auth/weak-password': 'Password must be at least 6 characters',
+    'auth/too-many-requests': 'Too many attempts. Please try again later',
+    'auth/operation-not-allowed': 'This sign-in method is not enabled in Firebase',
+    'auth/requires-recent-login': 'Please log in again to complete this action',
+    'auth/network-request-failed': 'Network error. Check your connection and try again',
+  };
+  return messages[code] || (err?.message || 'Something went wrong. Please try again');
+};
 
 const styles = {
   container: {
@@ -370,49 +329,6 @@ const styles = {
     fontWeight: 'bold',
     cursor: 'pointer',
     marginTop: 8,
-  },
-  sendOtpButton: {
-    backgroundColor: '#FF6B1A',
-    color: '#FFF',
-    border: 'none',
-    borderRadius: 12,
-    padding: '12px 0',
-    fontSize: 14,
-    fontWeight: 'bold',
-    cursor: 'pointer',
-  },
-  otpContainer: {
-    display: 'flex',
-    gap: 6,
-    justifyContent: 'center',
-  },
-  otpBox: {
-    width: 'clamp(32px, 11vw, 42px)',
-    height: 48,
-    borderRadius: 10,
-    border: '2px solid #FF6B1A',
-    backgroundColor: '#0A2540',
-    textAlign: 'center',
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-    outline: 'none',
-  },
-  timerText: {
-    color: '#9DB0C5',
-    fontSize: 12,
-    textAlign: 'center',
-    margin: '4px 0 0 0',
-  },
-  resendButton: {
-    background: 'none',
-    border: 'none',
-    color: '#FF6B1A',
-    fontSize: 13,
-    fontWeight: 600,
-    cursor: 'pointer',
-    textAlign: 'center',
-    marginTop: 4,
   },
   error: {
     color: '#F87171',
