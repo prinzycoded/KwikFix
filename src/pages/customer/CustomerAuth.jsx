@@ -6,7 +6,7 @@ import { useAuth } from '../../contexts/AuthContext';
 export default function CustomerAuth() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { login, signup, firebaseReady } = useAuth();
+  const { login, signup, sendVerificationEmail, firebaseReady } = useAuth();
 
   const bookingQuery = searchParams.toString();
 
@@ -78,6 +78,7 @@ export default function CustomerAuth() {
         phone,
         role: 'customer',
       });
+      try { await sendVerificationEmail(); } catch { /* verification email is optional */ }
       navigate(`/matching${bookingQuery ? `?${bookingQuery}` : ''}`);
     } catch (err) {
       setError(getFriendlyError(err));

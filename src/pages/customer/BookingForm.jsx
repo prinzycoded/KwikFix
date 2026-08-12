@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { ArrowLeft, MapPin, Crosshair, AlertCircle } from 'lucide-react'
+import { useAuth } from '../../contexts/AuthContext'
 
 const timeOptions = [
   { label: '15 mins', value: '15' },
@@ -16,6 +17,7 @@ const baseField = 'w-full rounded-lg border bg-navy-700 text-white px-3 py-2 tex
 export default function BookingForm() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
+  const { isAuthenticated } = useAuth()
   const serviceName = searchParams.get('service') || ''
 
   const [address, setAddress] = useState('')
@@ -48,7 +50,7 @@ export default function BookingForm() {
         ? fullAddress
         : (useLiveLocation ? 'Live location (shared when the handyman arrives)' : address)
       const params = new URLSearchParams({ service: serviceName, date, time, address: finalAddress })
-      navigate(`/auth?${params.toString()}`)
+      navigate(isAuthenticated ? `/matching?${params.toString()}` : `/auth?${params.toString()}`)
     }
   }
 

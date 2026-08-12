@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, Moon, Sun, Bell, Globe, Lock, ChevronRight, Smartphone, Info, LogOut } from 'lucide-react';
+import { ChevronLeft, Moon, Sun, Bell, Globe, Lock, ChevronRight, Smartphone, Info, LogOut, Mail, ShieldCheck, Loader2 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 
@@ -38,17 +38,57 @@ function SettingsLink({ icon, label, description, onClick }) {
 
 function HandymanSettings() {
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { logout, isEmailVerified, sendVerificationEmail } = useAuth();
   const { darkMode, toggleDarkMode } = useTheme();
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [locationEnabled, setLocationEnabled] = useState(true);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+
+  const handleVerify = async () => {
+    setSending(true);
+    try {
+      await sendVerificationEmail();
+      setSent(true);
+      setTimeout(() => setSent(false), 5000);
+    } finally {
+      setSending(false);
+    }
+  };
 
   return (
     <div className="max-w-3xl">
       <h1 className="text-2xl font-bold text-white mb-6">Settings</h1>
 
       <div className="space-y-6">
+        <div className="bg-navy-800 border border-white/10 rounded-2xl p-4 flex items-center gap-3">
+          {isEmailVerified ? (
+            <>
+              <div className="w-10 h-10 rounded-xl bg-[#10B981]/15 flex items-center justify-center shrink-0"><ShieldCheck className="w-5 h-5 text-[#10B981]" /></div>
+              <div className="flex-1">
+                <p className="font-medium text-white text-sm">Email Verified</p>
+                <p className="text-xs text-muted">Your account is verified. You can now accept jobs.</p>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="w-10 h-10 rounded-xl bg-accent/15 flex items-center justify-center shrink-0"><Mail className="w-5 h-5 text-accent" /></div>
+              <div className="flex-1">
+                <p className="font-medium text-white text-sm">Verify Your Email</p>
+                <p className="text-xs text-muted">Required before you can accept job requests.</p>
+              </div>
+              <button
+                onClick={handleVerify}
+                disabled={sending}
+                className="px-4 py-2 bg-accent text-white rounded-xl text-xs font-bold hover:bg-accent-dark disabled:opacity-60 flex items-center gap-1"
+              >
+                {sending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null}
+                {sent ? 'Sent!' : 'Send Link'}
+              </button>
+            </>
+          )}
+        </div>
         <div className="bg-navy-800 border border-white/10 rounded-2xl overflow-hidden">
           <div className="px-4 pt-4 pb-2"><h2 className="text-xs font-semibold text-muted uppercase tracking-wider">Appearance</h2></div>
           <div className="border-t border-white/10">

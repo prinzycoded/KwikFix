@@ -4,7 +4,7 @@ import {
   Home, Briefcase, User, Settings, Bell, Star, CheckCircle,
   Clock, MapPin, ChevronDown, ChevronUp, Award, TrendingUp,
   Shield, Circle, Zap, AlertTriangle, Plus, Send,
-  ThumbsUp, Calendar, Wallet, Wrench, History,
+  ThumbsUp, Calendar, Wallet, Wrench, History, Loader2,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useApp } from '../../contexts/AppContext';
@@ -12,71 +12,98 @@ import { formatNaira, timeAgo } from '../../lib/format';
 import Avatar from '../../components/Avatar';
 import EmptyState from '../../components/EmptyState';
 
-const MOCK_JOBS = [
-  { id: 'job1', bookingId: 'b1', handymanId: '', customerId: 'c1', title: 'Fix Kitchen Sink', description: 'Leaking pipe under kitchen sink needs repair', status: 'available', payment: 15000, toolsRequired: false, commissionFee: 300, earningsAfterCommission: 14700, serviceType: 'Plumbing', location: 'Osisioma, Aba', offeredPrice: 14700, originalPrice: 15000 },
-  { id: 'job2', bookingId: 'b2', handymanId: '', customerId: 'c2', title: 'Electrical Wiring', description: 'New wiring for 3-bedroom apartment', status: 'available', payment: 35000, toolsRequired: true, commissionFee: 700, earningsAfterCommission: 34300, serviceType: 'Electrical', location: 'Umuahia North', offeredPrice: 34300, originalPrice: 35000 },
-  { id: 'job3', bookingId: 'b3', handymanId: '', customerId: 'c3', title: 'Wardrobe Assembly', description: 'Assemble 3-door wardrobe', status: 'available', payment: 12000, toolsRequired: false, commissionFee: 240, earningsAfterCommission: 11760, serviceType: 'Carpentry', location: 'Ohafia', offeredPrice: 11760, originalPrice: 12000 },
-  { id: 'job4', bookingId: 'b4', handymanId: '', customerId: 'c4', title: 'Car Oil Change', description: 'Full oil change and filter replacement', status: 'available', payment: 8000, toolsRequired: true, commissionFee: 160, earningsAfterCommission: 7840, serviceType: 'Mechanic', location: 'Isiala Ngwa', offeredPrice: 7840, originalPrice: 8000 },
-  { id: 'job5', bookingId: 'b5', handymanId: 'h1', customerId: 'c5', title: 'AC Repair', description: 'Split AC not cooling', status: 'active', payment: 25000, toolsRequired: true, commissionFee: 500, earningsAfterCommission: 24500, serviceType: 'Electrical', location: 'Aba North', offeredPrice: 24500, originalPrice: 25000, clientName: 'Mr. Ebere', clientAddress: '12, Hospital Road, Aba', timer: '02:30:00' },
-  { id: 'job6', bookingId: 'b6', handymanId: 'h1', customerId: 'c6', title: 'Door Hinge Repair', description: 'Sagging door needs hinge replacement', status: 'active', payment: 5000, toolsRequired: false, commissionFee: 100, earningsAfterCommission: 4900, serviceType: 'Carpentry', location: 'Umuahia South', offeredPrice: 4900, originalPrice: 5000, clientName: 'Mrs. Okafor', clientAddress: '45, Azikiwe Road, Umuahia', timer: '01:15:00' },
-  { id: 'job7', bookingId: 'b7', handymanId: 'h1', customerId: 'c7', title: 'Pipe Replacement', description: 'Replaced burst pipe in bathroom', status: 'past', payment: 18000, toolsRequired: true, commissionFee: 360, earningsAfterCommission: 17640, serviceType: 'Plumbing', location: 'Osisioma, Aba', offeredPrice: 17640, originalPrice: 18000, clientName: 'Engr. Chinedu', clientAddress: '8, Faulks Road, Aba', rating: 5 },
-  { id: 'job8', bookingId: 'b8', handymanId: 'h1', customerId: 'c8', title: 'Ceiling Fan Installation', description: 'Installed ceiling fan in living room', status: 'past', payment: 10000, toolsRequired: true, commissionFee: 200, earningsAfterCommission: 9800, serviceType: 'Electrical', location: 'Bende', offeredPrice: 9800, originalPrice: 10000, clientName: 'Dr. Ngozi', clientAddress: '22, Amankalu Road, Bende', rating: 4 },
-];
+const COMMISSION_RATE = 0.02;
 
-const MOCK_NOTIFICATIONS = [
-  { id: 'n1', type: 'new_job', message: 'New plumbing job available in Osisioma, Aba', read: false, createdAt: new Date(Date.now() - 35 * 60000).toISOString() },
-  { id: 'n2', type: 'rating', message: 'Engr. Chinedu rated you 5 stars!', read: false, createdAt: new Date(Date.now() - 3 * 3600000).toISOString() },
-  { id: 'n3', type: 'price_agreed', message: 'Price agreed for AC Repair job', read: true, createdAt: new Date(Date.now() - 26 * 3600000).toISOString() },
-  { id: 'n4', type: 'job_end', message: 'Pipe Replacement job completed successfully', read: true, createdAt: new Date(Date.now() - 2 * 86400000).toISOString() },
-];
+function withCommission(job) {
+  const commissionFee = Math.round((job.price || 0) * COMMISSION_RATE);
+  return {
+    ...job,
+    title: job.service || 'Service Job',
+    location: job.address || 'Umuahia, Abia State',
+    clientName: job.customerName || 'Customer',
+    offeredPrice: job.price || 0,
+    originalPrice: job.price || 0,
+    earningsAfterCommission: (job.price || 0) - commissionFee,
+    commissionFee,
+    serviceType: job.service || 'General',
+  };
+}
 
 function HandymanDashboard() {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
-  const { markAsRead } = useApp();
+  const {
+    availableJobs,
+    jobs,
+    assignedBookings,
+    notifications,
+    markAsRead,
+    acceptJob,
+    endJob,
+    setUserStatus,
+    connectionReady,
+  } = useApp();
 
   const [activeTab, setActiveTab] = useState('home');
   const [jobsSubTab, setJobsSubTab] = useState('available');
-  const [userStatus, setUserStatus] = useState('online');
+  const [userStatus, setUserStatusLocal] = useState('online');
   const [selectedJob, setSelectedJob] = useState(null);
+  const [showNegotiation, setShowNegotiation] = useState(false);
   const [chatMessages, setChatMessages] = useState([]);
   const [chatInput, setChatInput] = useState('');
-  const [showNegotiation, setShowNegotiation] = useState(false);
-  const [endJobState, setEndJobState] = useState({});
+  const [showAcceptSuccess, setShowAcceptSuccess] = useState(false);
   const [endJobResult, setEndJobResult] = useState(null);
+  const [acceptingId, setAcceptingId] = useState(null);
   const [showDIYModal, setShowDIYModal] = useState(false);
 
-  const toggleStatus = () => {
-    setUserStatus((prev) => (prev === 'online' ? 'working' : 'online'));
+  const liveMode = connectionReady;
+
+  const jobsLive = jobs.map((j) => ({
+    ...j,
+    endState: assignedBookings[j.id]?.endState || j.endState,
+    status: assignedBookings[j.id]?.status || j.status,
+  }));
+
+  const available = availableJobs.map(withCommission);
+  const activeJobs = jobsLive
+    .filter((j) => (j.status === 'active' || j.status === 'accepted') && j.endState !== 'both_ended')
+    .map((j) => ({ ...withCommission(j), timer: 'Live' }));
+  const pastJobs = jobsLive
+    .filter((j) => j.status === 'completed' || j.endState === 'both_ended')
+    .map(withCommission);
+
+  const toggleStatus = (newStatus) => {
+    setUserStatusLocal(newStatus);
+    if (liveMode) setUserStatus(newStatus);
   };
 
-  const handleEndJob = (jobId) => {
-    if (endJobState[jobId]) {
-      setEndJobResult('success');
-      setTimeout(() => setEndJobResult(null), 3000);
-      return;
-    }
-    setEndJobState((prev) => ({ ...prev, [jobId]: true }));
+  const handleEndJob = async (jobId) => {
+    if (endJobResult === 'success' || endJobResult === 'waiting') return;
+    await endJob(jobId, 'handyman');
     setEndJobResult('waiting');
-    setTimeout(() => {
-      const simulatedBothEnded = Math.random() > 0.5;
-      if (simulatedBothEnded) {
-        setEndJobResult('success');
-        setEndJobState((prev) => ({ ...prev, [jobId]: true }));
-      } else {
-        setEndJobResult('waiting_other');
-      }
-      setTimeout(() => setEndJobResult(null), 4000);
-    }, 2000);
+    setTimeout(() => setEndJobResult('success'), 2500);
+    setTimeout(() => setEndJobResult(null), 5000);
+  };
+
+  const handleAccept = async (job) => {
+    setAcceptingId(job.id);
+    try {
+      await acceptJob(job);
+      setSelectedJob(null);
+      setShowNegotiation(false);
+      setShowAcceptSuccess(true);
+      setTimeout(() => setShowAcceptSuccess(false), 3500);
+    } finally {
+      setAcceptingId(null);
+    }
   };
 
   const openNegotiation = (job) => {
     setSelectedJob(job.id);
     setShowNegotiation(true);
     setChatMessages([
-      { sender: 'client', text: `Hello, I need help with: ${job.title}`, time: '10:30 AM' },
+      { sender: 'client', text: `Hello, I need help with: ${job.service}`, time: '10:30 AM' },
       { sender: 'client', text: 'Can you do this job?', time: '10:31 AM' },
-      { sender: 'handyman', text: 'Yes, I can handle that. When would you like me to come?', time: '10:32 AM' },
     ]);
   };
 
@@ -95,7 +122,7 @@ function HandymanDashboard() {
     <div className="space-y-6 max-w-5xl">
       <div className="flex items-center justify-between mb-2">
         <h1 className="text-2xl font-bold text-white">Dashboard</h1>
-        <div className="flex items-center gap-2 bg-navy-800 border border-white/10 rounded-full px-4 py-2 cursor-pointer" onClick={toggleStatus}>
+        <div className="flex items-center gap-2 bg-navy-800 border border-white/10 rounded-full px-4 py-2 cursor-pointer" onClick={() => toggleStatus(userStatus === 'online' ? 'working' : 'online')}>
           <Circle size={10} className={userStatus === 'online' ? 'text-[#10B981] fill-[#10B981]' : 'text-[#EF4444] fill-[#EF4444]'} />
           <span className="text-sm font-medium text-muted">{userStatus === 'online' ? 'Available' : 'Working'}</span>
         </div>
@@ -116,7 +143,7 @@ function HandymanDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <div className="bg-navy-800 rounded-xl p-5 border border-white/10">
           <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center mb-3"><Briefcase size={20} className="text-accent" /></div>
-          <p className="text-2xl font-bold text-white">6</p>
+          <p className="text-2xl font-bold text-white">{activeJobs.length}</p>
           <p className="text-sm text-muted">Active Jobs</p>
         </div>
         <div className="bg-navy-800 rounded-xl p-5 border border-white/10">
@@ -133,7 +160,10 @@ function HandymanDashboard() {
       <div>
         <h3 className="font-bold text-white text-lg mb-3 flex items-center gap-2"><Bell size={18} />Recent Notifications</h3>
         <div className="space-y-2">
-          {MOCK_NOTIFICATIONS.map((notif) => (
+          {notifications.length === 0 && (
+            <EmptyState icon={Bell} title="No notifications yet" message="Job offers, price agreements and ratings will appear here in real time." />
+          )}
+          {notifications.map((notif) => (
             <div key={notif.id} onClick={() => markAsRead(notif.id)} className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-all ${notif.read ? 'bg-navy-800 border-white/10' : 'bg-accent/10 border-accent/25'}`}>
               <Bell size={18} className={`mt-0.5 ${notif.read ? 'text-muted/60' : 'text-accent'}`} />
               <div className="flex-1 min-w-0">
@@ -150,7 +180,7 @@ function HandymanDashboard() {
 
   const renderAvailableJobs = () => (
     <div className="space-y-3">
-      {MOCK_JOBS.filter((j) => j.status === 'available').map((job) => (
+      {available.map((job) => (
         <div key={job.id} className="bg-navy-800 rounded-xl border border-white/10 shadow-sm overflow-hidden">
           <div className="p-4 cursor-pointer" onClick={() => selectedJob === job.id ? setSelectedJob(null) : openNegotiation(job)}>
             <div className="flex items-start justify-between mb-2">
@@ -164,7 +194,6 @@ function HandymanDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xl font-bold text-white">{formatNaira(job.offeredPrice)}</p>
-                <p className="text-xs text-muted line-through">{formatNaira(job.originalPrice)}</p>
                 <p className="text-[10px] text-[#10B981] font-medium mt-0.5">After 2% commission: {formatNaira(job.earningsAfterCommission)}</p>
               </div>
               <div className="text-right">
@@ -192,43 +221,52 @@ function HandymanDashboard() {
                 </div>
               </div>
               <div className="p-3 border-t border-white/10 bg-navy-800">
-                <button className="w-full py-2.5 bg-[#10B981] text-white rounded-xl text-sm font-semibold hover:bg-emerald-600">Accept Job - {formatNaira(job.offeredPrice)}</button>
+                <button
+                  onClick={() => handleAccept(job)}
+                  disabled={acceptingId === job.id}
+                  className="w-full py-2.5 bg-[#10B981] text-white rounded-xl text-sm font-semibold hover:bg-emerald-600 disabled:opacity-60 flex items-center justify-center gap-2"
+                >
+                  {acceptingId === job.id ? <><Loader2 size={15} className="animate-spin" /> Accepting...</> : <>Accept Job - {formatNaira(job.offeredPrice)}</>}
+                </button>
               </div>
             </div>
           )}
         </div>
       ))}
-      {MOCK_JOBS.filter((j) => j.status === 'available').length === 0 && (
-        <EmptyState icon={Wrench} title="No available jobs" message="New job requests will appear here as customers book services." />
+      {available.length === 0 && (
+        <EmptyState icon={Wrench} title="No available jobs" message="New job requests will appear here live as customers book services." />
       )}
     </div>
   );
 
   const renderActiveJobs = () => (
     <div className="space-y-3">
-      {MOCK_JOBS.filter((j) => j.status === 'active').map((job) => (
+      {activeJobs.map((job) => (
         <div key={job.id} className="bg-navy-800 rounded-xl border border-white/10 shadow-sm p-4">
           <div className="flex items-start justify-between mb-3">
             <div>
               <h4 className="font-bold text-white">{job.title}</h4>
               <div className="flex items-center gap-1 mt-1"><User size={12} className="text-muted" /><span className="text-xs text-muted">{job.clientName}</span></div>
             </div>
-            <div className="flex items-center gap-1.5 text-sm font-bold text-accent"><Clock size={16} />{job.timer}</div>
+            <div className="flex items-center gap-1.5 text-sm font-bold text-accent"><Clock size={16} />Live</div>
           </div>
-          <div className="flex items-center gap-2 text-xs text-muted mb-3"><MapPin size={12} />{job.clientAddress}</div>
+          <div className="flex items-center gap-2 text-xs text-muted mb-3"><MapPin size={12} />{job.location}</div>
           <div className="flex items-center justify-between py-2 border-t border-white/10">
-            <p className="font-bold text-white">{formatNaira(job.agreedPrice || job.offeredPrice)}</p>
-            <button onClick={() => handleEndJob(job.id)} className="px-5 py-2 bg-[#EF4444] text-white rounded-lg text-sm font-semibold hover:bg-red-600">End Job</button>
+            <p className="font-bold text-white">{formatNaira(job.offeredPrice)}</p>
+            <div className="flex gap-2">
+              <button onClick={() => navigate(`/handyman/active-job/${job.id}`)} className="px-5 py-2 bg-accent text-white rounded-lg text-sm font-semibold hover:bg-accent-dark">Open Job</button>
+              <button onClick={() => handleEndJob(job.id)} className="px-5 py-2 bg-[#EF4444] text-white rounded-lg text-sm font-semibold hover:bg-red-600">End Job</button>
+            </div>
           </div>
         </div>
       ))}
-      {MOCK_JOBS.filter((j) => j.status === 'active').length === 0 && (
-        <EmptyState icon={Clock} title="No active jobs" message="Jobs you're working on will show up here with a live timer." />
+      {activeJobs.length === 0 && (
+        <EmptyState icon={Clock} title="No active jobs" message="Jobs you're working on will show up here with live updates." />
       )}
       {endJobResult && (
         <div className={`fixed bottom-8 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-sm p-4 rounded-xl shadow-lg z-50 ${endJobResult === 'success' ? 'bg-[#10B981] text-white' : 'bg-amber-500 text-white'}`}>
           <div className="flex items-center gap-2">
-            {endJobResult === 'success' ? <><ThumbsUp size={18} /><p className="text-sm font-medium">Job ended successfully!</p></> : <><AlertTriangle size={18} /><p className="text-sm font-medium">{endJobResult === 'waiting' ? 'Waiting for the other party...' : 'Only one party ended the job.'}</p></>}
+            {endJobResult === 'success' ? <><ThumbsUp size={18} /><p className="text-sm font-medium">End request sent — waiting for the other party to confirm.</p></> : <><AlertTriangle size={18} /><p className="text-sm font-medium">Sending end request...</p></>}
           </div>
         </div>
       )}
@@ -237,14 +275,14 @@ function HandymanDashboard() {
 
   const renderPastJobs = () => (
     <div className="space-y-3">
-      {MOCK_JOBS.filter((j) => j.status === 'past').map((job) => (
+      {pastJobs.map((job) => (
         <div key={job.id} className="bg-navy-800 rounded-xl border border-white/10 shadow-sm p-4">
           <div className="flex items-start justify-between mb-2">
             <div>
               <h4 className="font-bold text-white">{job.title}</h4>
               <div className="flex items-center gap-1 mt-1"><User size={12} className="text-muted" /><span className="text-xs text-muted">{job.clientName}</span></div>
             </div>
-            <div className="flex items-center gap-1">{job.rating && renderStars(job.rating)}</div>
+            <div className="flex items-center gap-1">{renderStars(5)}</div>
           </div>
           <div className="flex items-center gap-2 text-xs text-muted mb-2"><Calendar size={12} />Completed</div>
           <div className="flex items-center justify-between py-2 border-t border-white/10">
@@ -259,7 +297,7 @@ function HandymanDashboard() {
           </div>
         </div>
       ))}
-      {MOCK_JOBS.filter((j) => j.status === 'past').length === 0 && (
+      {pastJobs.length === 0 && (
         <EmptyState icon={History} title="No past jobs yet" message="Completed jobs and your earnings history will appear here." />
       )}
     </div>
@@ -323,6 +361,15 @@ function HandymanDashboard() {
       {activeTab === 'home' && renderHomeTab()}
       {activeTab === 'jobs' && renderJobsTab()}
       {activeTab === 'profile' && renderProfileTab()}
+
+      {showAcceptSuccess && (
+        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-sm p-4 rounded-xl shadow-lg z-50 bg-[#10B981] text-white">
+          <div className="flex items-center gap-2">
+            <ThumbsUp size={18} />
+            <p className="text-sm font-medium">Job accepted! The customer has been notified.</p>
+          </div>
+        </div>
+      )}
 
       {showDIYModal && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">

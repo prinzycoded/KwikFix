@@ -5,8 +5,10 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   updateProfile,
+  sendEmailVerification,
+  reload,
 } from 'firebase/auth';
-import { ref, get, set } from 'firebase/database';
+import { ref, get, set, onDisconnect } from 'firebase/database';
 import { auth, db, firebaseReady } from '../lib/firebase';
 
 const AuthContext = createContext(null);
@@ -29,6 +31,7 @@ export function AuthProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
+  const [firebaseUser, setFirebaseUser] = useState(null);
   const [initializing, setInitializing] = useState(true);
 
   useEffect(() => {
@@ -59,14 +62,17 @@ export function AuthProvider({ children }) {
           });
           setUserRole(role);
           setIsAuthenticated(true);
+          setFirebaseUser(user);
         } catch (err) {
           console.warn('Failed to load profile from Realtime DB', err);
           setCurrentUser({ id: user.uid, email: user.email || '', phone: user.phoneNumber || '', ...DEFAULT_PROFILE });
           setUserRole('customer');
           setIsAuthenticated(true);
+          setFirebaseUser(user);
         }
       } else {
         setCurrentUser(null);
+        setFirebaseUser(null);
         setUserRole(null);
         setIsAuthenticated(false);
       }
@@ -74,6 +80,15 @@ export function AuthProvider({ children }) {
     });
     return unsubscribe;
   }, []);
+
+  // presence: mark online + auto-offline on disconnect
+  useEffect(() => {
+    if (!auth || !db || !firebaseUser) return;
+    const presenceRef = ref(db, `presence/${firebaseUser.uid}`);
+    const offlineData = { status: 'offline', lastSeen: new Date().toISOString() };
+    onDisconnect(presenceRef).set(offlineData);
+    set(presenceRef, { status: 'online', lastSeen: new Date().toISOString() }).catch(() => {});
+  }, [firebaseUser]);
 
   const writeProfile = async (uid, data) => {
     const profile = {
@@ -106,6 +121,7 @@ export function AuthProvider({ children }) {
     });
     const profile = await writeProfile(cred.user.uid, data);
     setCurrentUser({ id: cred.user.uid, ...profile });
+    setFirebaseUser(cred.user);
     setUserRole(profile.role);
     setIsAuthenticated(true);
     return cred.user;
@@ -115,17 +131,32 @@ export function AuthProvider({ children }) {
     if (auth) await signOut(auth);
   };
 
+  const sendVerificationEmail = async () => {
+    if (!auth || !firebaseUser) throw new Error('You must be signed in');
+    await sendEmailVerification(firebaseUser);
+  };
+
+  const refreshUser = async () => {
+    if (!auth || !firebaseUser) return;
+    await reload(firebaseUser);
+    setFirebaseUser({ ...firebaseUser });
+  };
+
   return (
     <AuthContext.Provider
       value={{
         isAuthenticated,
         userRole,
         currentUser,
+        firebaseUser,
+        isEmailVerified: Boolean(firebaseUser?.emailVerified),
         initializing,
         firebaseReady,
         login,
         signup,
         logout,
+        sendVerificationEmail,
+        refreshUser,
       }}
     >
       {children}

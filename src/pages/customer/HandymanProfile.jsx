@@ -14,7 +14,7 @@ const portfolioItems = [
 export default function HandymanProfile() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { addBooking } = useApp();
+  const { createBooking } = useApp();
   const service = searchParams.get('service') || 'Plumbing';
   const date = searchParams.get('date') || '';
   const time = searchParams.get('time') || '';
@@ -22,27 +22,37 @@ export default function HandymanProfile() {
   const [proposedPrice, setProposedPrice] = useState(20000);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [agreedPrice, setAgreedPrice] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
-  const confirmBooking = () => {
+  const confirmBooking = async () => {
     if (!agreedPrice) return;
     setShowConfirmModal(false);
-    addBooking({
-      id: `b${Date.now()}`,
-      service,
-      date,
-      time,
-      address,
-      price: Number(agreedPrice),
-      status: 'confirmed',
-    });
-    const params = new URLSearchParams({
-      service,
-      price: agreedPrice,
-      date,
-      time,
-      address,
-    });
-    navigate(`/customer/success?${params.toString()}`);
+    setSubmitting(true);
+    try {
+      const id = await createBooking({
+        service,
+        date,
+        time,
+        address,
+        price: Number(agreedPrice),
+        description: '',
+      });
+      const params = new URLSearchParams({
+        id,
+        service,
+        price: agreedPrice,
+        date,
+        time,
+        address,
+      });
+      navigate(`/customer/success?${params.toString()}`);
+    } catch (err) {
+      setError(err?.message || 'Failed to create booking. Please try again.');
+      setShowConfirmModal(true);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -121,7 +131,8 @@ export default function HandymanProfile() {
             <button onClick={() => setShowConfirmModal(false)} className="float-right"><X className="w-5 h-5 text-muted" /></button>
             <h3 className="text-lg font-bold text-white mb-3 mt-2">Enter Agreed Price</h3>
             <input type="number" value={agreedPrice} onChange={(e) => setAgreedPrice(e.target.value)} placeholder="e.g. 20000" className="w-full border border-white/15 bg-navy-700 text-white placeholder:text-muted/60 rounded-xl p-3 mb-4 focus:outline-none focus:ring-2 focus:ring-accent" />
-            <button onClick={() => { if (agreedPrice) { confirmBooking(); } }} className="w-full bg-white text-navy py-3 rounded-2xl font-bold hover:bg-slate-100">Submit Agreement</button>
+            {error && <p className="text-red-400 text-xs mb-3">{error}</p>}
+            <button onClick={() => { if (agreedPrice) { confirmBooking(); } }} disabled={submitting} className="w-full bg-white text-navy py-3 rounded-2xl font-bold hover:bg-slate-100 disabled:opacity-60">{submitting ? 'Creating booking...' : 'Submit Agreement'}</button>
           </div>
         </div>
       )}

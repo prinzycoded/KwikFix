@@ -44,6 +44,15 @@ function RequireAuth({ role, children }) {
   return children;
 }
 
+function RedirectIfAuthed({ children }) {
+  const { isAuthenticated, userRole, initializing } = useAuth();
+  if (initializing) return <LoadingScreen />;
+  if (isAuthenticated) {
+    return <Navigate to={userRole === 'handyman' ? '/handyman/dashboard' : '/customer/dashboard'} replace />;
+  }
+  return children;
+}
+
 export default function App() {
   return (
     <ThemeProvider>
@@ -53,10 +62,10 @@ export default function App() {
             <Routes>
               <Route path="/" element={<LandingPage />} />
 
-              <Route path="/service-selection" element={<ServiceSelection />} />
-              <Route path="/booking-form" element={<BookingForm />} />
-              <Route path="/auth" element={<CustomerAuth />} />
-              <Route path="/matching" element={<RequireAuth><MatchingAnimation /></RequireAuth>} />
+              <Route path="/service-selection" element={<RequireAuth role="customer"><ServiceSelection /></RequireAuth>} />
+              <Route path="/booking-form" element={<RequireAuth role="customer"><BookingForm /></RequireAuth>} />
+              <Route path="/auth" element={<RedirectIfAuthed><CustomerAuth /></RedirectIfAuthed>} />
+              <Route path="/matching" element={<RequireAuth role="customer"><MatchingAnimation /></RequireAuth>} />
               <Route path="/customer/handyman-profile" element={<RequireAuth role="customer"><HandymanProfile /></RequireAuth>} />
               <Route path="/customer/success" element={<RequireAuth role="customer"><SuccessScreen /></RequireAuth>} />
 
@@ -65,12 +74,13 @@ export default function App() {
               <Route path="/customer/active-job/:id" element={<RequireAuth role="customer"><DashboardLayout><ActiveJobScreen /></DashboardLayout></RequireAuth>} />
               <Route path="/customer/chat/:id" element={<RequireAuth role="customer"><DashboardLayout><ChatPopup /></DashboardLayout></RequireAuth>} />
 
-              <Route path="/handyman/login" element={<HandymanSetup />} />
+              <Route path="/handyman/login" element={<RedirectIfAuthed><HandymanSetup /></RedirectIfAuthed>} />
               <Route path="/handyman/dashboard" element={<RequireAuth role="handyman"><DashboardLayout><HandymanDashboard /></DashboardLayout></RequireAuth>} />
               <Route path="/handyman/withdraw" element={<RequireAuth role="handyman"><DashboardLayout><WithdrawFunds /></DashboardLayout></RequireAuth>} />
               <Route path="/handyman/portfolio" element={<RequireAuth role="handyman"><DashboardLayout><PortfolioUpload /></DashboardLayout></RequireAuth>} />
               <Route path="/handyman/settings" element={<RequireAuth role="handyman"><DashboardLayout><HandymanSettings /></DashboardLayout></RequireAuth>} />
               <Route path="/handyman/active-job/:id" element={<RequireAuth role="handyman"><DashboardLayout><ActiveJobScreen /></DashboardLayout></RequireAuth>} />
+              <Route path="/handyman/chat/:id" element={<RequireAuth role="handyman"><DashboardLayout><ChatPopup /></DashboardLayout></RequireAuth>} />
 
               <Route path="/diy-sos" element={<DIYScreen />} />
 

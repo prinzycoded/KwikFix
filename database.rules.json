@@ -2,8 +2,64 @@
   "rules": {
     "users": {
       "$uid": {
-        ".read": "auth != null && auth.uid === $uid",
+        ".read": "auth != null && (auth.uid === $uid || root.child('users/' + auth.uid + '/role').val() === 'handyman')",
         ".write": "auth != null && auth.uid === $uid"
+      }
+    },
+    "handymanProfiles": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || root.child('users/' + auth.uid + '/role').val() === 'handyman' || root.child('users/' + auth.uid + '/isAdmin').val() === true)",
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    },
+    "bookings": {
+      "$customerUid": {
+        ".read": "auth != null && (auth.uid === $customerUid || root.child('users/' + auth.uid + '/role').val() === 'handyman')",
+        "$bookingId": {
+          ".read": "auth != null && (auth.uid === $customerUid || data.child('handymanId').val() === auth.uid)",
+          ".write": "auth != null && (auth.uid === $customerUid || data.child('customerUid').val() !== auth.uid && newData.child('handymanId').val() === auth.uid)"
+        }
+      }
+    },
+    "availableJobs": {
+      ".read": "auth != null",
+      "$bookingId": {
+        ".write": "auth != null && (!data.exists() && newData.child('customerUid').val() === auth.uid || newData.val() === null)"
+      }
+    },
+    "jobs": {
+      "$handymanUid": {
+        ".read": "auth != null && auth.uid === $handymanUid",
+        "$bookingId": {
+          ".read": "auth != null && (auth.uid === $handymanUid || data.child('customerUid').val() === auth.uid)",
+          ".write": "auth != null && (auth.uid === $handymanUid || newData.child('customerUid').val() === auth.uid)"
+        }
+      }
+    },
+    "notifications": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || data.child('fromUid').val() === auth.uid)",
+        ".write": "auth != null && (auth.uid === $uid || newData.child('fromUid').val() === auth.uid)"
+      }
+    },
+    "messages": {
+      "$convoId": {
+        ".read": "auth != null && $convoId.contains(auth.uid)",
+        ".write": "auth != null && $convoId.contains(auth.uid)"
+      }
+    },
+    "presence": {
+      "$uid": {
+        ".read": "auth != null",
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    },
+    "withdrawals": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        "$withdrawalId": {
+          ".write": "auth != null && auth.uid === $uid"
+        }
       }
     }
   }

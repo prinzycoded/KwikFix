@@ -108,7 +108,7 @@ const getFriendlyError = (err) => {
 
 function HandymanSetup() {
   const navigate = useNavigate();
-  const { signup, login, firebaseReady } = useAuth();
+  const { signup, login, sendVerificationEmail, firebaseReady } = useAuth();
   const { updateHandymanRegistration } = useApp();
 
   const [step, setStep] = useState(0);
@@ -321,6 +321,7 @@ function HandymanSetup() {
         permissions: { location: locationPermission, audio: audioPermission },
       });
       setShowSuccessModal(true);
+      try { await sendVerificationEmail(); } catch { /* verification email is optional */ }
     } catch (err) {
       setErrors({ acceptTerms: getFriendlyError(err) });
     } finally {
@@ -1063,7 +1064,7 @@ function HandymanSetup() {
               Account Created Successfully!
             </h2>
             <p className="text-muted text-sm mb-6">
-              Welcome to KWIKFIX! Your handyman profile has been created.
+              Welcome to KWIKFIX! Your handyman profile has been created. We've sent a verification link to your email — click it before accepting jobs.
             </p>
             <button
               onClick={() => {

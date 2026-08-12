@@ -2,11 +2,13 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, AlertTriangle, CheckCircle, X } from 'lucide-react';
 import { formatNaira } from '../../lib/format';
+import { useApp } from '../../contexts/AppContext';
 
 const NIGERIAN_BANKS = ['Access Bank', 'First Bank of Nigeria', 'Guaranty Trust Bank (GTBank)', 'United Bank for Africa (UBA)', 'Zenith Bank', 'Polaris Bank', 'Fidelity Bank', 'Union Bank', 'Ecobank Nigeria', 'Stanbic IBTC Bank', 'Sterling Bank', 'Wema Bank', 'Keystone Bank', 'Unity Bank', 'Heritage Bank', 'Providus Bank', 'SunTrust Bank', 'Globus Bank', 'Titan Trust Bank', 'Lotus Bank', 'OPay Digital Services', 'PalmPay', 'Moniepoint Microfinance Bank', 'Kuda Microfinance Bank', 'Sparkle Microfinance Bank', 'VFD Microfinance Bank'];
 
 function WithdrawFunds() {
   const navigate = useNavigate();
+  const { addWithdrawal } = useApp();
   const [accountNumber, setAccountNumber] = useState('');
   const [accountName, setAccountName] = useState('');
   const [bankName, setBankName] = useState('');
@@ -14,6 +16,7 @@ function WithdrawFunds() {
   const [errors, setErrors] = useState({});
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const inputClass = 'w-full px-4 py-3 rounded-lg border border-white/15 bg-navy-700 text-white placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent text-sm transition-all';
   const labelClass = 'block text-sm font-semibold text-white mb-1.5';
@@ -31,7 +34,22 @@ function WithdrawFunds() {
   };
 
   const handleSubmit = () => { if (validate()) setShowConfirmModal(true); };
-  const handleConfirm = () => { setShowConfirmModal(false); setShowSuccess(true); setTimeout(() => { setShowSuccess(false); navigate(-1); }, 2500); };
+  const handleConfirm = async () => {
+    setShowConfirmModal(false);
+    setSubmitting(true);
+    try {
+      await addWithdrawal({
+        accountNumber: accountNumber.replace(/\s/g, ''),
+        accountName,
+        bankName,
+        amount: Number(amount),
+      });
+      setShowSuccess(true);
+      setTimeout(() => { setShowSuccess(false); navigate(-1); }, 2500);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   const renderError = (field) => {
     if (!errors[field]) return null;
@@ -104,7 +122,7 @@ function WithdrawFunds() {
             </div>
             <div className="flex gap-3">
               <button onClick={() => setShowConfirmModal(false)} className="flex-1 py-2.5 border border-white/15 rounded-xl text-sm font-semibold text-muted hover:bg-white/5">Cancel</button>
-              <button onClick={handleConfirm} className="flex-1 py-2.5 bg-accent text-white rounded-xl text-sm font-semibold hover:bg-accent-dark">Confirm</button>
+              <button onClick={handleConfirm} disabled={submitting} className="flex-1 py-2.5 bg-accent text-white rounded-xl text-sm font-semibold hover:bg-accent-dark disabled:opacity-60">{submitting ? 'Submitting...' : 'Confirm'}</button>
             </div>
           </div>
         </div>

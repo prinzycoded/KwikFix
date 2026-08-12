@@ -26,6 +26,20 @@ export default function CustomerDashboard() {
 
   const openBooking = (id) => navigate(`/customer/active-job/${id}`);
 
+  const activeBookings = bookings.filter((b) => b.status !== 'completed' && b.status !== 'cancelled');
+  const completedBookings = bookings.filter((b) => b.status === 'completed');
+
+  const statusBadge = (booking) => {
+    const map = {
+      pending: { tone: 'warning', label: 'Pending' },
+      accepted: { tone: 'info', label: 'Accepted' },
+      active: { tone: 'success', label: 'In Progress' },
+      completed: { tone: 'success', label: 'Completed' },
+    };
+    const cfg = map[booking.status] || { tone: 'warning', label: booking.status || 'Pending' };
+    return <Badge tone={cfg.tone}>{cfg.label}</Badge>;
+  };
+
   return (
     <div className="min-h-screen max-w-5xl">
       <div className="flex items-center gap-3 mb-6">
@@ -37,15 +51,15 @@ export default function CustomerDashboard() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <StatCard icon={Briefcase} value={String(bookings.length)} label="Active Bookings" />
-        <StatCard icon={Home} value="12" label="Completed" iconBg="bg-emerald-500/15" iconColor="text-emerald-400" valueClass="text-white" />
+        <StatCard icon={Briefcase} value={String(activeBookings.length)} label="Active Bookings" />
+        <StatCard icon={Home} value={String(completedBookings.length)} label="Completed" iconBg="bg-emerald-500/15" iconColor="text-emerald-400" valueClass="text-white" />
         <StatCard icon={Star} value="4.9" label="Average Rating" iconBg="bg-amber-500/15" iconColor="text-amber-400" valueClass="text-amber-400" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div>
           <h2 className="font-bold text-white mb-3">Active Bookings</h2>
-          {bookings.length === 0 ? (
+          {activeBookings.length === 0 ? (
             <EmptyState
               icon={PackageOpen}
               title="No bookings yet"
@@ -55,7 +69,7 @@ export default function CustomerDashboard() {
             />
           ) : (
             <div className="space-y-3">
-              {bookings.map((b) => (
+              {activeBookings.map((b) => (
                 <button
                   key={b.id}
                   onClick={() => openBooking(b.id)}
@@ -63,7 +77,7 @@ export default function CustomerDashboard() {
                 >
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-bold text-white">{b.service}</span>
-                    <Badge tone="success">In Progress</Badge>
+                    {statusBadge(b)}
                   </div>
                   <p className="text-sm text-muted flex items-center gap-1"><MapPin className="w-3 h-3 shrink-0" /> {b.address || 'Umuahia, Abia State'}</p>
                   <p className="text-xs text-faint mt-1 flex items-center gap-1">
@@ -88,14 +102,14 @@ export default function CustomerDashboard() {
             </button>
           </div>
 
-          {bookings.length > 0 && (
+          {activeBookings.length > 0 && (
             <div className="mt-3 bg-navy-800 border border-white/10 rounded-2xl p-4">
               <div className="flex items-center gap-2 mb-1">
                 <Clock size={16} className="text-accent" />
                 <p className="font-medium text-white text-sm">Handyman arriving soon?</p>
               </div>
               <p className="text-xs text-muted">Track your active job and see live updates from your KWIKFIXER.</p>
-              <button onClick={() => openBooking(bookings[0].id)} className="mt-3 w-full py-2.5 bg-white text-navy rounded-xl text-sm font-semibold hover:bg-slate-100 transition-colors">
+              <button onClick={() => openBooking(activeBookings[0].id)} className="mt-3 w-full py-2.5 bg-white text-navy rounded-xl text-sm font-semibold hover:bg-slate-100 transition-colors">
                 View Active Job
               </button>
             </div>
