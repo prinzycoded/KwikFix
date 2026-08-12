@@ -44,7 +44,10 @@ export default function BookingForm() {
   const handleSubmit = (e) => {
     e.preventDefault()
     if (validate()) {
-      const params = new URLSearchParams({ service: serviceName, date, time })
+      const finalAddress = hiringFor === 'someoneElse'
+        ? fullAddress
+        : (useLiveLocation ? 'Live location (shared when the handyman arrives)' : address)
+      const params = new URLSearchParams({ service: serviceName, date, time, address: finalAddress })
       navigate(`/auth?${params.toString()}`)
     }
   }

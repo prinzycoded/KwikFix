@@ -32,7 +32,7 @@ export default function ActiveJobScreen() {
         serviceType: booking.service,
         providerName: 'KWIKFIXER',
         clientName: currentUser?.fullName || 'You',
-        address: 'Umuahia, Abia State',
+        address: booking.address || 'Umuahia, Abia State',
         agreedPrice: booking.price || 0,
         time: timeOptionLabels[booking.time] || booking.time || 'Flexible',
         date: booking.date || '',

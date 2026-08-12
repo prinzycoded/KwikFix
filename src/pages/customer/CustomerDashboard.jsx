@@ -65,7 +65,7 @@ export default function CustomerDashboard() {
                     <span className="font-bold text-white">{b.service}</span>
                     <Badge tone="success">In Progress</Badge>
                   </div>
-                  <p className="text-sm text-muted flex items-center gap-1"><MapPin className="w-3 h-3 shrink-0" /> Umuahia, Abia State</p>
+                  <p className="text-sm text-muted flex items-center gap-1"><MapPin className="w-3 h-3 shrink-0" /> {b.address || 'Umuahia, Abia State'}</p>
                   <p className="text-xs text-faint mt-1 flex items-center gap-1">
                     <Calendar className="w-3 h-3" /> {formatDate(b.date || new Date())}
                     {b.time && <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {timeOptionLabels[b.time] || b.time}</span>}

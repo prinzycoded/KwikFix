@@ -92,13 +92,32 @@ function getAge(dateString) {
   return age;
 }
 
+const getFriendlyError = (err) => {
+  const code = err?.code || '';
+  const messages = {
+    'auth/email-already-in-use':
+      'An account with this email already exists. Try logging in instead, or use a different email.',
+    'auth/invalid-email': 'Please enter a valid email address',
+    'auth/weak-password': 'Password must be at least 6 characters',
+    'auth/too-many-requests': 'Too many attempts. Please try again later',
+    'auth/operation-not-allowed': 'This sign-in method is not enabled in Firebase',
+    'auth/network-request-failed': 'Network error. Check your connection and try again',
+  };
+  return messages[code] || (err?.message || 'Failed to create account. Please try again');
+};
+
 function HandymanSetup() {
   const navigate = useNavigate();
-  const { signup, firebaseReady } = useAuth();
+  const { signup, login, firebaseReady } = useAuth();
   const { updateHandymanRegistration } = useApp();
 
   const [step, setStep] = useState(0);
   const [errors, setErrors] = useState({});
+  const [view, setView] = useState('signup');
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
+  const [loginSubmitting, setLoginSubmitting] = useState(false);
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -303,11 +322,74 @@ function HandymanSetup() {
       });
       setShowSuccessModal(true);
     } catch (err) {
-      setErrors({ acceptTerms: err?.message || 'Failed to create account. Please try again' });
+      setErrors({ acceptTerms: getFriendlyError(err) });
     } finally {
       setCreating(false);
     }
   };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoginError('');
+    if (!firebaseReady) {
+      setLoginError('Firebase is not configured. Add your config to .env (see .env.example)');
+      return;
+    }
+    if (!loginEmail.trim() || !loginPassword.trim()) {
+      setLoginError('Please fill in all fields');
+      return;
+    }
+    setLoginSubmitting(true);
+    try {
+      await login(loginEmail, loginPassword);
+      navigate('/handyman/dashboard');
+    } catch (err) {
+      setLoginError(getFriendlyError(err));
+    } finally {
+      setLoginSubmitting(false);
+    }
+  };
+
+  const renderLoginView = () => (
+    <div className="space-y-5 animate-fadeIn">
+      <h2 className="text-2xl font-bold text-white mb-6">Log In</h2>
+      <form onSubmit={handleLogin} className="space-y-5">
+        <div>
+          <label className={labelClass}>Email Address</label>
+          <input
+            type="email"
+            placeholder="e.g. johnfixer@email.com"
+            value={loginEmail}
+            onChange={(e) => setLoginEmail(e.target.value)}
+            className={inputClass}
+          />
+        </div>
+        <div>
+          <label className={labelClass}>Password</label>
+          <input
+            type="password"
+            placeholder="Your password"
+            value={loginPassword}
+            onChange={(e) => setLoginPassword(e.target.value)}
+            className={inputClass}
+          />
+        </div>
+        {loginError && (
+          <p className="text-[#EF4444] text-xs flex items-center gap-1">
+            <X size={12} />
+            {loginError}
+          </p>
+        )}
+        <button
+          type="submit"
+          disabled={loginSubmitting}
+          className="w-full py-4 bg-accent text-white rounded-2xl font-bold text-lg hover:bg-accent-dark transition-all shadow-lg shadow-accent/30 disabled:opacity-60"
+        >
+          {loginSubmitting ? 'Logging in...' : 'Log In'}
+        </button>
+      </form>
+    </div>
+  );
 
   const renderStepIndicator = () => (
     <div className="flex items-center justify-center mb-8 px-4">
@@ -864,52 +946,79 @@ function HandymanSetup() {
             <ChevronLeft size={24} className="text-white" />
           </button>
           <h1 className="text-lg font-bold text-white">
-            Handyman Registration
+            {view === 'login' ? 'Handyman Login' : 'Handyman Registration'}
           </h1>
           <div className="w-10" />
         </div>
 
-        {renderStepIndicator()}
-
-        <div className="bg-navy-800 rounded-2xl p-6 border border-white/10 shadow-sm">
-          {renderStepContent()}
+        <div className="grid grid-cols-2 gap-2 mb-6 bg-navy-800 border border-white/10 rounded-xl p-1.5">
+          <button
+            onClick={() => setView('signup')}
+            className={`py-2.5 rounded-lg text-sm font-semibold transition-colors ${
+              view === 'signup' ? 'bg-accent text-white shadow-lg shadow-accent/30' : 'text-muted hover:text-white'
+            }`}
+          >
+            Register
+          </button>
+          <button
+            onClick={() => setView('login')}
+            className={`py-2.5 rounded-lg text-sm font-semibold transition-colors ${
+              view === 'login' ? 'bg-accent text-white shadow-lg shadow-accent/30' : 'text-muted hover:text-white'
+            }`}
+          >
+            Log In
+          </button>
         </div>
 
-        {step < 4 && (
-          <div className="flex justify-between mt-6">
-            <button
-              onClick={handleBack}
-              disabled={step === 0}
-              className={`px-6 py-3 rounded-xl font-semibold text-sm transition-all flex items-center gap-2
-                ${
-                  step === 0
-                    ? 'bg-white/5 text-muted/50 cursor-not-allowed'
-                    : 'bg-white/10 border border-white/15 text-white hover:bg-white/20'
-                }`}
-            >
-              <ChevronLeft size={18} />
-              Back
-            </button>
-            <button
-              onClick={handleContinue}
-              className="px-8 py-3 bg-accent text-white rounded-xl font-semibold text-sm hover:bg-accent-dark transition-all flex items-center gap-2 shadow-lg shadow-accent/30"
-            >
-              Continue
-              <ChevronRight size={18} />
-            </button>
+        {view === 'login' ? (
+          <div className="bg-navy-800 rounded-2xl p-6 border border-white/10 shadow-sm">
+            {renderLoginView()}
           </div>
-        )}
+        ) : (
+          <>
+            {renderStepIndicator()}
 
-        {step === 4 && (
-          <div className="flex justify-start mt-6">
-            <button
-              onClick={handleBack}
-              className="px-6 py-3 rounded-xl font-semibold text-sm transition-all flex items-center gap-2 bg-white/10 border border-white/15 text-white hover:bg-white/20"
-            >
-              <ChevronLeft size={18} />
-              Back
-            </button>
-          </div>
+            <div className="bg-navy-800 rounded-2xl p-6 border border-white/10 shadow-sm">
+              {renderStepContent()}
+            </div>
+
+            {step < 4 && (
+              <div className="flex justify-between mt-6">
+                <button
+                  onClick={handleBack}
+                  disabled={step === 0}
+                  className={`px-6 py-3 rounded-xl font-semibold text-sm transition-all flex items-center gap-2
+                    ${
+                      step === 0
+                        ? 'bg-white/5 text-muted/50 cursor-not-allowed'
+                        : 'bg-white/10 border border-white/15 text-white hover:bg-white/20'
+                    }`}
+                >
+                  <ChevronLeft size={18} />
+                  Back
+                </button>
+                <button
+                  onClick={handleContinue}
+                  className="px-8 py-3 bg-accent text-white rounded-xl font-semibold text-sm hover:bg-accent-dark transition-all flex items-center gap-2 shadow-lg shadow-accent/30"
+                >
+                  Continue
+                  <ChevronRight size={18} />
+                </button>
+              </div>
+            )}
+
+            {step === 4 && (
+              <div className="flex justify-start mt-6">
+                <button
+                  onClick={handleBack}
+                  className="px-6 py-3 rounded-xl font-semibold text-sm transition-all flex items-center gap-2 bg-white/10 border border-white/15 text-white hover:bg-white/20"
+                >
+                  <ChevronLeft size={18} />
+                  Back
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
 

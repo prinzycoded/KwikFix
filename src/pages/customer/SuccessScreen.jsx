@@ -1,5 +1,5 @@
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, CheckCircle, Clock, CalendarDays } from 'lucide-react';
+import { ArrowLeft, CheckCircle, Clock, CalendarDays, MapPin } from 'lucide-react';
 import { formatNaira } from '../../lib/format';
 
 const serviceNames = {
@@ -33,6 +33,7 @@ export default function SuccessScreen() {
   const price = searchParams.get('price') || '20000';
   const date = searchParams.get('date') || '';
   const time = searchParams.get('time') || '';
+  const address = searchParams.get('address') || '';
 
   const bookedDate = formatBookedDate(date);
   const timeLabel = timeOptionLabels[time] || 'at your scheduled time';
@@ -66,6 +67,12 @@ export default function SuccessScreen() {
             <p className="text-sm text-muted flex items-center gap-1"><Clock size={13} /> Time Request</p>
             <p className="font-bold text-white capitalize">{timeLabel}</p>
           </div>
+          {address && (
+            <div className="border-b border-white/10 pb-3 mb-3">
+              <p className="text-sm text-muted flex items-center gap-1"><MapPin size={13} /> Service Address</p>
+              <p className="font-bold text-white">{address}</p>
+            </div>
+          )}
           <div>
             <p className="text-sm text-muted">Agreed Price</p>
             <p className="font-bold text-accent">{formatNaira(price)}</p>

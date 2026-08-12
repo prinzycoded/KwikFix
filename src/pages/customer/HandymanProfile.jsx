@@ -18,6 +18,7 @@ export default function HandymanProfile() {
   const service = searchParams.get('service') || 'Plumbing';
   const date = searchParams.get('date') || '';
   const time = searchParams.get('time') || '';
+  const address = searchParams.get('address') || '';
   const [proposedPrice, setProposedPrice] = useState(20000);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [agreedPrice, setAgreedPrice] = useState('');
@@ -30,14 +31,16 @@ export default function HandymanProfile() {
       service,
       date,
       time,
+      address,
       price: Number(agreedPrice),
       status: 'confirmed',
     });
     const params = new URLSearchParams({
-      service: encodeURIComponent(service),
+      service,
       price: agreedPrice,
-      date: encodeURIComponent(date),
-      time: encodeURIComponent(time),
+      date,
+      time,
+      address,
     });
     navigate(`/customer/success?${params.toString()}`);
   };
