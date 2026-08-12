@@ -1,12 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Moon, Sun, Bell, Shield, LogOut, Mail, ShieldCheck, Loader2 } from 'lucide-react';
-import { useTheme } from '../../contexts/ThemeContext';
+import { Bell, Shield, LogOut, Mail, ShieldCheck, Loader2 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 export default function CustomerSettings() {
   const navigate = useNavigate();
-  const { darkMode, toggleDarkMode } = useTheme();
   const { logout, isEmailVerified, sendVerificationEmail } = useAuth();
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
@@ -60,18 +58,6 @@ export default function CustomerSettings() {
       </div>
 
       <div className="bg-navy-800 border border-white/10 rounded-2xl divide-y divide-white/10">
-        <div className="flex items-center justify-between p-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">{darkMode ? <Moon className="w-5 h-5 text-accent" /> : <Sun className="w-5 h-5 text-accent" />}</div>
-            <span className="font-medium text-white">Dark Mode</span>
-          </div>
-          <button
-            onClick={toggleDarkMode}
-            className={`relative w-12 h-6 rounded-full transition-colors ${darkMode ? 'bg-accent' : 'bg-white/20'}`}
-          >
-            <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${darkMode ? 'left-7' : 'left-1'}`} />
-          </button>
-        </div>
         <div className="flex items-center gap-3 p-4">
           <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center"><Bell className="w-5 h-5 text-muted" /></div>
           <span className="font-medium text-white">Push Notifications</span>

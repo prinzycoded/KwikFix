@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { ThemeProvider } from './contexts/ThemeContext';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { AppProvider } from './contexts/AppContext';
 import SidebarLayout from './components/SidebarLayout';
@@ -55,11 +54,10 @@ function RedirectIfAuthed({ children }) {
 
 export default function App() {
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <AppProvider>
-          <BrowserRouter>
-            <Routes>
+    <AuthProvider>
+      <AppProvider>
+        <BrowserRouter>
+          <Routes>
               <Route path="/" element={<LandingPage />} />
 
               <Route path="/service-selection" element={<RequireAuth role="customer"><ServiceSelection /></RequireAuth>} />
@@ -89,6 +87,5 @@ export default function App() {
           </BrowserRouter>
         </AppProvider>
       </AuthProvider>
-    </ThemeProvider>
   );
 }

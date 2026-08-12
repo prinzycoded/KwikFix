@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X, Home, Briefcase, User, Settings, Wrench, Calendar, Wallet, Image, LogOut } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { useTheme } from '../contexts/ThemeContext';
 import heroImg from '../assets/Kwik.img.png';
 
 const customerLinks = [
@@ -25,7 +24,6 @@ export default function SidebarLayout({ children }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { currentUser, userRole, logout } = useAuth();
-  const { darkMode, toggleDarkMode } = useTheme();
 
   const links = userRole === 'handyman' ? handymanLinks : customerLinks;
 
@@ -106,16 +104,6 @@ export default function SidebarLayout({ children }) {
         </nav>
 
         <div className="border-t border-white/10 p-3 space-y-2">
-          <button
-            onClick={toggleDarkMode}
-            className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
-              collapsed ? 'justify-center' : ''
-            } text-muted hover:bg-white/10 hover:text-white`}
-            title={collapsed ? 'Toggle Theme' : undefined}
-          >
-            <span className="text-base">{darkMode ? '☀️' : '🌙'}</span>
-            {!collapsed && <span>{darkMode ? 'Light Mode' : 'Dark Mode'}</span>}
-          </button>
           <button
             onClick={handleLogout}
             className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${

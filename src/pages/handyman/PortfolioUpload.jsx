@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, Plus, Trash2, Image as ImageIcon, X } from 'lucide-react';
 
 const MOCK_PORTFOLIO = [
-  { id: '1', url: '', title: 'Kitchen Sink Repair', date: '2026-07-15' },
-  { id: '2', url: '', title: 'Electrical Wiring', date: '2026-07-10' },
-  { id: '3', url: '', title: 'Wardrobe Assembly', date: '2026-07-05' },
-  { id: '4', url: '', title: 'Pipe Replacement', date: '2026-06-28' },
+  { id: '1', url: '', title: 'Kitchen Sink Repair', description: 'Replaced a corroded sink tap and fixed the leaking pipes underneath.', date: '2026-07-15' },
+  { id: '2', url: '', title: 'Electrical Wiring', description: 'Full rewiring of a 3-bedroom apartment with new sockets and breakers.', date: '2026-07-10' },
+  { id: '3', url: '', title: 'Wardrobe Assembly', description: 'Assembled and wall-mounted a 3-door sliding wardrobe.', date: '2026-07-05' },
+  { id: '4', url: '', title: 'Pipe Replacement', description: 'Swapped out a burst water pipe and restored full water flow.', date: '2026-06-28' },
 ];
 
 const PLACEHOLDER_COLORS = ['bg-accent/15', 'bg-[#10B981]/15', 'bg-purple-500/15', 'bg-amber-500/15', 'bg-pink-500/15', 'bg-teal-500/15'];
@@ -15,6 +15,9 @@ function PortfolioUpload() {
   const navigate = useNavigate();
   const [images, setImages] = useState(MOCK_PORTFOLIO);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
+  const [pendingImage, setPendingImage] = useState(null);
+  const [pendingTitle, setPendingTitle] = useState('');
+  const [pendingDescription, setPendingDescription] = useState('');
   const fileInputRef = useRef(null);
 
   const pickImage = () => {
@@ -25,10 +28,24 @@ function PortfolioUpload() {
     const file = e.target.files?.[0];
     if (file) {
       const url = URL.createObjectURL(file);
-      const title = file.name.replace(/\.[^.]+$/, '') || 'Untitled Work';
-      setImages((prev) => [...prev, { id: Date.now().toString(), url, title, date: new Date().toISOString().split('T')[0] }]);
+      setPendingImage(url);
+      setPendingTitle(file.name.replace(/\.[^.]+$/, '') || 'Untitled Work');
+      setPendingDescription('');
     }
     e.target.value = '';
+  };
+
+  const closePendingModal = () => {
+    setPendingImage(null);
+    setPendingTitle('');
+    setPendingDescription('');
+  };
+
+  const savePendingImage = () => {
+    if (!pendingImage) return;
+    const title = pendingTitle.trim() || 'Untitled Work';
+    setImages((prev) => [...prev, { id: Date.now().toString(), url: pendingImage, title, description: pendingDescription.trim(), date: new Date().toISOString().split('T')[0] }]);
+    closePendingModal();
   };
 
   const removeImage = (id) => {
@@ -75,13 +92,57 @@ function PortfolioUpload() {
                 </div>
                 <div className="p-3">
                   <p className="text-sm font-medium text-white truncate">{img.title}</p>
-                  <p className="text-xs text-muted">{img.date}</p>
+                  {img.description && <p className="text-xs text-muted mt-1 line-clamp-2">{img.description}</p>}
+                  <p className="text-xs text-muted mt-1">{img.date}</p>
                 </div>
               </div>
             ))}
           </div>
           <button onClick={pickImage} className="fixed bottom-8 right-8 w-14 h-14 bg-accent text-white rounded-full shadow-xl hover:bg-accent-dark flex items-center justify-center z-30"><Plus size={28} /></button>
         </>
+      )}
+
+      {pendingImage && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={closePendingModal}>
+          <div className="bg-navy-800 border border-white/10 rounded-2xl p-6 w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-white">Add Portfolio Work</h3>
+              <button onClick={closePendingModal} className="p-1.5 hover:bg-white/10 rounded-lg"><X size={18} className="text-muted" /></button>
+            </div>
+
+            <div className="aspect-video rounded-xl overflow-hidden bg-navy-700 border border-white/10 mb-4 flex items-center justify-center">
+              <img src={pendingImage} alt="Preview" className="w-full h-full object-cover" />
+            </div>
+
+            <div className="space-y-3">
+              <div>
+                <label className="block text-sm font-semibold text-white mb-1.5">Title</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Kitchen Sink Repair"
+                  value={pendingTitle}
+                  onChange={(e) => setPendingTitle(e.target.value)}
+                  className="w-full px-4 py-3 rounded-lg border border-white/15 bg-navy-700 text-white placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-accent text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-white mb-1.5">Description</label>
+                <textarea
+                  rows={3}
+                  placeholder="Describe the work you did (e.g. materials used, problem solved)..."
+                  value={pendingDescription}
+                  onChange={(e) => setPendingDescription(e.target.value)}
+                  className="w-full px-4 py-3 rounded-lg border border-white/15 bg-navy-700 text-white placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-accent text-sm resize-none"
+                />
+                <p className="text-xs text-muted mt-1">A short description helps customers understand your work.</p>
+              </div>
+            </div>
+
+            <button onClick={savePendingImage} className="mt-5 w-full py-3.5 bg-accent text-white rounded-xl font-bold hover:bg-accent-dark">
+              Add to Portfolio
+            </button>
+          </div>
+        </div>
       )}
 
       {showDeleteConfirm && (

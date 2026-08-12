@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, Moon, Sun, Bell, Globe, Lock, ChevronRight, Smartphone, Info, LogOut, Mail, ShieldCheck, Loader2 } from 'lucide-react';
+import { Bell, Globe, Lock, ChevronRight, Smartphone, Info, LogOut, Mail, ShieldCheck, Loader2 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
-import { useTheme } from '../../contexts/ThemeContext';
 
 function SettingsToggle({ icon, label, description, value, onChange }) {
   return (
@@ -39,7 +38,6 @@ function SettingsLink({ icon, label, description, onClick }) {
 function HandymanSettings() {
   const navigate = useNavigate();
   const { logout, isEmailVerified, sendVerificationEmail } = useAuth();
-  const { darkMode, toggleDarkMode } = useTheme();
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [locationEnabled, setLocationEnabled] = useState(true);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
@@ -89,13 +87,6 @@ function HandymanSettings() {
             </>
           )}
         </div>
-        <div className="bg-navy-800 border border-white/10 rounded-2xl overflow-hidden">
-          <div className="px-4 pt-4 pb-2"><h2 className="text-xs font-semibold text-muted uppercase tracking-wider">Appearance</h2></div>
-          <div className="border-t border-white/10">
-            <SettingsToggle icon={darkMode ? <Moon size={18} className="text-accent" /> : <Sun size={18} className="text-accent" />} label="Dark Mode" description={darkMode ? 'Dark theme is active' : 'Switch to dark theme'} value={darkMode} onChange={toggleDarkMode} />
-          </div>
-        </div>
-
         <div className="bg-navy-800 border border-white/10 rounded-2xl overflow-hidden">
           <div className="px-4 pt-4 pb-2"><h2 className="text-xs font-semibold text-muted uppercase tracking-wider">Preferences</h2></div>
           <div className="border-t border-white/10">
