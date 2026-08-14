@@ -26,7 +26,7 @@ export default function ChatPopup() {
   const isHandyman = userRole === 'handyman';
   const otherName = isHandyman
     ? record?.customerName || currentUser?.fullName || 'Customer'
-    : record?.handymanName || 'Adebayo Olamide';
+    : record?.handymanName || 'KWIKFIXER';
   const otherUid = isHandyman ? customerUid : handymanUid;
   const otherOnline = otherUid && presenceStatuses[otherUid]?.status === 'online';
 

@@ -54,6 +54,12 @@
         ".write": "auth != null && auth.uid === $uid"
       }
     },
+    "registeredHandymen": {
+      ".read": "auth != null",
+      "$uid": {
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    },
     "withdrawals": {
       "$uid": {
         ".read": "auth != null && auth.uid === $uid",

@@ -100,7 +100,7 @@ function HandymanSettings() {
         <div className="bg-navy-800 border border-white/10 rounded-2xl overflow-hidden">
           <div className="px-4 pt-4 pb-2"><h2 className="text-xs font-semibold text-muted uppercase tracking-wider">Account</h2></div>
           <div className="border-t border-white/10">
-            <SettingsLink icon={<Lock size={18} className="text-accent" />} label="Privacy & Security" description="Manage your account security" onClick={() => {}} />
+            <SettingsLink icon={<Lock size={18} className="text-accent" />} label="Privacy & Security" description="Manage your account security" onClick={() => navigate('/handyman/privacy')} />
             <div className="border-t border-white/10">
               <SettingsLink icon={<Smartphone size={18} className="text-accent" />} label="App Version" description="v1.0.0 (Build 1)" onClick={() => {}} />
             </div>

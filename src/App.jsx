@@ -20,6 +20,7 @@ import HandymanDashboard from './pages/handyman/HandymanDashboard';
 import WithdrawFunds from './pages/handyman/WithdrawFunds';
 import PortfolioUpload from './pages/handyman/PortfolioUpload';
 import HandymanSettings from './pages/handyman/HandymanSettings';
+import PrivacySecurity from './pages/handyman/PrivacySecurity';
 
 import DIYScreen from './pages/customer/DIYScreen';
 
@@ -77,6 +78,7 @@ export default function App() {
               <Route path="/handyman/withdraw" element={<RequireAuth role="handyman"><DashboardLayout><WithdrawFunds /></DashboardLayout></RequireAuth>} />
               <Route path="/handyman/portfolio" element={<RequireAuth role="handyman"><DashboardLayout><PortfolioUpload /></DashboardLayout></RequireAuth>} />
               <Route path="/handyman/settings" element={<RequireAuth role="handyman"><DashboardLayout><HandymanSettings /></DashboardLayout></RequireAuth>} />
+              <Route path="/handyman/privacy" element={<RequireAuth role="handyman"><DashboardLayout><PrivacySecurity /></DashboardLayout></RequireAuth>} />
               <Route path="/handyman/active-job/:id" element={<RequireAuth role="handyman"><DashboardLayout><ActiveJobScreen /></DashboardLayout></RequireAuth>} />
               <Route path="/handyman/chat/:id" element={<RequireAuth role="handyman"><DashboardLayout><ChatPopup /></DashboardLayout></RequireAuth>} />
 

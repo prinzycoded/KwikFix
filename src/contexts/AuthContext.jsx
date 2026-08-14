@@ -142,6 +142,64 @@ export function AuthProvider({ children }) {
     setFirebaseUser({ ...firebaseUser });
   };
 
+  // For accounts created directly in the Firebase console: the first time the
+  // handyman signs in through the app, a profile + directory entry is created
+  // so the client can see and connect to them. No handyman can ever be matched
+  // without a real Firebase Auth account.
+  const bootstrapHandymanProfile = async ({ fullName, phone } = {}) => {
+    if (!auth || !db || !firebaseUser) return null;
+    const uid = firebaseUser.uid;
+    const existing = await get(ref(db, `users/${uid}`));
+    if (existing.exists()) {
+      const profile = existing.val();
+      setCurrentUser({
+        id: uid,
+        fullName: profile.fullName || fullName || firebaseUser.displayName || '',
+        email: profile.email || firebaseUser.email || '',
+        phone: profile.phone || phone || '',
+        role: profile.role || 'handyman',
+        avatar: profile.avatar || firebaseUser.photoURL || '',
+        username: profile.username || '',
+        niche: profile.niche || 'other',
+        rating: profile.rating || 0,
+        isVerified: profile.isVerified || false,
+        isDIYProfessional: profile.isDIYProfessional || false,
+        status: profile.status || 'offline',
+        createdAt: profile.createdAt || new Date().toISOString(),
+      });
+      setUserRole(profile.role || 'handyman');
+      setIsAuthenticated(true);
+      return profile;
+    }
+    const displayName = fullName || firebaseUser.displayName || (firebaseUser.email || '').split('@')[0];
+    const profile = {
+      id: uid,
+      ...DEFAULT_PROFILE,
+      fullName: displayName,
+      email: firebaseUser.email || '',
+      phone: phone || '',
+      role: 'handyman',
+      username: displayName.replace(/\s+/g, '').toLowerCase(),
+      createdAt: new Date().toISOString(),
+    };
+    await set(ref(db, `users/${uid}`), profile);
+    await set(ref(db, `registeredHandymen/${uid}`), {
+      uid,
+      fullName: profile.fullName,
+      username: profile.username,
+      profilePicture: '',
+      niche: profile.niche,
+      yearsOfExperience: 0,
+      rating: 0,
+      isVerified: false,
+      createdAt: profile.createdAt,
+    });
+    setCurrentUser({ id: uid, ...profile });
+    setUserRole('handyman');
+    setIsAuthenticated(true);
+    return profile;
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -157,6 +215,7 @@ export function AuthProvider({ children }) {
         logout,
         sendVerificationEmail,
         refreshUser,
+        bootstrapHandymanProfile,
       }}
     >
       {children}

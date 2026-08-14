@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Home, Briefcase, Star, Wrench, Settings, MapPin, Calendar, Clock, PackageOpen, ChevronRight } from 'lucide-react';
+import { Home, Briefcase, Star, Wrench, Settings, MapPin, Calendar, Clock, PackageOpen, ChevronRight, Navigation } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useApp } from '../../contexts/AppContext';
 import { formatDate } from '../../lib/format';
@@ -7,6 +7,7 @@ import Avatar from '../../components/Avatar';
 import Badge from '../../components/Badge';
 import StatCard from '../../components/StatCard';
 import EmptyState from '../../components/EmptyState';
+import useLiveTracking from '../../hooks/useLiveTracking';
 
 const timeOptionLabels = {
   '15': 'within 15 mins',
@@ -28,6 +29,10 @@ export default function CustomerDashboard() {
 
   const activeBookings = bookings.filter((b) => b.status !== 'completed' && b.status !== 'cancelled');
   const completedBookings = bookings.filter((b) => b.status === 'completed');
+
+  const nextBooking = activeBookings[0];
+  const live = useLiveTracking(nextBooking?.tracking);
+  const hasTracking = live.status && live.status !== 'none';
 
   const statusBadge = (booking) => {
     const map = {
@@ -108,8 +113,24 @@ export default function CustomerDashboard() {
                 <Clock size={16} className="text-accent" />
                 <p className="font-medium text-white text-sm">Handyman arriving soon?</p>
               </div>
-              <p className="text-xs text-muted">Track your active job and see live updates from your KWIKFIXER.</p>
-              <button onClick={() => openBooking(activeBookings[0].id)} className="mt-3 w-full py-2.5 bg-white text-navy rounded-xl text-sm font-semibold hover:bg-slate-100 transition-colors">
+              {hasTracking ? (
+                live.status === 'arrived' ? (
+                  <p className="text-xs text-[#10B981] font-medium flex items-center gap-1 mt-1">
+                    <MapPin size={12} /> Your KWIKFIXER has arrived at your location
+                  </p>
+                ) : (
+                  <div className="flex items-center justify-between mt-2">
+                    <p className="text-xs text-muted flex items-center gap-1">
+                      <Navigation size={12} className="text-[#10B981] animate-pulse" />
+                      {nextBooking.handymanName || 'Your KWIKFIXER'} is on the way
+                    </p>
+                    <p className="text-lg font-bold text-accent">~{live.etaMinutes} min</p>
+                  </div>
+                )
+              ) : (
+                <p className="text-xs text-muted">Tracking starts once a KWIKFIXER accepts your job.</p>
+              )}
+              <button onClick={() => openBooking(nextBooking.id)} className="mt-3 w-full py-2.5 bg-white text-navy rounded-xl text-sm font-semibold hover:bg-slate-100 transition-colors">
                 View Active Job
               </button>
             </div>

@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useRef, useState, useCallback } f
 import { ref, onValue, push, set, update, remove, get } from 'firebase/database';
 import { db } from '../lib/firebase';
 import { useAuth } from './AuthContext';
+import { buildMockJourney } from '../lib/mockData';
 
 const defaultHandymanRegistration = {
   step1: {
@@ -58,13 +59,14 @@ export function AppProvider({ children }) {
   const [chatConvoId, setChatConvoId] = useState(null);
   const [presenceStatuses, setPresenceStatuses] = useState({});
   const [withdrawals, setWithdrawals] = useState([]);
+  const [registeredHandymen, setRegisteredHandymen] = useState([]);
   const [connectionReady, setConnectionReady] = useState(false);
 
   const handymanRegistrationRef = useRef(defaultHandymanRegistration);
   const [handymanRegistration, setHandymanRegistrationState] = useState(defaultHandymanRegistration);
 
   // demo-mode (no Firebase config) fallback stores
-  const demo = useRef({ bookings: [], jobs: [], notifications: [] });
+  const demo = useRef({ bookings: [], jobs: [], notifications: [], registeredHandymen: {} });
 
   // ---------- real-time listeners ----------
   useEffect(() => {
@@ -72,29 +74,42 @@ export function AppProvider({ children }) {
 
     const unsubs = [];
 
+    // Permission-denied reads are ignored (they log to console) so a single
+    // denied path can never crash the whole app.
+    const ignore = (err) => console.warn('Listener denied', err?.code || err?.message || err);
+
     if (uid) {
       unsubs.push(
-        onValue(ref(db, `bookings/${uid}`), (snap) => setBookings(toArray(snap.val()))),
+        onValue(ref(db, `bookings/${uid}`), (snap) => setBookings(toArray(snap.val())), ignore),
       );
       unsubs.push(
-        onValue(ref(db, `jobs/${uid}`), (snap) => setJobs(toArray(snap.val()))),
+        onValue(ref(db, `jobs/${uid}`), (snap) => setJobs(toArray(snap.val())), ignore),
       );
       unsubs.push(
-        onValue(ref(db, `notifications/${uid}`), (snap) => setNotifications(toArray(snap.val()))),
+        onValue(ref(db, `notifications/${uid}`), (snap) => setNotifications(toArray(snap.val())), ignore),
       );
       unsubs.push(
-        onValue(ref(db, `withdrawals/${uid}`), (snap) => setWithdrawals(toArray(snap.val()))),
+        onValue(ref(db, `withdrawals/${uid}`), (snap) => setWithdrawals(toArray(snap.val())), ignore),
       );
     }
 
     if (role === 'handyman') {
       unsubs.push(
-        onValue(ref(db, 'availableJobs'), (snap) => setAvailableJobs(toArray(snap.val() || {}))),
+        onValue(ref(db, 'availableJobs'), (snap) => setAvailableJobs(toArray(snap.val() || {})), ignore),
       );
     }
+    // directory of handymen who registered an account (real Firebase Auth users).
+    // The client may only ever connect to handymen listed here.
+    unsubs.push(
+      onValue(ref(db, 'registeredHandymen'), (snap) =>
+        setRegisteredHandymen(toArray(snap.val() || {})),
+        ignore,
+      ),
+    );
     unsubs.push(
       onValue(ref(db, 'presence'), (snap) =>
         setPresenceStatuses(snap.val() || {}),
+        ignore,
       ),
     );
 
@@ -102,6 +117,7 @@ export function AppProvider({ children }) {
       unsubs.push(
         onValue(ref(db, `messages/${chatConvoId}`), (snap) =>
           setChatMessages(toArray(snap.val())),
+          ignore,
         ),
       );
     }
@@ -117,6 +133,7 @@ export function AppProvider({ children }) {
   // and status stays in sync (customers cannot write to jobs/{handymanUid})
   useEffect(() => {
     if (!firebaseReady || !db || role !== 'handyman' || !uid) return;
+    const ignore = (err) => console.warn('Listener denied', err?.code || err?.message || err);
     const unsubs = jobs
       .filter((j) => j.customerUid && j.id)
       .map((j) =>
@@ -128,7 +145,7 @@ export function AppProvider({ children }) {
             else delete next[j.id];
             return next;
           });
-        }),
+        }, ignore),
       );
     return () => {
       setAssignedBookings({});
@@ -211,6 +228,26 @@ export function AppProvider({ children }) {
     [firebaseReady, db, uid],
   );
 
+  // ---------- live tracking (simulated journey) ----------
+  // Auto-starts when a handyman accepts. The journey is deterministic — both
+  // parties recompute progress/ETA from `startedAt` + `totalMinutes`, so the
+  // customer's countdown ticks live with zero extra writes.
+  const startTracking = useCallback(
+    async (bookingId, customerUid, customerAddress) => {
+      if (!bookingId || !customerUid) return;
+      const journey = buildMockJourney(customerAddress);
+      if (firebaseReady && db) {
+        await update(ref(db, `bookings/${customerUid}/${bookingId}`), { tracking: journey });
+        return;
+      }
+      demo.current.bookings = (demo.current.bookings || []).map((b) =>
+        b.id === bookingId ? { ...b, tracking: journey } : b,
+      );
+      setBookings([...demo.current.bookings]);
+    },
+    [firebaseReady, db],
+  );
+
   const acceptJob = useCallback(
     async (job) => {
       const customerUid = job.customerUid;
@@ -248,16 +285,19 @@ export function AppProvider({ children }) {
           endState: 'none',
         });
         await remove(ref(db, `availableJobs/${id}`));
+        // the customer immediately sees a live ETA countdown
+        await startTracking(id, customerUid, job.address);
         return;
       }
 
       // demo fallback: keep the job in the available list for the customer to see in matching
       demo.current.bookings = (demo.current.bookings || []).map((b) =>
-        b.id === job.id ? { ...b, status: 'accepted' } : b,
+        b.id === job.id ? { ...b, status: 'accepted', handymanName: currentUser?.fullName || 'KWIKFIXER' } : b,
       );
       setBookings([...demo.current.bookings]);
+      await startTracking(job.id, customerUid, job.address);
     },
-    [firebaseReady, db, uid, currentUser],
+    [firebaseReady, db, uid, currentUser, startTracking],
   );
 
   const endJob = useCallback(
@@ -278,7 +318,10 @@ export function AppProvider({ children }) {
       }
 
       const updates = { endState: nextState };
-      if (nextState === 'both_ended') updates.status = 'completed';
+      if (nextState === 'both_ended') {
+        updates.status = 'completed';
+        updates.tracking = { status: 'completed', completedAt: new Date().toISOString() };
+      }
 
       const customerUid = record?.customerUid || uid;
       const handymanId = record?.handymanId || (role === 'handyman' ? uid : '');
@@ -418,6 +461,71 @@ export function AppProvider({ children }) {
     setHandymanRegistrationState(handymanRegistrationRef.current);
   };
 
+  // ---------- handyman registration & directory ----------
+  // Persists the full registration (incl. verified NIN) and publishes a
+  // public entry in `registeredHandymen/{uid}` — the directory customers
+  // match against. Only handymen with a real Firebase Auth account reach
+  // this point, so the directory can never contain a fabricated handyman.
+  const saveHandymanProfile = useCallback(
+    async (registration) => {
+      if (!uid) return;
+      const step1 = registration.step1 || {};
+      const step2 = registration.step2 || {};
+      const step3 = registration.step3 || {};
+      const step4 = registration.step4 || {};
+      const step5 = registration.step5 || {};
+      const profile = {
+        uid,
+        fullName: step1.name || '',
+        email: step4.email || '',
+        username: step5.username || '',
+        profilePicture: step5.profilePicture || '',
+        niche: step1.areaOfSpecialization || 'other',
+        age: step1.age || 0,
+        gender: step1.gender || 'other',
+        dateOfBirth: step1.dateOfBirth || '',
+        highestEducation: step2.highestEducation || '',
+        yearsOfExperience: step2.yearsOfExperience || 0,
+        references: step2.references || [],
+        pastWorkImages: step2.pastWorkImages || [],
+        nin: step3.nin || '',
+        ninVerified: Boolean(step3.ninVerified),
+        verifiedNinName: step3.verifiedNinName || '',
+        permissions: step5.permissions || { location: false, audio: false },
+        isVerified: Boolean(step3.ninVerified),
+        createdAt: new Date().toISOString(),
+      };
+
+      if (firebaseReady && db) {
+        await set(ref(db, `handymanProfiles/${uid}`), profile);
+        await set(ref(db, `registeredHandymen/${uid}`), {
+          uid,
+          fullName: profile.fullName,
+          username: profile.username,
+          profilePicture: profile.profilePicture,
+          niche: profile.niche,
+          yearsOfExperience: profile.yearsOfExperience,
+          rating: 0,
+          isVerified: profile.isVerified,
+          createdAt: profile.createdAt,
+        });
+        return;
+      }
+      // demo fallback (no Firebase): treat the in-memory record as registered
+      demo.current.registeredHandymen = {
+        ...(demo.current.registeredHandymen || {}),
+        [uid]: { id: uid, ...profile },
+      };
+      setRegisteredHandymen(toArray(demo.current.registeredHandymen));
+    },
+    [firebaseReady, db, uid],
+  );
+
+  // ---------- live tracking (simulated journey) ----------
+  // Auto-starts when a handyman accepts. The journey is deterministic — both
+  // parties recompute progress/ETA from `startedAt` + `totalMinutes`, so the
+  // customer's countdown ticks live with zero extra writes.
+
   return (
     <AppContext.Provider
       value={{
@@ -430,6 +538,7 @@ export function AppProvider({ children }) {
         chatConvoId,
         presenceStatuses,
         withdrawals,
+        registeredHandymen,
         connectionReady,
         createBooking,
         updateBooking,
@@ -445,6 +554,8 @@ export function AppProvider({ children }) {
         addWithdrawal,
         handymanRegistration,
         updateHandymanRegistration,
+        saveHandymanProfile,
+        startTracking,
       }}
     >
       {children}

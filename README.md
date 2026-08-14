@@ -66,8 +66,9 @@ Restart `npm run dev` after adding the values.
 | Node | Who can read | Who can write | Purpose |
 | --- | --- | --- | --- |
 | `users/{uid}` | Self + handymans | Self | Profile (name, email, phone, role, niche) |
-| `handymanProfiles/{uid}` | Self, handymans, admins | Self | Extended handyman registration data |
-| `bookings/{customerUid}/{bookingId}` | Customer + handymans | Customer creates; assigned handyman updates | The booking record + live status (`pending` → `accepted` → `active` → `completed`) |
+| `handymanProfiles/{uid}` | Self, handymans, admins | Self | Full handyman registration data (incl. verified NIN) |
+| `registeredHandymen/{uid}` | All authenticated | Self | Public directory of handymen with a Firebase account — the only handymen a customer can be matched with |
+| `bookings/{customerUid}/{bookingId}` | Customer + handymans | Customer creates; assigned handyman updates | The booking record + live status (`pending` → `accepted` → `active` → `completed`) + `tracking` (simulated journey) |
 | `availableJobs/{bookingId}` | Handymans only | Customer creates; handyman removes on claim | The live "job feed" handymans watch |
 | `jobs/{handymanUid}/{bookingId}` | Handyman (self) | Handyman; customer writes end-state | The handyman's active/past job mirror |
 | `notifications/{uid}/{notifId}` | Self | Self + counterparty (`fromUid`) | In-app real-time alerts |
@@ -82,16 +83,21 @@ Restart `npm run dev` after adding the values.
    *"Waiting for a KWIKFIXER…"*
 2. **Handyman accepts** → `HandymanDashboard.jsx` **Accept Job** writes
    `jobs/{handymanUid}/...`, updates the booking to `accepted`, removes the job
-   from `availableJobs/`, and pushes a notification to the customer.
+   from `availableJobs/`, pushes a notification to the customer, and **auto-starts
+   a live ETA journey** (`tracking` on the booking).
 3. **Customer sees it live** → `SuccessScreen` / `CustomerDashboard` re-render
    instantly via their `bookings/{uid}` listener → *"Adebayo accepted — on the way"* + Track button.
-4. **Job in progress** → both parties watch the same `endState` field;
+4. **Live ETA** → the customer's screens tick down the simulated journey live
+   (`~X min until arrival` → progress bar → *arrived*) in `ActiveJobScreen`,
+   `SuccessScreen` and the dashboard card. The journey is deterministic
+   (`startedAt` + `totalMinutes`), so both parties recompute it with zero extra writes.
+5. **Job in progress** → both parties watch the same `endState` field;
    ending requires both confirmations (`customer_ended` + `handyman_ended` = `completed`).
-5. **Chat** → both sides open the conversation `{customerUid}_{handymanUid}` and
+6. **Chat** → both sides open the conversation `{customerUid}_{handymanUid}` and
    messages stream in real time. Typing is disabled until the job is accepted.
-6. **Presence** → handymans toggle **Available / Working**; customers instantly
+7. **Presence** → handymans toggle **Available / Working**; customers instantly
    see the status, and when a user disconnects, presence flips to `offline` automatically.
-7. **Withdrawals** → requests are persisted under `withdrawals/{uid}` instead of being lost in memory.
+8. **Withdrawals** → requests are persisted under `withdrawals/{uid}` instead of being lost in memory.
 
 ## Authentication & verification
 
@@ -101,8 +107,19 @@ Restart `npm run dev` after adding the values.
 - Route guards: every shared-data page requires an authenticated account
   (`RequireAuth`), role-specific pages require the matching role, and authenticated
   users are redirected away from login pages.
-- Handyman verification (NIN/BVN) is captured in `handymanProfiles` for future
-  admin verification of `users/{uid}/isVerified`.
+- **Only registered handymen are connectable** — handymen register with a real
+  Firebase Auth account (via the app or the Firebase console); registration
+  writes `handymanProfiles/{uid}` and publishes them in `registeredHandymen/{uid}`.
+  Customers are only ever matched with handymen from that directory. Accounts
+  created directly in the Firebase console are bootstrapped on their first
+  sign-in through the app.
+- **NIN verification (mock data)** — the "Verify NIN" step checks the number
+  against a mock NIMC database in `src/lib/mockData.js` (10 sample records).
+  A NIN only passes if it exists there; the returned identity is stored in
+  `handymanProfiles/{uid}/ninVerified` + `verifiedNinName` for future admin
+  verification of `users/{uid}/isVerified`. Sample NINs: `12345678901`
+  (ADEBayo OLAMIDE), `23456789012` (CHINWE OKAFOR), `34567890123` (EMEKA
+  NWACHUKWU), `45678901234` (FATIMA BELLO), `56789012345` (JOHN IHEANACHO).
 
 ## What is stored where
 
@@ -110,8 +127,10 @@ Restart `npm run dev` after adding the values.
 | --- | --- |
 | Email / password accounts | Firebase Authentication |
 | User profiles (`users/{uid}`) | Firebase Realtime Database |
+| Handyman directory (`registeredHandymen/{uid}`) | Firebase Realtime Database |
 | Bookings, jobs, notifications, chat, presence, withdrawals | Firebase Realtime Database |
-| NIN / BVN | `handymanProfiles/{uid}` (to be connected to a verification provider later) |
+| NIN (verified via mock NIMC data) | `handymanProfiles/{uid}` (mock verification in `src/lib/mockData.js`) |
+| Live ETA journey (`tracking` on bookings) | Firebase Realtime Database (simulated from `src/lib/mockData.js`) |
 
 ## Running without Firebase (demo mode)
 

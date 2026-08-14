@@ -1,7 +1,8 @@
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, CheckCircle, Clock, CalendarDays, MapPin, Loader2, Wrench } from 'lucide-react';
+import { ArrowLeft, CheckCircle, Clock, CalendarDays, MapPin, Loader2, Wrench, Navigation } from 'lucide-react';
 import { formatNaira } from '../../lib/format';
 import { useApp } from '../../contexts/AppContext';
+import useLiveTracking from '../../hooks/useLiveTracking';
 
 const serviceNames = {
   plumbing: 'Plumbing',
@@ -43,6 +44,9 @@ export default function SuccessScreen() {
   const status = liveBooking?.status || 'pending';
   const accepted = status === 'accepted' || status === 'active' || status === 'completed';
   const handymanName = liveBooking?.handymanName || 'A KWIKFIXER';
+
+  const live = useLiveTracking(liveBooking?.tracking);
+  const hasTracking = live.status && live.status !== 'none';
 
   const bookedDate = formatBookedDate(date);
   const timeLabel = timeOptionLabels[time] || 'at your scheduled time';
@@ -113,6 +117,29 @@ export default function SuccessScreen() {
           </p>
           <p className="text-sm text-slate-200">{estimated}</p>
         </div>
+
+        {accepted && hasTracking && (
+          <div className={`rounded-2xl p-4 w-full max-w-sm mb-3 border ${live.status === 'arrived' ? 'bg-[#10B981]/15 border-[#10B981]/30' : 'bg-navy-800 border-white/10'}`}>
+            {live.status === 'arrived' ? (
+              <p className="text-sm font-semibold text-[#10B981] flex items-center gap-2">
+                <MapPin className="w-4 h-4" /> {handymanName} has arrived at your location
+              </p>
+            ) : (
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-muted flex items-center gap-1"><Navigation size={12} className="text-[#10B981] animate-pulse" /> On the way</p>
+                  <p className="text-2xl font-bold text-accent">~{live.etaMinutes} min</p>
+                </div>
+                <div className="w-28">
+                  <div className="h-2 rounded-full bg-white/10 overflow-hidden">
+                    <div className="h-full rounded-full bg-accent transition-all duration-1000" style={{ width: `${Math.max(3, Math.round((live.progress || 0) * 100))}%` }} />
+                  </div>
+                  <p className="text-[10px] text-faint mt-1 text-right">{live.distanceKm} km away</p>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {accepted && (
           <button

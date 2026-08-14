@@ -4,15 +4,51 @@ import {
   Home, Briefcase, User, Settings, Bell, Star, CheckCircle,
   Clock, MapPin, ChevronDown, ChevronUp, Award, TrendingUp,
   Shield, Circle, Zap, AlertTriangle, Plus, Send,
-  ThumbsUp, Calendar, Wallet, Wrench, History, Loader2,
+  ThumbsUp, Calendar, Wallet, Wrench, History, Loader2, Navigation,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useApp } from '../../contexts/AppContext';
 import { formatNaira, timeAgo } from '../../lib/format';
 import Avatar from '../../components/Avatar';
 import EmptyState from '../../components/EmptyState';
+import useLiveTracking from '../../hooks/useLiveTracking';
 
 const COMMISSION_RATE = 0.02;
+
+function ActiveJobCard({ job, onOpen, onEnd }) {
+  const live = useLiveTracking(job.tracking);
+  const hasTracking = live.status && live.status !== 'none';
+  return (
+    <div className="bg-navy-800 rounded-xl border border-white/10 shadow-sm p-4">
+      <div className="flex items-start justify-between mb-3">
+        <div>
+          <h4 className="font-bold text-white">{job.title}</h4>
+          <div className="flex items-center gap-1 mt-1"><User size={12} className="text-muted" /><span className="text-xs text-muted">{job.clientName}</span></div>
+        </div>
+        <div className="flex items-center gap-1.5 text-sm font-bold text-accent"><Clock size={16} />Live</div>
+      </div>
+      <div className="flex items-center gap-2 text-xs text-muted mb-3"><MapPin size={12} />{job.location}</div>
+      {hasTracking && live.status !== 'arrived' && (
+        <div className="flex items-center justify-between p-2.5 rounded-lg bg-accent/10 border border-accent/20 mb-3">
+          <p className="text-xs text-accent font-medium flex items-center gap-1"><Navigation size={13} />En route to customer</p>
+          <p className="text-sm font-bold text-accent">~{live.etaMinutes} min</p>
+        </div>
+      )}
+      {hasTracking && live.status === 'arrived' && (
+        <div className="flex items-center justify-between p-2.5 rounded-lg bg-[#10B981]/10 border border-[#10B981]/25 mb-3">
+          <p className="text-xs text-[#10B981] font-medium flex items-center gap-1"><MapPin size={13} />Arrived at location</p>
+        </div>
+      )}
+      <div className="flex items-center justify-between py-2 border-t border-white/10">
+        <p className="font-bold text-white">{formatNaira(job.offeredPrice)}</p>
+        <div className="flex gap-2">
+          <button onClick={onOpen} className="px-5 py-2 bg-accent text-white rounded-lg text-sm font-semibold hover:bg-accent-dark">Open Job</button>
+          <button onClick={onEnd} className="px-5 py-2 bg-[#EF4444] text-white rounded-lg text-sm font-semibold hover:bg-red-600">End Job</button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function withCommission(job) {
   const commissionFee = Math.round((job.price || 0) * COMMISSION_RATE);
@@ -62,6 +98,7 @@ function HandymanDashboard() {
     ...j,
     endState: assignedBookings[j.id]?.endState || j.endState,
     status: assignedBookings[j.id]?.status || j.status,
+    tracking: assignedBookings[j.id]?.tracking || j.tracking,
   }));
 
   const available = availableJobs.map(withCommission);
@@ -242,23 +279,12 @@ function HandymanDashboard() {
   const renderActiveJobs = () => (
     <div className="space-y-3">
       {activeJobs.map((job) => (
-        <div key={job.id} className="bg-navy-800 rounded-xl border border-white/10 shadow-sm p-4">
-          <div className="flex items-start justify-between mb-3">
-            <div>
-              <h4 className="font-bold text-white">{job.title}</h4>
-              <div className="flex items-center gap-1 mt-1"><User size={12} className="text-muted" /><span className="text-xs text-muted">{job.clientName}</span></div>
-            </div>
-            <div className="flex items-center gap-1.5 text-sm font-bold text-accent"><Clock size={16} />Live</div>
-          </div>
-          <div className="flex items-center gap-2 text-xs text-muted mb-3"><MapPin size={12} />{job.location}</div>
-          <div className="flex items-center justify-between py-2 border-t border-white/10">
-            <p className="font-bold text-white">{formatNaira(job.offeredPrice)}</p>
-            <div className="flex gap-2">
-              <button onClick={() => navigate(`/handyman/active-job/${job.id}`)} className="px-5 py-2 bg-accent text-white rounded-lg text-sm font-semibold hover:bg-accent-dark">Open Job</button>
-              <button onClick={() => handleEndJob(job.id)} className="px-5 py-2 bg-[#EF4444] text-white rounded-lg text-sm font-semibold hover:bg-red-600">End Job</button>
-            </div>
-          </div>
-        </div>
+        <ActiveJobCard
+          key={job.id}
+          job={job}
+          onOpen={() => navigate(`/handyman/active-job/${job.id}`)}
+          onEnd={() => handleEndJob(job.id)}
+        />
       ))}
       {activeJobs.length === 0 && (
         <EmptyState icon={Clock} title="No active jobs" message="Jobs you're working on will show up here with live updates." />

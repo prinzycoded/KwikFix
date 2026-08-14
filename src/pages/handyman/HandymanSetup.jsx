@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useApp } from '../../contexts/AppContext';
+import { verifyNinWithMockData } from '../../lib/mockData';
 
 const STEPS = [
   { label: 'Personal Info', icon: User },
@@ -108,8 +109,8 @@ const getFriendlyError = (err) => {
 
 function HandymanSetup() {
   const navigate = useNavigate();
-  const { signup, login, sendVerificationEmail, firebaseReady } = useAuth();
-  const { updateHandymanRegistration } = useApp();
+  const { signup, login, sendVerificationEmail, firebaseReady, bootstrapHandymanProfile } = useAuth();
+  const { updateHandymanRegistration, saveHandymanProfile } = useApp();
 
   const [step, setStep] = useState(0);
   const [errors, setErrors] = useState({});
@@ -138,6 +139,7 @@ function HandymanSetup() {
   const [nin, setNin] = useState('');
   const [ninVerified, setNinVerified] = useState(false);
   const [ninError, setNinError] = useState('');
+  const [verifiedNinName, setVerifiedNinName] = useState('');
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -254,10 +256,14 @@ function HandymanSetup() {
       setNinError('NIN must be exactly 11 digits');
       return;
     }
+    const record = verifyNinWithMockData(cleaned, `${firstName} ${lastName}`.trim());
+    if (!record) {
+      setNinError('NIN must be exactly 11 digits');
+      return;
+    }
     setNinError('');
-    setTimeout(() => {
-      setNinVerified(true);
-    }, 800);
+    setVerifiedNinName(record.fullName);
+    setNinVerified(true);
   };
 
   const handlePastWorkFile = (e) => {
@@ -290,6 +296,32 @@ function HandymanSetup() {
     }
     setCreating(true);
     try {
+      const registration = {
+        step1: {
+          name: `${firstName} ${lastName}`,
+          age: parseInt(age, 10),
+          gender,
+          dateOfBirth,
+          areaOfSpecialization: areaOfSpecialization.toLowerCase(),
+        },
+        step2: {
+          pastWorkImages,
+          highestEducation: highestEducation.toLowerCase().replace(/\s/g, '_'),
+          yearsOfExperience: parseInt(yearsOfExperience, 10),
+          references: references.filter((r) => r.name.trim() || r.phone.trim()),
+        },
+        step3: {
+          nin,
+          ninVerified: true,
+          verifiedNinName,
+        },
+        step4: { email },
+        step5: {
+          username,
+          profilePicture,
+          permissions: { location: locationPermission, audio: audioPermission },
+        },
+      };
       await signup({
         fullName: `${firstName} ${lastName}`,
         email,
@@ -300,26 +332,12 @@ function HandymanSetup() {
         avatar: profilePicture,
         niche: areaOfSpecialization.toLowerCase(),
       });
-      updateHandymanRegistration('step1', {
-        name: `${firstName} ${lastName}`,
-        age: parseInt(age, 10),
-        gender,
-        dateOfBirth,
-        areaOfSpecialization: areaOfSpecialization.toLowerCase(),
-      });
-      updateHandymanRegistration('step2', {
-        pastWorkImages,
-        highestEducation: highestEducation.toLowerCase().replace(/\s/g, '_'),
-        yearsOfExperience: parseInt(yearsOfExperience, 10),
-        references: references.filter((r) => r.name.trim() || r.phone.trim()),
-      });
-      updateHandymanRegistration('step3', { nin });
-      updateHandymanRegistration('step4', { email });
-      updateHandymanRegistration('step5', {
-        username,
-        profilePicture,
-        permissions: { location: locationPermission, audio: audioPermission },
-      });
+      updateHandymanRegistration('step1', registration.step1);
+      updateHandymanRegistration('step2', registration.step2);
+      updateHandymanRegistration('step3', registration.step3);
+      updateHandymanRegistration('step4', registration.step4);
+      updateHandymanRegistration('step5', registration.step5);
+      await saveHandymanProfile(registration);
       setShowSuccessModal(true);
       try { await sendVerificationEmail(); } catch { /* verification email is optional */ }
     } catch (err) {
@@ -343,6 +361,7 @@ function HandymanSetup() {
     setLoginSubmitting(true);
     try {
       await login(loginEmail, loginPassword);
+      await bootstrapHandymanProfile();
       navigate('/handyman/dashboard');
     } catch (err) {
       setLoginError(getFriendlyError(err));
@@ -692,6 +711,7 @@ function HandymanSetup() {
               const val = e.target.value.replace(/\D/g, '').slice(0, 11);
               setNin(val);
               setNinVerified(false);
+              setVerifiedNinName('');
               setNinError('');
             }}
             disabled={ninVerified}
@@ -720,9 +740,14 @@ function HandymanSetup() {
       {ninVerified && (
         <div className="p-4 rounded-xl bg-[#10B981]/10 border border-[#10B981]/20 flex items-center gap-3">
           <Shield size={24} className="text-[#10B981]" />
-          <p className="text-sm text-white font-medium">
+          <div className="text-sm text-white font-medium">
             NIN verification complete.
-          </p>
+            {verifiedNinName && (
+              <p className="text-[#10B981] text-xs mt-0.5">
+                Identity matched: {verifiedNinName} (NIMC record)
+              </p>
+            )}
+          </div>
         </div>
       )}
     </div>
