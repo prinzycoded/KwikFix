@@ -9,6 +9,7 @@ import {
 import { useAuth } from '../../contexts/AuthContext';
 import { useApp } from '../../contexts/AppContext';
 import { formatNaira, timeAgo } from '../../lib/format';
+import { nichesLabel } from '../../lib/niches';
 import Avatar from '../../components/Avatar';
 import EmptyState from '../../components/EmptyState';
 import useLiveTracking from '../../hooks/useLiveTracking';
@@ -163,7 +164,7 @@ function HandymanDashboard() {
           <p className="text-sm text-muted">
             @{currentUser?.username || 'kwikfixer'}
             <span className="text-accent mx-1.5">•</span>
-            <span className="capitalize">{currentUser?.niche && currentUser.niche !== 'other' ? currentUser.niche : 'Handyman'}</span>
+            <span className="capitalize">{nichesLabel(currentUser?.niches || []) || 'Handyman'}</span>
           </p>
         </div>
         <div className="flex items-center gap-2 bg-navy-800 border border-white/10 rounded-full px-4 py-2 cursor-pointer" onClick={() => toggleStatus(userStatus === 'online' ? 'working' : 'online')}>
@@ -361,7 +362,7 @@ function HandymanDashboard() {
         </div>
         <h3 className="text-lg font-bold text-white">{currentUser?.fullName || 'Handyman'}</h3>
         <p className="text-sm text-muted">@{currentUser?.username || 'kwikfixer'}</p>
-        <p className="text-sm text-muted capitalize">{currentUser?.niche && currentUser.niche !== 'other' ? currentUser.niche : 'Handyman'}</p>
+        <p className="text-sm text-muted capitalize">{nichesLabel(currentUser?.niches || []) || 'Handyman'}</p>
         <div className="flex items-center justify-center gap-1 mt-2">{renderStars(5)}<span className="text-xs text-muted ml-1">4.8</span></div>
       </div>
 

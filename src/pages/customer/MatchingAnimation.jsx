@@ -3,30 +3,30 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Search, CheckCircle, Star, MapPin, Wrench, Loader2 } from 'lucide-react';
 import Avatar from '../../components/Avatar';
 import { useApp } from '../../contexts/AppContext';
-
-const NICHE_MAP = {
-  plumbing: ['plumbing'],
-  electrical: ['electrical'],
-  generator_repair: ['mechanic', 'electrical'],
-  carpentry: ['carpentry'],
-};
+import { useAuth } from '../../contexts/AuthContext';
+import { handymanMatchesService, getHandymanNiches, nichesLabel } from '../../lib/niches';
 
 export default function MatchingAnimation() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { registeredHandymen, presenceStatuses } = useApp();
+  const { registeredHandymen, presenceStatuses, connectionReady } = useApp();
+  const { firebaseReady } = useAuth();
   const [searching, setSearching] = useState(true);
 
   const service = (searchParams.get('service') || '').toLowerCase();
-  const niches = NICHE_MAP[service] || [service];
 
-  // Only match handymen who registered an account (the Firebase directory).
-  const candidates = useMemo(() => {
-    return registeredHandymen.filter((h) => {
-      const hNiche = String(h.niche || '').toLowerCase();
-      return niches.length === 0 || niches.includes(hNiche);
-    });
-  }, [registeredHandymen, niches]);
+  // Tier 1: handymen whose registered profile covers the requested service.
+  const nicheCandidates = useMemo(() => {
+    return registeredHandymen.filter((h) => handymanMatchesService(h, service));
+  }, [registeredHandymen, service]);
+
+  // Tier 2: if no niche match exists, fall back to any handyman with a
+  // registered account on KwikFix so clients can always connect to a
+  // real handyman instead of hitting a dead end.
+  const candidates = useMemo(
+    () => (nicheCandidates.length > 0 ? nicheCandidates : registeredHandymen),
+    [nicheCandidates, registeredHandymen],
+  );
 
   const matched = useMemo(() => {
     if (candidates.length === 0) return null;
@@ -76,7 +76,7 @@ export default function MatchingAnimation() {
                   </div>
                 </div>
               </div>
-              <p className="text-muted text-sm mb-1 capitalize">Specialization: {matched.niche || 'General'}</p>
+              <p className="text-muted text-sm mb-1 capitalize">Specialization: {nichesLabel(getHandymanNiches(matched)) || 'General'}</p>
               <p className="text-muted text-sm">Experience: {matched.yearsOfExperience || 0} years</p>
             </div>
 
@@ -96,11 +96,16 @@ export default function MatchingAnimation() {
             <div className="w-20 h-20 rounded-full bg-navy-800 border border-white/10 flex items-center justify-center mb-6">
               <Wrench className="w-10 h-10 text-muted" />
             </div>
-            <h2 className="text-2xl font-bold text-white mb-2">No registered handyman yet</h2>
+            <h2 className="text-2xl font-bold text-white mb-2">No KWIKFIXERs registered yet</h2>
             <p className="text-muted text-center max-w-sm mb-2">
-              There is no registered handyman for this service right now. Only handymen with an account on KwikFix can be matched.
+              {!firebaseReady
+                ? 'Firebase is not configured. Add your config to .env (see .env.example) and restart the dev server.'
+                : 'No handyman has signed in through the app yet. A handyman only appears here after they log in via Handyman Login at least once.'}
             </p>
-            <p className="text-xs text-faint mb-6 flex items-center gap-1"><Loader2 className="w-3 h-3" /> Your booking request stays live — the moment a registered handyman becomes available, you'll be notified.</p>
+            <p className="text-xs text-faint mb-6 flex items-center gap-1"><Loader2 className="w-3 h-3" /> Your request stays live — the moment a handyman becomes available, you'll be notified.</p>
+            <div className="bg-navy-800 border border-white/10 rounded-xl px-4 py-3 text-[11px] text-muted mb-4 text-center">
+              Directory: {registeredHandymen.length} handyman{registeredHandymen.length === 1 ? '' : 's'} · Firebase: {firebaseReady ? (connectionReady ? 'connected' : 'connecting') : 'not configured'}
+            </div>
             <button
               onClick={() => navigate('/service-selection')}
               className="bg-accent text-white px-8 py-3 rounded-2xl font-bold hover:bg-accent-dark transition-colors"

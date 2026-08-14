@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Star, CheckCircle, X, Wrench, Bath, Flame, Droplets, ShieldCheck, UserCheck } from 'lucide-react';
 import Avatar from '../../components/Avatar';
 import { useApp } from '../../contexts/AppContext';
+import { getHandymanNiches, nichesLabel } from '../../lib/niches';
 
 const portfolioItems = [
   { title: 'Kitchen Sink Repair', icon: Wrench, color: 'text-accent' },
@@ -109,7 +110,7 @@ export default function HandymanProfile() {
                       <span className={`w-2 h-2 rounded-full ml-2 ${isOnline ? 'bg-[#10B981]' : 'bg-muted'}`} />
                       <span className={`text-xs ${isOnline ? 'text-[#10B981]' : 'text-muted'}`}>{isOnline ? 'Online' : 'Offline'}</span>
                     </div>
-                    <p className="text-muted text-sm mt-1 capitalize">{handyman.niche || 'General'} · {handyman.yearsOfExperience || 0} years experience</p>
+                    <p className="text-muted text-sm mt-1 capitalize">{nichesLabel(getHandymanNiches(handyman)) || 'General'} · {handyman.yearsOfExperience || 0} years experience</p>
                   </div>
                 </div>
               </div>

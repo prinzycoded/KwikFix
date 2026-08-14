@@ -21,6 +21,7 @@ const DEFAULT_PROFILE = {
   avatar: '',
   username: '',
   niche: 'other',
+  niches: [],
   rating: 0,
   isVerified: false,
   isDIYProfessional: false,
@@ -54,6 +55,7 @@ export function AuthProvider({ children }) {
             avatar: profile.avatar || user.photoURL || '',
             username: profile.username || '',
             niche: profile.niche || 'other',
+            niches: profile.niches || (profile.niche ? [profile.niche] : []),
             rating: profile.rating || 0,
             isVerified: profile.isVerified || false,
             isDIYProfessional: profile.isDIYProfessional || false,
@@ -63,6 +65,30 @@ export function AuthProvider({ children }) {
           setUserRole(role);
           setIsAuthenticated(true);
           setFirebaseUser(user);
+          // Auto-heal: every handyman with a profile must appear in the
+          // public directory clients match against. If the entry is missing
+          // (e.g. account created in the Firebase console), create it now.
+          if (role === 'handyman' && db) {
+            try {
+              const dirSnap = await get(ref(db, `registeredHandymen/${user.uid}`));
+              if (!dirSnap.exists()) {
+                await set(ref(db, `registeredHandymen/${user.uid}`), {
+                  uid: user.uid,
+                  fullName: profile.fullName || user.displayName || '',
+                  username: profile.username || '',
+                  profilePicture: profile.avatar || user.photoURL || '',
+                  niche: profile.niche || 'other',
+                  niches: profile.niches || (profile.niche ? [profile.niche] : []),
+                  yearsOfExperience: 0,
+                  rating: 0,
+                  isVerified: profile.isVerified || false,
+                  createdAt: new Date().toISOString(),
+                });
+              }
+            } catch (err) {
+              console.warn('Failed to ensure directory entry', err);
+            }
+          }
         } catch (err) {
           console.warn('Failed to load profile from Realtime DB', err);
           setCurrentUser({ id: user.uid, email: user.email || '', phone: user.phoneNumber || '', ...DEFAULT_PROFILE });
@@ -101,6 +127,7 @@ export function AuthProvider({ children }) {
       avatar: data.avatar ?? '',
       username: data.username ?? '',
       niche: data.niche ?? 'other',
+      niches: data.niches ?? (data.niche ? [data.niche] : []),
       createdAt: new Date().toISOString(),
     };
     await set(ref(db, `users/${uid}`), profile);
@@ -161,6 +188,7 @@ export function AuthProvider({ children }) {
         avatar: profile.avatar || firebaseUser.photoURL || '',
         username: profile.username || '',
         niche: profile.niche || 'other',
+        niches: profile.niches || (profile.niche ? [profile.niche] : []),
         rating: profile.rating || 0,
         isVerified: profile.isVerified || false,
         isDIYProfessional: profile.isDIYProfessional || false,
@@ -189,6 +217,7 @@ export function AuthProvider({ children }) {
       username: profile.username,
       profilePicture: '',
       niche: profile.niche,
+      niches: profile.niches,
       yearsOfExperience: 0,
       rating: 0,
       isVerified: false,

@@ -3,6 +3,7 @@ import { ref, onValue, push, set, update, remove, get } from 'firebase/database'
 import { db } from '../lib/firebase';
 import { useAuth } from './AuthContext';
 import { buildMockJourney } from '../lib/mockData';
+import { normalizeNiche } from '../lib/niches';
 
 const defaultHandymanRegistration = {
   step1: {
@@ -474,13 +475,22 @@ export function AppProvider({ children }) {
       const step3 = registration.step3 || {};
       const step4 = registration.step4 || {};
       const step5 = registration.step5 || {};
+      const niches = [
+        ...new Set(
+          (Array.isArray(step1.niches) && step1.niches.length
+            ? step1.niches
+            : [step1.areaOfSpecialization]
+          ).map(normalizeNiche).filter(Boolean),
+        ),
+      ];
       const profile = {
         uid,
         fullName: step1.name || '',
         email: step4.email || '',
         username: step5.username || '',
         profilePicture: step5.profilePicture || '',
-        niche: step1.areaOfSpecialization || 'other',
+        niche: niches[0] || 'other',
+        niches,
         age: step1.age || 0,
         gender: step1.gender || 'other',
         dateOfBirth: step1.dateOfBirth || '',
@@ -504,6 +514,7 @@ export function AppProvider({ children }) {
           username: profile.username,
           profilePicture: profile.profilePicture,
           niche: profile.niche,
+          niches: profile.niches,
           yearsOfExperience: profile.yearsOfExperience,
           rating: 0,
           isVerified: profile.isVerified,

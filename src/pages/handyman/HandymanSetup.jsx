@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   CheckCircle,
@@ -17,6 +17,7 @@ import {
 import { useAuth } from '../../contexts/AuthContext';
 import { useApp } from '../../contexts/AppContext';
 import { verifyNinWithMockData } from '../../lib/mockData';
+import { NICHES, normalizeNiche } from '../../lib/niches';
 
 const STEPS = [
   { label: 'Personal Info', icon: User },
@@ -25,8 +26,6 @@ const STEPS = [
   { label: 'Account', icon: Mail },
   { label: 'Final Setup', icon: CheckCircle },
 ];
-
-const NICHES = ['Plumbing', 'Carpentry', 'Electrical', 'Mechanic'];
 
 const EDUCATION_LEVELS = [
   'First School Leaving',
@@ -109,8 +108,16 @@ const getFriendlyError = (err) => {
 
 function HandymanSetup() {
   const navigate = useNavigate();
-  const { signup, login, sendVerificationEmail, firebaseReady, bootstrapHandymanProfile } = useAuth();
+  const { signup, login, logout, sendVerificationEmail, firebaseReady, bootstrapHandymanProfile, firebaseUser, isAuthenticated, userRole } = useAuth();
   const { updateHandymanRegistration, saveHandymanProfile } = useApp();
+
+  // A handyman who is already signed in as a handyman goes straight to
+  // their dashboard (the login form is for switching/setup only).
+  useEffect(() => {
+    if (isAuthenticated && userRole === 'handyman') {
+      navigate('/handyman/dashboard', { replace: true });
+    }
+  }, [isAuthenticated, userRole, navigate]);
 
   const [step, setStep] = useState(0);
   const [errors, setErrors] = useState({});
@@ -125,7 +132,7 @@ function HandymanSetup() {
   const [age, setAge] = useState('');
   const [gender, setGender] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
-  const [areaOfSpecialization, setAreaOfSpecialization] = useState('');
+  const [selectedNiches, setSelectedNiches] = useState([]);
 
   const [pastWorkImages, setPastWorkImages] = useState([]);
   const [highestEducation, setHighestEducation] = useState('');
@@ -183,9 +190,9 @@ function HandymanSetup() {
         else if (!isNaN(enteredAge) && calculatedAge !== enteredAge)
           newErrors.dateOfBirth = 'Date of birth does not match entered age';
       }
-      if (!areaOfSpecialization)
-        newErrors.areaOfSpecialization =
-          'Please select your area of specialization';
+      if (selectedNiches.length === 0)
+        newErrors.selectedNiches =
+          'Select at least one niche you can work in';
     }
 
     if (s === 1) {
@@ -302,7 +309,8 @@ function HandymanSetup() {
           age: parseInt(age, 10),
           gender,
           dateOfBirth,
-          areaOfSpecialization: areaOfSpecialization.toLowerCase(),
+          niches: selectedNiches.map(normalizeNiche),
+          areaOfSpecialization: normalizeNiche(selectedNiches[0] || ''),
         },
         step2: {
           pastWorkImages,
@@ -330,7 +338,8 @@ function HandymanSetup() {
         role: 'handyman',
         username,
         avatar: profilePicture,
-        niche: areaOfSpecialization.toLowerCase(),
+        niche: normalizeNiche(selectedNiches[0] || ''),
+        niches: selectedNiches.map(normalizeNiche),
       });
       updateHandymanRegistration('step1', registration.step1);
       updateHandymanRegistration('step2', registration.step2);
@@ -360,8 +369,16 @@ function HandymanSetup() {
     }
     setLoginSubmitting(true);
     try {
-      await login(loginEmail, loginPassword);
-      await bootstrapHandymanProfile();
+      if (firebaseUser?.email === loginEmail.trim()) {
+        // Already signed in with this account (e.g. it was created in the
+        // Firebase console and auto-signed-in as a customer). Just bootstrap
+        // the handyman profile + directory entry and go to the dashboard.
+        await bootstrapHandymanProfile();
+      } else {
+        if (firebaseUser) await logout();
+        await login(loginEmail, loginPassword);
+        await bootstrapHandymanProfile();
+      }
       navigate('/handyman/dashboard');
     } catch (err) {
       setLoginError(getFriendlyError(err));
@@ -545,20 +562,40 @@ function HandymanSetup() {
       </div>
 
       <div>
-        <label className={labelClass}>Area of Specialization / Niche</label>
-        <select
-          value={areaOfSpecialization ?? ''}
-          onChange={(e) => setAreaOfSpecialization(e.target.value)}
-          className={`${selectClass} ${errors.areaOfSpecialization ? 'border-[#EF4444]' : ''}`}
-        >
-          <option value="">Select your niche</option>
-          {NICHES.map((n) => (
-            <option key={n} value={n}>
-              {n}
-            </option>
-          ))}
-        </select>
-        {renderError('areaOfSpecialization')}
+        <label className={labelClass}>Areas of Specialization / Niches</label>
+        <p className="text-xs text-muted mb-2">Select all niches you can work in — you'll only be matched with services you selected.</p>
+        <div className="grid grid-cols-2 gap-2">
+          {NICHES.map((n) => {
+            const selected = selectedNiches.includes(n.key);
+            return (
+              <button
+                type="button"
+                key={n.key}
+                onClick={() => {
+                  setSelectedNiches((prev) =>
+                    selected ? prev.filter((k) => k !== n.key) : [...prev, n.key],
+                  );
+                  setErrors((prev) => ({ ...prev, selectedNiches: undefined }));
+                }}
+                className={`flex items-center gap-2 px-4 py-3 rounded-lg border text-sm font-medium transition-all text-left ${
+                  selected
+                    ? 'border-accent bg-accent/15 text-white'
+                    : 'border-white/15 bg-navy-700 text-muted hover:border-accent/50'
+                }`}
+              >
+                <span
+                  className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-all ${
+                    selected ? 'bg-accent border-accent' : 'border-white/25'
+                  }`}
+                >
+                  {selected && <Check size={14} className="text-white" />}
+                </span>
+                {n.label}
+              </button>
+            );
+          })}
+        </div>
+        {renderError('selectedNiches')}
       </div>
     </div>
   );

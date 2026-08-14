@@ -73,7 +73,7 @@ export default function App() {
               <Route path="/customer/active-job/:id" element={<RequireAuth role="customer"><DashboardLayout><ActiveJobScreen /></DashboardLayout></RequireAuth>} />
               <Route path="/customer/chat/:id" element={<RequireAuth role="customer"><DashboardLayout><ChatPopup /></DashboardLayout></RequireAuth>} />
 
-              <Route path="/handyman/login" element={<RedirectIfAuthed><HandymanSetup /></RedirectIfAuthed>} />
+              <Route path="/handyman/login" element={<HandymanSetup />} />
               <Route path="/handyman/dashboard" element={<RequireAuth role="handyman"><DashboardLayout><HandymanDashboard /></DashboardLayout></RequireAuth>} />
               <Route path="/handyman/withdraw" element={<RequireAuth role="handyman"><DashboardLayout><WithdrawFunds /></DashboardLayout></RequireAuth>} />
               <Route path="/handyman/portfolio" element={<RequireAuth role="handyman"><DashboardLayout><PortfolioUpload /></DashboardLayout></RequireAuth>} />
