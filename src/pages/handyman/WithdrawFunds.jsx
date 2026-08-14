@@ -72,17 +72,17 @@ function WithdrawFunds() {
       <div className="space-y-5">
         <div>
           <label className={labelClass}>Account Number</label>
-          <input type="text" inputMode="numeric" maxLength={10} placeholder="e.g. 0123456789" value={accountNumber} onChange={(e) => setAccountNumber(e.target.value.replace(/\D/g, '').slice(0, 10))} className={inputClass} />
+          <input type="text" inputMode="numeric" maxLength={10} placeholder="e.g. 0123456789" value={accountNumber ?? ''} onChange={(e) => setAccountNumber(e.target.value.replace(/\D/g, '').slice(0, 10))} className={inputClass} />
           {renderError('accountNumber')}
         </div>
         <div>
           <label className={labelClass}>Account Name</label>
-          <input type="text" placeholder="e.g. Chinedu Okafor" value={accountName} onChange={(e) => setAccountName(e.target.value)} className={inputClass} />
+          <input type="text" placeholder="e.g. Chinedu Okafor" value={accountName ?? ''} onChange={(e) => setAccountName(e.target.value)} className={inputClass} />
           {renderError('accountName')}
         </div>
         <div>
           <label className={labelClass}>Select Bank</label>
-          <select value={bankName} onChange={(e) => setBankName(e.target.value)} className={selectClass}>
+          <select value={bankName ?? ''} onChange={(e) => setBankName(e.target.value)} className={selectClass}>
             <option value="">Select your bank</option>
             {NIGERIAN_BANKS.map((bank) => (<option key={bank} value={bank} className="bg-navy-800">{bank}</option>))}
           </select>
@@ -92,7 +92,7 @@ function WithdrawFunds() {
           <label className={labelClass}>Amount</label>
           <div className="relative">
             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-semibold text-muted">₦</span>
-            <input type="number" min={1000} placeholder="e.g. 10000" value={amount} onChange={(e) => setAmount(e.target.value)} className={`${inputClass} pl-14`} />
+            <input type="number" min={1000} placeholder="e.g. 10000" value={amount ?? ''} onChange={(e) => setAmount(e.target.value)} className={`${inputClass} pl-14`} />
           </div>
           {renderError('amount')}
         </div>

@@ -166,7 +166,7 @@ export default function HandymanProfile() {
           <div className="bg-navy-800 border border-white/10 rounded-2xl p-6 w-full max-w-sm" onClick={(e) => e.stopPropagation()}>
             <button onClick={() => setShowConfirmModal(false)} className="float-right"><X className="w-5 h-5 text-muted" /></button>
             <h3 className="text-lg font-bold text-white mb-3 mt-2">Enter Agreed Price</h3>
-            <input type="number" value={agreedPrice} onChange={(e) => setAgreedPrice(e.target.value)} placeholder="e.g. 20000" className="w-full border border-white/15 bg-navy-700 text-white placeholder:text-muted/60 rounded-xl p-3 mb-4 focus:outline-none focus:ring-2 focus:ring-accent" />
+            <input type="number" value={agreedPrice ?? ''} onChange={(e) => setAgreedPrice(e.target.value)} placeholder="e.g. 20000" className="w-full border border-white/15 bg-navy-700 text-white placeholder:text-muted/60 rounded-xl p-3 mb-4 focus:outline-none focus:ring-2 focus:ring-accent" />
             {error && <p className="text-red-400 text-xs mb-3">{error}</p>}
             <button onClick={() => { if (agreedPrice) { confirmBooking(); } }} disabled={submitting} className="w-full bg-white text-navy py-3 rounded-2xl font-bold hover:bg-slate-100 disabled:opacity-60">{submitting ? 'Creating booking...' : 'Submit Agreement'}</button>
           </div>

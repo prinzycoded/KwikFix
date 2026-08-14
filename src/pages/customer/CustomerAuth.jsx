@@ -114,7 +114,7 @@ export default function CustomerAuth() {
               <input
                 style={inputStyle}
                 placeholder="e.g. john@email.com"
-                value={email}
+                value={email ?? ''}
                 onChange={(e) => setEmail(e.target.value)}
                 type="email"
               />
@@ -126,7 +126,7 @@ export default function CustomerAuth() {
                 <input
                   style={{ ...inputStyle, paddingRight: 44 }}
                   placeholder="e.g. ••••••••"
-                  value={password}
+                  value={password ?? ''}
                   onChange={(e) => setPassword(e.target.value)}
                   type={showPassword ? 'text' : 'password'}
                 />
@@ -170,7 +170,7 @@ export default function CustomerAuth() {
             <input
               style={inputStyle}
               placeholder="e.g. Chinedu Okafor"
-              value={fullName}
+              value={fullName ?? ''}
               onChange={(e) => setFullName(e.target.value)}
             />
           </div>
@@ -180,7 +180,7 @@ export default function CustomerAuth() {
             <input
               style={inputStyle}
               placeholder="e.g. 08012345678"
-              value={phone}
+              value={phone ?? ''}
               onChange={(e) => setPhone(e.target.value)}
               type="tel"
             />
@@ -191,7 +191,7 @@ export default function CustomerAuth() {
             <input
               style={inputStyle}
               placeholder="e.g. john@email.com"
-              value={signupEmail}
+              value={signupEmail ?? ''}
               onChange={(e) => setSignupEmail(e.target.value)}
               type="email"
             />
@@ -203,7 +203,7 @@ export default function CustomerAuth() {
               <input
                 style={{ ...inputStyle, paddingRight: 44 }}
                 placeholder="Enter password"
-                value={signupPassword}
+                value={signupPassword ?? ''}
                 onChange={(e) => setSignupPassword(e.target.value)}
                 type={showPassword ? 'text' : 'password'}
               />
@@ -222,7 +222,7 @@ export default function CustomerAuth() {
             <input
               style={inputStyle}
               placeholder="Confirm your password"
-              value={confirmPassword}
+              value={confirmPassword ?? ''}
               onChange={(e) => setConfirmPassword(e.target.value)}
               type="password"
             />

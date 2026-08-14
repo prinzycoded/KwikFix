@@ -1,10 +1,17 @@
 export const formatNaira = (amount) => `₦${Number(amount || 0).toLocaleString('en-NG')}`;
 
-export const formatDate = (date) =>
-  new Date(date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+export const formatDate = (date) => {
+  const d = new Date(date);
+  return isNaN(d.getTime())
+    ? ''
+    : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+};
 
 export const timeAgo = (dateStr) => {
-  const diff = Date.now() - new Date(dateStr).getTime();
+  if (!dateStr) return '';
+  const time = new Date(dateStr).getTime();
+  if (isNaN(time)) return '';
+  const diff = Date.now() - time;
   const mins = Math.floor(diff / 60000);
   if (mins < 1) return 'just now';
   if (mins < 60) return `${mins}m ago`;

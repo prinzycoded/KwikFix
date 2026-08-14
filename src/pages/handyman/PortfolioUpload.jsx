@@ -120,7 +120,7 @@ function PortfolioUpload() {
                 <input
                   type="text"
                   placeholder="e.g. Kitchen Sink Repair"
-                  value={pendingTitle}
+                  value={pendingTitle ?? ''}
                   onChange={(e) => setPendingTitle(e.target.value)}
                   className="w-full px-4 py-3 rounded-lg border border-white/15 bg-navy-700 text-white placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-accent text-sm"
                 />
@@ -130,7 +130,7 @@ function PortfolioUpload() {
                 <textarea
                   rows={3}
                   placeholder="Describe the work you did (e.g. materials used, problem solved)..."
-                  value={pendingDescription}
+                  value={pendingDescription ?? ''}
                   onChange={(e) => setPendingDescription(e.target.value)}
                   className="w-full px-4 py-3 rounded-lg border border-white/15 bg-navy-700 text-white placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-accent text-sm resize-none"
                 />

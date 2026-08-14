@@ -91,7 +91,7 @@ export default function ChatPopup() {
           <button className="text-muted hover:text-accent"><Mic className="w-6 h-6" /></button>
           <input
             type="text"
-            value={inputText}
+            value={inputText ?? ''}
             onChange={(e) => setInputText(e.target.value)}
             placeholder={convoId ? 'Type a message...' : 'Chat unavailable until job is accepted'}
             disabled={!convoId}

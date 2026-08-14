@@ -379,7 +379,7 @@ function HandymanSetup() {
           <input
             type="email"
             placeholder="e.g. johnfixer@email.com"
-            value={loginEmail}
+            value={loginEmail ?? ''}
             onChange={(e) => setLoginEmail(e.target.value)}
             className={inputClass}
           />
@@ -389,7 +389,7 @@ function HandymanSetup() {
           <input
             type="password"
             placeholder="Your password"
-            value={loginPassword}
+            value={loginPassword ?? ''}
             onChange={(e) => setLoginPassword(e.target.value)}
             className={inputClass}
           />
@@ -484,7 +484,7 @@ function HandymanSetup() {
           <input
             type="text"
             placeholder="e.g. John"
-            value={firstName}
+            value={firstName ?? ''}
             onChange={(e) => setFirstName(e.target.value)}
             className={`${inputClass} ${errors.firstName ? 'border-[#EF4444]' : ''}`}
           />
@@ -495,7 +495,7 @@ function HandymanSetup() {
           <input
             type="text"
             placeholder="e.g. Okafor"
-            value={lastName}
+            value={lastName ?? ''}
             onChange={(e) => setLastName(e.target.value)}
             className={`${inputClass} ${errors.lastName ? 'border-[#EF4444]' : ''}`}
           />
@@ -511,7 +511,7 @@ function HandymanSetup() {
             placeholder="e.g. 25"
             min={18}
             max={50}
-            value={age}
+            value={age ?? ''}
             onChange={(e) => setAge(e.target.value)}
             className={`${inputClass} ${errors.age ? 'border-[#EF4444]' : ''}`}
           />
@@ -520,7 +520,7 @@ function HandymanSetup() {
         <div>
           <label className={labelClass}>Gender</label>
           <select
-            value={gender}
+            value={gender ?? ''}
             onChange={(e) => setGender(e.target.value)}
             className={`${selectClass} ${errors.gender ? 'border-[#EF4444]' : ''}`}
           >
@@ -537,7 +537,7 @@ function HandymanSetup() {
         <label className={labelClass}>Date of Birth</label>
         <input
           type="date"
-          value={dateOfBirth}
+          value={dateOfBirth ?? ''}
           onChange={(e) => setDateOfBirth(e.target.value)}
           className={`${inputClass} ${errors.dateOfBirth ? 'border-[#EF4444]' : ''}`}
         />
@@ -547,7 +547,7 @@ function HandymanSetup() {
       <div>
         <label className={labelClass}>Area of Specialization / Niche</label>
         <select
-          value={areaOfSpecialization}
+          value={areaOfSpecialization ?? ''}
           onChange={(e) => setAreaOfSpecialization(e.target.value)}
           className={`${selectClass} ${errors.areaOfSpecialization ? 'border-[#EF4444]' : ''}`}
         >
@@ -607,7 +607,7 @@ function HandymanSetup() {
       <div>
         <label className={labelClass}>Highest Education Level</label>
         <select
-          value={highestEducation}
+          value={highestEducation ?? ''}
           onChange={(e) => setHighestEducation(e.target.value)}
           className={`${selectClass} ${errors.highestEducation ? 'border-[#EF4444]' : ''}`}
         >
@@ -627,7 +627,7 @@ function HandymanSetup() {
           type="number"
           min={1}
           placeholder="e.g. 5"
-          value={yearsOfExperience}
+          value={yearsOfExperience ?? ''}
           onChange={(e) => setYearsOfExperience(e.target.value)}
           className={`${inputClass} ${errors.yearsOfExperience ? 'border-[#EF4444]' : ''}`}
         />
@@ -657,7 +657,7 @@ function HandymanSetup() {
                 <input
                   type="text"
                   placeholder="e.g. Mr. Adebayo"
-                  value={ref.name}
+                  value={ref.name ?? ''}
                   onChange={(e) => {
                     const newRefs = [...references];
                     newRefs[idx] = { ...newRefs[idx], name: e.target.value };
@@ -672,7 +672,7 @@ function HandymanSetup() {
                 <input
                   type="tel"
                   placeholder="e.g. 08012345678"
-                  value={ref.phone}
+                  value={ref.phone ?? ''}
                   onChange={(e) => {
                     const newRefs = [...references];
                     newRefs[idx] = { ...newRefs[idx], phone: e.target.value };
@@ -706,7 +706,7 @@ function HandymanSetup() {
             inputMode="numeric"
             maxLength={11}
             placeholder="e.g. 12345678901"
-            value={nin}
+            value={nin ?? ''}
             onChange={(e) => {
               const val = e.target.value.replace(/\D/g, '').slice(0, 11);
               setNin(val);
@@ -764,7 +764,7 @@ function HandymanSetup() {
         <input
           type="email"
           placeholder="e.g. johnfixer@email.com"
-          value={email}
+          value={email ?? ''}
           onChange={(e) => setEmail(e.target.value)}
           className={`${inputClass} ${errors.email ? 'border-[#EF4444]' : ''}`}
         />
@@ -779,7 +779,7 @@ function HandymanSetup() {
         <input
           type="password"
           placeholder="At least 6 characters"
-          value={password}
+          value={password ?? ''}
           onChange={(e) => setPassword(e.target.value)}
           className={`${inputClass} ${errors.password ? 'border-[#EF4444]' : ''}`}
         />
@@ -791,7 +791,7 @@ function HandymanSetup() {
         <input
           type="password"
           placeholder="Re-enter your password"
-          value={confirmPassword}
+          value={confirmPassword ?? ''}
           onChange={(e) => setConfirmPassword(e.target.value)}
           className={`${inputClass} ${errors.confirmPassword ? 'border-[#EF4444]' : ''}`}
         />
@@ -837,7 +837,7 @@ function HandymanSetup() {
         <input
           type="text"
           placeholder="e.g. johnfixer"
-          value={username}
+          value={username ?? ''}
           onChange={(e) => setUsername(e.target.value.replace(/\s/g, ''))}
           className={`${inputClass} ${errors.username ? 'border-[#EF4444]' : ''}`}
         />

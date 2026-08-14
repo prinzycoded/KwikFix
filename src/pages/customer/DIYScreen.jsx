@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, MessageSquare, Phone, MessageCircle, Send, Mic, PhoneOff, Volume2, VolumeX } from 'lucide-react';
 
@@ -22,6 +22,28 @@ export default function DIYScreen() {
   const [isSpeaker, setIsSpeaker] = useState(false);
   const [showPremiumPopup, setShowPremiumPopup] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  const callTimerRef = useRef(null);
+  const connectTimeoutRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (connectTimeoutRef.current) clearTimeout(connectTimeoutRef.current);
+      if (callTimerRef.current) clearInterval(callTimerRef.current);
+      callTimerRef.current = null;
+      connectTimeoutRef.current = null;
+    };
+  }, []);
+
+  const stopCallTimer = () => {
+    if (connectTimeoutRef.current) {
+      clearTimeout(connectTimeoutRef.current);
+      connectTimeoutRef.current = null;
+    }
+    if (callTimerRef.current) {
+      clearInterval(callTimerRef.current);
+      callTimerRef.current = null;
+    }
+  };
 
   const handleSendMessage = () => {
     if (!inputText.trim()) return;
@@ -51,13 +73,14 @@ export default function DIYScreen() {
     setCallTimer(0);
     setIsMuted(false);
     setIsSpeaker(false);
+    stopCallTimer();
 
-    setTimeout(() => {
+    connectTimeoutRef.current = setTimeout(() => {
+      connectTimeoutRef.current = null;
       setCallState('connected');
-      const interval = setInterval(() => {
+      callTimerRef.current = setInterval(() => {
         setCallTimer((t) => t + 1);
       }, 1000);
-      return () => clearInterval(interval);
     }, 2500);
 
     setTimeout(() => {
@@ -67,6 +90,7 @@ export default function DIYScreen() {
 
   const handleEndCall = () => {
     setCallState('ended');
+    stopCallTimer();
   };
 
   const handleWhatsApp = () => {
@@ -135,7 +159,7 @@ export default function DIYScreen() {
           <input
             style={styles.chatInput}
             placeholder="Type a message..."
-            value={inputText}
+            value={inputText ?? ''}
             onChange={(e) => setInputText(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
           />

@@ -158,7 +158,14 @@ function HandymanDashboard() {
   const renderHomeTab = () => (
     <div className="space-y-6 max-w-5xl">
       <div className="flex items-center justify-between mb-2">
-        <h1 className="text-2xl font-bold text-white">Dashboard</h1>
+        <div>
+          <h1 className="text-2xl font-bold text-white">Dashboard</h1>
+          <p className="text-sm text-muted">
+            @{currentUser?.username || 'kwikfixer'}
+            <span className="text-accent mx-1.5">•</span>
+            <span className="capitalize">{currentUser?.niche && currentUser.niche !== 'other' ? currentUser.niche : 'Handyman'}</span>
+          </p>
+        </div>
         <div className="flex items-center gap-2 bg-navy-800 border border-white/10 rounded-full px-4 py-2 cursor-pointer" onClick={() => toggleStatus(userStatus === 'online' ? 'working' : 'online')}>
           <Circle size={10} className={userStatus === 'online' ? 'text-[#10B981] fill-[#10B981]' : 'text-[#EF4444] fill-[#EF4444]'} />
           <span className="text-sm font-medium text-muted">{userStatus === 'online' ? 'Available' : 'Working'}</span>
@@ -253,7 +260,7 @@ function HandymanDashboard() {
                   ))}
                 </div>
                 <div className="flex items-center gap-2">
-                  <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && sendMessage()} placeholder="Type a message..." className="flex-1 px-4 py-2.5 rounded-xl border border-white/15 bg-navy-700 text-white placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-accent text-sm" />
+                  <input type="text" value={chatInput ?? ''} onChange={(e) => setChatInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && sendMessage()} placeholder="Type a message..." className="flex-1 px-4 py-2.5 rounded-xl border border-white/15 bg-navy-700 text-white placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-accent text-sm" />
                   <button onClick={sendMessage} className="w-10 h-10 rounded-xl bg-accent text-white flex items-center justify-center hover:bg-accent-dark"><Send size={16} /></button>
                 </div>
               </div>
@@ -353,7 +360,8 @@ function HandymanDashboard() {
           <Avatar name={currentUser?.fullName || 'KwikFixer'} size={80} />
         </div>
         <h3 className="text-lg font-bold text-white">{currentUser?.fullName || 'Handyman'}</h3>
-        <p className="text-sm text-muted">Handyman</p>
+        <p className="text-sm text-muted">@{currentUser?.username || 'kwikfixer'}</p>
+        <p className="text-sm text-muted capitalize">{currentUser?.niche && currentUser.niche !== 'other' ? currentUser.niche : 'Handyman'}</p>
         <div className="flex items-center justify-center gap-1 mt-2">{renderStars(5)}<span className="text-xs text-muted ml-1">4.8</span></div>
       </div>
 

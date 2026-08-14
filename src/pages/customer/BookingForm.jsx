@@ -81,13 +81,13 @@ export default function BookingForm() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-slate-200 mb-1">Address <span className="text-accent">*</span></label>
-              <textarea rows={2} placeholder="e.g. 12, Azikiwe Road, Umuahia, Abia State" value={address} onChange={(e) => { setAddress(e.target.value); setErrors((prev) => ({ ...prev, address: undefined })) }} className={fieldClass(errors.address)} />
+              <textarea rows={2} placeholder="e.g. 12, Azikiwe Road, Umuahia, Abia State" value={address ?? ''} onChange={(e) => { setAddress(e.target.value); setErrors((prev) => ({ ...prev, address: undefined })) }} className={fieldClass(errors.address)} />
               {renderError('address')}
             </div>
 
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-slate-200 mb-1">Description of Task <span className="text-accent">*</span></label>
-              <textarea rows={3} placeholder="e.g. I need someone to fix my kitchen sink" value={description} onChange={(e) => { setDescription(e.target.value); setErrors((prev) => ({ ...prev, description: undefined })) }} className={fieldClass(errors.description)} />
+              <textarea rows={3} placeholder="e.g. I need someone to fix my kitchen sink" value={description ?? ''} onChange={(e) => { setDescription(e.target.value); setErrors((prev) => ({ ...prev, description: undefined })) }} className={fieldClass(errors.description)} />
               {renderError('description')}
             </div>
 
@@ -114,14 +114,14 @@ export default function BookingForm() {
                 </div>
               ) : (
                 <div className="mt-3">
-                  <input type="text" placeholder="e.g. 7, Faulks Road, Aba" value={fullAddress} onChange={(e) => setFullAddress(e.target.value)} className={fieldClass(false)} />
+                  <input type="text" placeholder="e.g. 7, Faulks Road, Aba" value={fullAddress ?? ''} onChange={(e) => setFullAddress(e.target.value)} className={fieldClass(false)} />
                 </div>
               )}
             </div>
 
             <div>
               <label className="block text-sm font-medium text-slate-200 mb-1">Date <span className="text-accent">*</span></label>
-              <input type="date" min={today} value={date} onChange={(e) => { setDate(e.target.value); setErrors((prev) => ({ ...prev, date: undefined })) }} className={`${fieldClass(errors.date)} [color-scheme:dark]`} />
+              <input type="date" min={today} value={date ?? ''} onChange={(e) => { setDate(e.target.value); setErrors((prev) => ({ ...prev, date: undefined })) }} className={`${fieldClass(errors.date)} [color-scheme:dark]`} />
               {renderError('date')}
             </div>
 
