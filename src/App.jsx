@@ -1,28 +1,29 @@
+import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { AppProvider } from './contexts/AppContext';
 import SidebarLayout from './components/SidebarLayout';
 
-import LandingPage from './pages/LandingPage';
-import ServiceSelection from './pages/customer/ServiceSelection';
-import BookingForm from './pages/customer/BookingForm';
-import CustomerAuth from './pages/customer/CustomerAuth';
-import MatchingAnimation from './pages/customer/MatchingAnimation';
-import HandymanProfile from './pages/customer/HandymanProfile';
-import SuccessScreen from './pages/customer/SuccessScreen';
-import CustomerDashboard from './pages/customer/CustomerDashboard';
-import CustomerSettings from './pages/customer/CustomerSettings';
-import ActiveJobScreen from './pages/customer/ActiveJobScreen';
-import ChatPopup from './pages/customer/ChatPopup';
+const LandingPage = lazy(() => import('./pages/LandingPage'));
+const ServiceSelection = lazy(() => import('./pages/customer/ServiceSelection'));
+const BookingForm = lazy(() => import('./pages/customer/BookingForm'));
+const CustomerAuth = lazy(() => import('./pages/customer/CustomerAuth'));
+const MatchingAnimation = lazy(() => import('./pages/customer/MatchingAnimation'));
+const HandymanProfile = lazy(() => import('./pages/customer/HandymanProfile'));
+const SuccessScreen = lazy(() => import('./pages/customer/SuccessScreen'));
+const CustomerDashboard = lazy(() => import('./pages/customer/CustomerDashboard'));
+const CustomerSettings = lazy(() => import('./pages/customer/CustomerSettings'));
+const ActiveJobScreen = lazy(() => import('./pages/customer/ActiveJobScreen'));
+const ChatPopup = lazy(() => import('./pages/customer/ChatPopup'));
 
-import HandymanSetup from './pages/handyman/HandymanSetup';
-import HandymanDashboard from './pages/handyman/HandymanDashboard';
-import WithdrawFunds from './pages/handyman/WithdrawFunds';
-import PortfolioUpload from './pages/handyman/PortfolioUpload';
-import HandymanSettings from './pages/handyman/HandymanSettings';
-import PrivacySecurity from './pages/handyman/PrivacySecurity';
+const HandymanSetup = lazy(() => import('./pages/handyman/HandymanSetup'));
+const HandymanDashboard = lazy(() => import('./pages/handyman/HandymanDashboard'));
+const WithdrawFunds = lazy(() => import('./pages/handyman/WithdrawFunds'));
+const PortfolioUpload = lazy(() => import('./pages/handyman/PortfolioUpload'));
+const HandymanSettings = lazy(() => import('./pages/handyman/HandymanSettings'));
+const PrivacySecurity = lazy(() => import('./pages/handyman/PrivacySecurity'));
 
-import DIYScreen from './pages/customer/DIYScreen';
+const DIYScreen = lazy(() => import('./pages/customer/DIYScreen'));
 
 function DashboardLayout({ children }) {
   return <SidebarLayout>{children}</SidebarLayout>;
@@ -58,7 +59,8 @@ export default function App() {
     <AuthProvider>
       <AppProvider>
         <BrowserRouter>
-          <Routes>
+          <Suspense fallback={<LoadingScreen />}>
+            <Routes>
               <Route path="/" element={<LandingPage />} />
 
               <Route path="/service-selection" element={<RequireAuth role="customer"><ServiceSelection /></RequireAuth>} />
@@ -86,8 +88,9 @@ export default function App() {
 
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
-          </BrowserRouter>
-        </AppProvider>
-      </AuthProvider>
+          </Suspense>
+        </BrowserRouter>
+      </AppProvider>
+    </AuthProvider>
   );
 }
