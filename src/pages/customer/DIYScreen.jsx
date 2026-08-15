@@ -291,7 +291,7 @@ export default function DIYScreen() {
 
 const styles = {
   container: {
-    minHeight: '100vh',
+    minHeight: '100dvh',
     backgroundColor: '#0A2540',
     display: 'flex',
     flexDirection: 'column',
@@ -318,9 +318,12 @@ const styles = {
   },
   cardsContainer: {
     padding: 20,
-    display: 'flex',
-    flexDirection: 'column',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
     gap: 16,
+    width: '100%',
+    maxWidth: 900,
+    margin: '0 auto',
   },
   card: {
     backgroundColor: '#0D3054',
@@ -369,7 +372,7 @@ const styles = {
     borderRadius: 12,
   },
   inputBar: {
-    padding: 12,
+    padding: '12px 12px calc(12px + env(safe-area-inset-bottom))',
     backgroundColor: '#0D3054',
     borderTop: '1px solid rgba(255,255,255,0.1)',
     display: 'flex',
@@ -430,7 +433,7 @@ const styles = {
     display: 'flex',
     justifyContent: 'center',
     gap: 20,
-    paddingBottom: 40,
+    paddingBottom: 'calc(40px + env(safe-area-inset-bottom))',
   },
   callButton: {
     backgroundColor: '#123A66',

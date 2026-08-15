@@ -1,5 +1,5 @@
-import { lazy, Suspense } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { lazy, Suspense, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { AppProvider } from './contexts/AppContext';
 import SidebarLayout from './components/SidebarLayout';
@@ -27,6 +27,14 @@ const DIYScreen = lazy(() => import('./pages/customer/DIYScreen'));
 
 function DashboardLayout({ children }) {
   return <SidebarLayout>{children}</SidebarLayout>;
+}
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0 });
+  }, [pathname]);
+  return null;
 }
 
 function LoadingScreen() {
@@ -59,6 +67,7 @@ export default function App() {
     <AuthProvider>
       <AppProvider>
         <BrowserRouter>
+          <ScrollToTop />
           <Suspense fallback={<LoadingScreen />}>
             <Routes>
               <Route path="/" element={<LandingPage />} />

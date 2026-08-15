@@ -265,12 +265,13 @@ const getFriendlyError = (err) => {
 
 const styles = {
   container: {
-    minHeight: '100vh',
+    minHeight: '100dvh',
     backgroundColor: '#0A2540',
     display: 'flex',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'center',
-    padding: 20,
+    padding: '24px 20px',
+    boxSizing: 'border-box',
   },
   formContainer: {
     backgroundColor: '#0D3054',
@@ -279,6 +280,7 @@ const styles = {
     padding: '32px 20px',
     width: '100%',
     maxWidth: 400,
+    margin: 'auto 0',
     boxShadow: '0 10px 40px rgba(0,0,0,0.35)',
   },
   title: {

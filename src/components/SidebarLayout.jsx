@@ -117,13 +117,14 @@ export default function SidebarLayout({ children }) {
         </div>
       </aside>
 
-      <main className={`flex-1 transition-all duration-300 ml-0 ${collapsed ? 'md:ml-16' : 'md:ml-60'}`}>
+      <main className={`flex-1 min-w-0 transition-all duration-300 ml-0 ${collapsed ? 'md:ml-16' : 'md:ml-60'}`}>
         <div className="md:hidden sticky top-0 z-30 relative overflow-hidden px-4 h-14 flex items-center justify-between border-b border-white/10 pt-[env(safe-area-inset-top)]">
           <img src={heroImg} alt="" className="absolute inset-0 w-full h-full object-cover" />
           <div className="absolute inset-0 bg-navy/80" />
           <button
             onClick={() => setMobileOpen(true)}
             className="relative z-10 p-2 -ml-2 rounded-lg hover:bg-white/10"
+            aria-label="Open menu"
           >
             <Menu size={22} className="text-white" />
           </button>
@@ -135,7 +136,9 @@ export default function SidebarLayout({ children }) {
           </div>
           <span className="w-9 relative z-10" />
         </div>
-        <div className="p-4 md:p-6 lg:p-8">{children}</div>
+        <div className="p-4 md:p-6 lg:p-8 pb-20 md:pb-8">
+          <div className="mx-auto w-full max-w-6xl min-w-0">{children}</div>
+        </div>
       </main>
     </div>
   );

@@ -49,7 +49,7 @@ export default function ChatPopup() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-8rem)] max-w-3xl">
+    <div className="flex flex-col w-full max-w-3xl mx-auto h-[calc(100dvh-10rem)] min-h-[24rem] md:h-[calc(100dvh-12rem)] md:max-h-[42rem] rounded-2xl overflow-hidden border border-white/10">
       <div className="bg-navy-700 text-white px-4 py-3 rounded-t-2xl flex items-center gap-3">
         <button onClick={() => navigate(-1)}><ArrowLeft className="w-6 h-6" /></button>
         <div className="flex-1">

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   CheckCircle,
   ChevronLeft,
@@ -108,8 +108,17 @@ const getFriendlyError = (err) => {
 
 function HandymanSetup() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { signup, login, logout, sendVerificationEmail, firebaseReady, bootstrapHandymanProfile, firebaseUser, isAuthenticated, userRole } = useAuth();
   const { updateHandymanRegistration, saveHandymanProfile } = useApp();
+
+  const goBack = () => {
+    if (location.key !== 'default') {
+      navigate(-1);
+    } else {
+      navigate('/');
+    }
+  };
 
   // A handyman who is already signed in as a handyman goes straight to
   // their dashboard (the login form is for switching/setup only).
@@ -737,7 +746,7 @@ function HandymanSetup() {
         <label className={labelClass}>
           National Identification Number (NIN)
         </label>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
           <input
             type="text"
             inputMode="numeric"
@@ -752,7 +761,7 @@ function HandymanSetup() {
               setNinError('');
             }}
             disabled={ninVerified}
-            className={`${inputClass} flex-1 ${ninVerified ? 'bg-white/5 opacity-75' : ''} ${ninError ? 'border-[#EF4444]' : ''}`}
+            className={`${inputClass} flex-1 min-w-8rem ${ninVerified ? 'bg-white/5 opacity-75' : ''} ${ninError ? 'border-[#EF4444]' : ''}`}
           />
           {!ninVerified ? (
             <button
@@ -1003,8 +1012,9 @@ function HandymanSetup() {
       <div className="max-w-lg mx-auto px-4 py-6">
         <div className="flex items-center justify-between mb-6">
           <button
-            onClick={() => navigate(-1)}
+            onClick={goBack}
             className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+            aria-label="Go back"
           >
             <ChevronLeft size={24} className="text-white" />
           </button>
