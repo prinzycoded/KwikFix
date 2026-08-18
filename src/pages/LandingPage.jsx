@@ -4,7 +4,7 @@ import {
   Wrench, Zap, Settings, Hammer, AlertTriangle, Shield, Clock, BadgeCheck,
   Star, ArrowRight, Menu, X, Phone, Mail, MapPin, CheckCircle2, CheckCircle, Users, Home, Search
 } from 'lucide-react';
-import heroImg from '../assets/Kwik.img.png';
+import heroImg from '../assets/fixer.jpg';
 
 const services = [
   { name: 'Plumbing', icon: Wrench, desc: 'Leaks, pipes, fittings & installations' },

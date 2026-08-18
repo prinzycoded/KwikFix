@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X, Home, Briefcase, User, Settings, Wrench, Calendar, Wallet, Image, LogOut } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import heroImg from '../assets/Kwik.img.png';
+import heroImg from '../assets/fixer.jpg';
 
 const customerLinks = [
   { label: 'Dashboard', icon: Home, path: '/customer/dashboard' },
