@@ -7,10 +7,10 @@ import {
 import heroImg from '../assets/fixer.jpg';
 
 const services = [
-  { name: 'Plumbing', icon: Wrench, desc: 'Leaks, pipes, fittings & installations' },
-  { name: 'Electrical', icon: Zap, desc: 'Wiring, switches, lighting & repairs' },
-  { name: 'Generator Repair', icon: Settings, desc: 'Servicing, fault diagnosis & fixes' },
-  { name: 'Carpentry', icon: Hammer, desc: 'Furniture, shelves & woodwork' },
+  { name: 'Plumbing', icon: Wrench, key: 'plumbing', desc: 'Leaks, pipes, fittings & installations' },
+  { name: 'Electrical', icon: Zap, key: 'electrical', desc: 'Wiring, switches, lighting & repairs' },
+  { name: 'Generator Repair', icon: Settings, key: 'generator_repair', desc: 'Servicing, fault diagnosis & fixes' },
+  { name: 'Carpentry', icon: Hammer, key: 'carpentry', desc: 'Furniture, shelves & woodwork' },
 ];
 
 const steps = [
