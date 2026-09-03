@@ -125,6 +125,8 @@ function HandymanSetup() {
   useEffect(() => {
     if (isAuthenticated && userRole === 'handyman') {
       navigate('/handyman/dashboard', { replace: true });
+    } else if (isAuthenticated && userRole === 'customer') {
+      navigate('/customer/dashboard', { replace: true });
     }
   }, [isAuthenticated, userRole, navigate]);
 

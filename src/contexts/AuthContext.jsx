@@ -179,6 +179,27 @@ export function AuthProvider({ children }) {
     const existing = await get(ref(db, `users/${uid}`));
     if (existing.exists()) {
       const profile = existing.val();
+      if (profile.role && profile.role !== 'handyman') {
+        setCurrentUser({
+          id: uid,
+          fullName: profile.fullName || fullName || firebaseUser.displayName || '',
+          email: profile.email || firebaseUser.email || '',
+          phone: profile.phone || phone || '',
+          role: profile.role,
+          avatar: profile.avatar || firebaseUser.photoURL || '',
+          username: profile.username || '',
+          niche: profile.niche || 'other',
+          niches: profile.niches || (profile.niche ? [profile.niche] : []),
+          rating: profile.rating || 0,
+          isVerified: profile.isVerified || false,
+          isDIYProfessional: profile.isDIYProfessional || false,
+          status: profile.status || 'offline',
+          createdAt: profile.createdAt || new Date().toISOString(),
+        });
+        setUserRole(profile.role);
+        setIsAuthenticated(true);
+        return profile;
+      }
       setCurrentUser({
         id: uid,
         fullName: profile.fullName || fullName || firebaseUser.displayName || '',
