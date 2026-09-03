@@ -202,8 +202,11 @@ export default function ActiveJobScreen() {
             {endState === 'handyman_ended' && <div className="flex items-center gap-2 p-3 bg-accent/10 border border-accent/30 rounded-lg mb-4"><Clock size={20} className="text-accent" /><span className="text-accent font-medium">Waiting for customer to confirm</span></div>}
             {isCompleted && <div className="flex items-center gap-2 p-3 bg-[#10B981]/15 border border-[#10B981]/30 rounded-lg mb-4"><CheckCircle size={20} className="text-[#10B981]" /><span className="text-[#10B981] font-medium">Job Completed!</span></div>}
             <div className="flex flex-col sm:flex-row gap-3">
-              <button onClick={() => handleEndJob('customer')} disabled={isCompleted || submitting} className={`flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold ${isCompleted ? 'bg-white/10 text-white/40' : 'bg-white text-navy hover:bg-slate-100'} ${endState === 'customer_ended' ? 'opacity-50' : ''}`}><XCircle size={18} />End Job (Customer)</button>
-              <button onClick={() => handleEndJob('handyman')} disabled={isCompleted || submitting} className={`flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-white ${isCompleted ? 'bg-white/10 text-white/40' : 'bg-accent hover:bg-accent-dark'} ${endState === 'handyman_ended' ? 'opacity-50' : ''}`}><XCircle size={18} />End Job (Handyman)</button>
+              {isHandyman ? (
+                <button onClick={() => handleEndJob('handyman')} disabled={isCompleted || submitting} className={`flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-white ${isCompleted ? 'bg-white/10 text-white/40' : 'bg-accent hover:bg-accent-dark'} ${endState === 'handyman_ended' ? 'opacity-50' : ''}`}><XCircle size={18} />End Job</button>
+              ) : (
+                <button onClick={() => handleEndJob('customer')} disabled={isCompleted || submitting} className={`flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold ${isCompleted ? 'bg-white/10 text-white/40' : 'bg-white text-navy hover:bg-slate-100'} ${endState === 'customer_ended' ? 'opacity-50' : ''}`}><XCircle size={18} />End Job</button>
+              )}
             </div>
           </div>
         </div>

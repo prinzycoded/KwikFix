@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Wrench, Zap, Settings, Hammer, AlertTriangle, Shield, Clock, BadgeCheck,
   Star, ArrowRight, Menu, X, Phone, Mail, MapPin, CheckCircle2, CheckCircle, Users, Home, Search
 } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 import heroImg from '../assets/fixer.jpg';
 
 const services = [
@@ -35,7 +36,18 @@ const stats = [
 
 export default function LandingPage() {
   const navigate = useNavigate();
+  const { isAuthenticated, userRole } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      if (userRole === 'handyman') {
+        navigate('/handyman/dashboard', { replace: true });
+      } else if (userRole === 'customer') {
+        navigate('/customer/dashboard', { replace: true });
+      }
+    }
+  }, [isAuthenticated, userRole, navigate]);
 
   const scrollTo = (id) => {
     setMenuOpen(false);

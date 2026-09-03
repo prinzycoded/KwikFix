@@ -6,7 +6,7 @@ import { useAuth } from '../../contexts/AuthContext';
 export default function CustomerAuth() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { login, signup, sendVerificationEmail, firebaseReady } = useAuth();
+  const { login, signup, sendVerificationEmail, firebaseReady, userRole } = useAuth();
 
   const bookingQuery = searchParams.toString();
 
@@ -38,7 +38,11 @@ export default function CustomerAuth() {
     setSubmitting(true);
     try {
       await login(email, password);
-      navigate(`/matching${bookingQuery ? `?${bookingQuery}` : ''}`);
+      if (userRole === 'handyman') {
+        navigate('/handyman/dashboard');
+      } else {
+        navigate(`/matching${bookingQuery ? `?${bookingQuery}` : ''}`);
+      }
     } catch (err) {
       setError(getFriendlyError(err));
     } finally {

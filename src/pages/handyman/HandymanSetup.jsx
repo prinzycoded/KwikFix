@@ -380,17 +380,19 @@ function HandymanSetup() {
     }
     setLoginSubmitting(true);
     try {
+      let profile;
       if (firebaseUser?.email === loginEmail.trim()) {
-        // Already signed in with this account (e.g. it was created in the
-        // Firebase console and auto-signed-in as a customer). Just bootstrap
-        // the handyman profile + directory entry and go to the dashboard.
-        await bootstrapHandymanProfile();
+        profile = await bootstrapHandymanProfile();
       } else {
         if (firebaseUser) await logout();
         await login(loginEmail, loginPassword);
-        await bootstrapHandymanProfile();
+        profile = await bootstrapHandymanProfile();
       }
-      navigate('/handyman/dashboard');
+      if (profile?.role === 'customer') {
+        navigate('/customer/dashboard');
+      } else {
+        navigate('/handyman/dashboard');
+      }
     } catch (err) {
       setLoginError(getFriendlyError(err));
     } finally {
