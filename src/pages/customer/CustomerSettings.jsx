@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bell, Shield, LogOut, Mail, ShieldCheck, Loader2 } from 'lucide-react';
+import { Bell, Shield, LogOut, Mail, ShieldCheck, Loader2, Home } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 export default function CustomerSettings() {
@@ -28,6 +28,17 @@ export default function CustomerSettings() {
   return (
     <div className="max-w-3xl">
       <h1 className="text-2xl font-bold text-white mb-6">Settings</h1>
+
+      <button
+        onClick={() => navigate('/customer/dashboard')}
+        className="mb-4 bg-navy-800 border border-white/10 rounded-2xl p-4 flex items-center gap-3 w-full hover:bg-navy-700 transition-colors"
+      >
+        <div className="w-10 h-10 rounded-xl bg-accent/15 flex items-center justify-center">
+          <Home className="w-5 h-5 text-accent" />
+        </div>
+        <span className="font-medium text-white">Home Page</span>
+        <span className="ml-auto text-sm text-muted">Go to Dashboard</span>
+      </button>
 
       <div className="bg-navy-800 border border-white/10 rounded-2xl p-4 mb-4 flex items-center gap-3">
         {isEmailVerified ? (
